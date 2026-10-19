@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "MapAlign: Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison"
+version: 0.1.0
+date-released: 2026-10-19
+license: MIT
+authors:
+  # TODO: replace with the author's full name (and ORCID if available) before publishing
+  - given-names: "TODO"
+    family-names: "TODO"
+references:
+  - type: dataset
+    title: "Old Survey of India Maps collection"
+    authors:
+      - family-names: "Brown"
+        given-names: "John"
+    doi: "10.5281/zenodo.10519306"
+    license: CC-BY-4.0
+  - type: dataset
+    title: "OpenStreetMap"
+    authors:
+      - name: "OpenStreetMap contributors"
+    url: "https://www.openstreetmap.org"
+    license: ODbL-1.0

@@ -1,0 +1,200 @@
+{
+  "definitions": {
+    "error_m": "Euclidean distance in EPSG:32643 between predicted and OSM-derived true position",
+    "rmse_m": "sqrt(mean(e_i^2))",
+    "std_m": "population standard deviation (ddof=0)",
+    "p90_m": "90th percentile (linear interpolation)",
+    "inlier_reprojection_rmse_working_px": "image-space fit of RANSAC inliers; NOT positional accuracy",
+    "fit_rmse_m / leave_one_out_rmse_m": "Method C fitting diagnostics on fitting points; NOT evaluation"
+  },
+  "primary_model": "homography",
+  "metrics": {
+    "homography/sift": {
+      "model": "homography",
+      "method": "sift",
+      "label": "SIFT + RANSAC",
+      "method_status": "failed",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 12,
+      "n_valid": 0,
+      "mean_m": null,
+      "median_m": null,
+      "rmse_m": null,
+      "max_m": null,
+      "min_m": null,
+      "std_m": null,
+      "p90_m": null,
+      "runtime_s": 13.46,
+      "device": "cpu",
+      "proposed_matches": 594,
+      "ransac_inliers": 26,
+      "inlier_ratio": 0.0438,
+      "inlier_reprojection_rmse_working_px": 0.07895564102831946
+    },
+    "homography/loftr": {
+      "model": "homography",
+      "method": "loftr",
+      "label": "LoFTR + RANSAC",
+      "method_status": "valid",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 0,
+      "n_valid": 12,
+      "mean_m": 64.23,
+      "median_m": 53.86,
+      "rmse_m": 77.43,
+      "max_m": 191.71,
+      "min_m": 24.22,
+      "std_m": 43.25,
+      "p90_m": 95.92,
+      "runtime_s": 18.26,
+      "device": "cpu",
+      "proposed_matches": 601,
+      "ransac_inliers": 389,
+      "inlier_ratio": 0.6473,
+      "inlier_reprojection_rmse_working_px": 6.403360421903218
+    },
+    "homography/manual": {
+      "model": "homography",
+      "method": "manual",
+      "label": "Manual GCPs (Method C)",
+      "method_status": "valid",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 0,
+      "n_valid": 12,
+      "mean_m": 89.61,
+      "median_m": 73.94,
+      "rmse_m": 102.37,
+      "max_m": 223.92,
+      "min_m": 44.91,
+      "std_m": 49.5,
+      "p90_m": 140.6,
+      "runtime_s": 0.15,
+      "device": null,
+      "n_fitting_points": 7,
+      "fit_rmse_m": 55.64,
+      "leave_one_out_rmse_m": 146.88,
+      "manual_interaction_time": "not reported: points were picked by an AI assistant, not a human"
+    },
+    "affine/sift": {
+      "model": "affine",
+      "method": "sift",
+      "label": "SIFT + RANSAC",
+      "method_status": "failed",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 12,
+      "n_valid": 0,
+      "mean_m": null,
+      "median_m": null,
+      "rmse_m": null,
+      "max_m": null,
+      "min_m": null,
+      "std_m": null,
+      "p90_m": null
+    },
+    "affine/loftr": {
+      "model": "affine",
+      "method": "loftr",
+      "label": "LoFTR + RANSAC",
+      "method_status": "valid",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 0,
+      "n_valid": 12,
+      "mean_m": 59.15,
+      "median_m": 42.37,
+      "rmse_m": 76.34,
+      "max_m": 202.4,
+      "min_m": 18.42,
+      "std_m": 48.27,
+      "p90_m": 99.67
+    },
+    "affine/manual": {
+      "model": "affine",
+      "method": "manual",
+      "label": "Manual GCPs (Method C)",
+      "method_status": "valid",
+      "n_evaluation_points": 12,
+      "n_failed_predictions": 0,
+      "n_valid": 12,
+      "mean_m": 92.84,
+      "median_m": 87.75,
+      "rmse_m": 105.49,
+      "max_m": 203.75,
+      "min_m": 32.09,
+      "std_m": 50.08,
+      "p90_m": 147.51
+    }
+  },
+  "paired_comparisons": {
+    "homography": {
+      "loftr_vs_manual": {
+        "n_pairs": 12,
+        "median_diff_m": -31.74,
+        "a_better_count": 9,
+        "b_better_count": 3,
+        "wilcoxon_statistic": 13.0,
+        "wilcoxon_p_two_sided": 0.0425,
+        "bootstrap_ci95_median_diff_m": [
+          -44.02,
+          2.46
+        ]
+      }
+    },
+    "affine": {
+      "loftr_vs_manual": {
+        "n_pairs": 12,
+        "median_diff_m": -25.1,
+        "a_better_count": 10,
+        "b_better_count": 2,
+        "wilcoxon_statistic": 9.0,
+        "wilcoxon_p_two_sided": 0.0161,
+        "bootstrap_ci95_median_diff_m": [
+          -58.55,
+          -5.1
+        ]
+      }
+    }
+  },
+  "sensitivity_without_low_confidence": {
+    "n_points": 9,
+    "metrics": {
+      "sift": {
+        "n_valid": 0,
+        "mean_m": null,
+        "median_m": null,
+        "rmse_m": null,
+        "max_m": null,
+        "min_m": null,
+        "std_m": null,
+        "p90_m": null
+      },
+      "loftr": {
+        "n_valid": 9,
+        "mean_m": 44.46,
+        "median_m": 44.89,
+        "rmse_m": 46.02,
+        "max_m": 59.79,
+        "min_m": 24.22,
+        "std_m": 11.9,
+        "p90_m": 57.1
+      },
+      "manual": {
+        "n_valid": 9,
+        "mean_m": 80.26,
+        "median_m": 66.67,
+        "rmse_m": 86.11,
+        "max_m": 144.11,
+        "min_m": 44.91,
+        "std_m": 31.2,
+        "p90_m": 116.0
+      }
+    }
+  },
+  "excluded_points": [],
+  "evaluation_points_sha256": "f0b45ff506427ae98091ddf069611a5ada0cda176875d84fd98c7c28715d48e8",
+  "caveats": [
+    "12 evaluation points (target was 20); none in the southern fifth or Mysore city",
+    "fitting and evaluation points were picked by an AI assistant and are not human-verified",
+    "truth is OSM vector geometry of unknown accuracy (plausibly 5-20 m)",
+    "single historical sheet; results do not generalise beyond it"
+  ]
+}

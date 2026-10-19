@@ -1,0 +1,7 @@
+model,method,label,method_status,n_evaluation_points,n_failed_predictions,n_valid,mean_m,median_m,rmse_m,max_m,min_m,std_m,p90_m,runtime_s,device,proposed_matches,ransac_inliers,inlier_ratio,inlier_reprojection_rmse_working_px,n_fitting_points,fit_rmse_m,leave_one_out_rmse_m,manual_interaction_time
+homography,sift,SIFT + RANSAC,failed,12,12,0,,,,,,,,13.46,cpu,594.0,26.0,0.0438,0.07895564102831946,,,,
+homography,loftr,LoFTR + RANSAC,valid,12,0,12,64.23,53.86,77.43,191.71,24.22,43.25,95.92,18.26,cpu,601.0,389.0,0.6473,6.403360421903218,,,,
+homography,manual,Manual GCPs (Method C),valid,12,0,12,89.61,73.94,102.37,223.92,44.91,49.5,140.6,0.15,,,,,,7.0,55.64,146.88,"not reported: points were picked by an AI assistant, not a human"
+affine,sift,SIFT + RANSAC,failed,12,12,0,,,,,,,,,,,,,,,,,
+affine,loftr,LoFTR + RANSAC,valid,12,0,12,59.15,42.37,76.34,202.4,18.42,48.27,99.67,,,,,,,,,,
+affine,manual,Manual GCPs (Method C),valid,12,0,12,92.84,87.75,105.49,203.75,32.09,50.08,147.51,,,,,,,,,,

@@ -1,0 +1,81 @@
+{
+  "python": "3.12.12 (main, Feb 12 2026, 00:40:26) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.22631-SP0",
+  "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "packages": {
+    "torch": "2.14.1+cpu",
+    "kornia": "0.8.3",
+    "opencv-python-headless": "5.0.0.93",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "matplotlib": "3.11.2",
+    "pillow": "13.0.0",
+    "rasterio": "1.5.2",
+    "pyproj": "3.8.0",
+    "scipy": "1.18.1",
+    "pyyaml": "6.0.3",
+    "pytest": "9.1.1"
+  },
+  "checks": {
+    "sift_ransac": {
+      "ok": true,
+      "keypoints": [
+        4424,
+        4430
+      ],
+      "ratio_matches": 4161,
+      "inliers": 4157,
+      "recovered_shift_px": [
+        10.999,
+        7.0
+      ]
+    },
+    "pyproj": {
+      "ok": true,
+      "centre_utm43n_m": [
+        676669.39,
+        1368557.98
+      ],
+      "utm_vs_geodesic_10km_m": 0.084,
+      "proj_version": "9.8.1",
+      "historical_datums": {
+        "EPSG:4243": "Kalianpur 1880",
+        "EPSG:4144": "Kalianpur 1937",
+        "EPSG:4146": "Kalianpur 1975"
+      }
+    },
+    "rasterio": {
+      "ok": true,
+      "gdal_version": "3.12.2",
+      "pixel(0,0)_centre": [
+        600002.5,
+        1369997.5
+      ]
+    },
+    "loftr": {
+      "ok": true,
+      "output_keys": [
+        "batch_indexes",
+        "confidence",
+        "keypoints0",
+        "keypoints1"
+      ],
+      "matches": 4070,
+      "median_shift_px": [
+        15.99,
+        8.03
+      ],
+      "expected_shift_px": [
+        16,
+        8
+      ],
+      "inference_s_640x480": 6.94,
+      "device": "cpu",
+      "torch_home": "D:\\EPFL\\MapAlign\\.cache\\torch"
+    }
+  },
+  "torch": {
+    "cuda_available": false,
+    "torch_cuda_build": null
+  }
+}

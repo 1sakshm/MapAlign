@@ -1,0 +1,104 @@
+{
+  "n_points": 9,
+  "per_point_offset_m": {
+    "F01": [
+      -40.2,
+      52.8
+    ],
+    "F02": [
+      -512.7,
+      12.9
+    ],
+    "F03": [
+      -44.7,
+      -24.4
+    ],
+    "F04": [
+      -101.3,
+      153.3
+    ],
+    "F05": [
+      126.0,
+      230.5
+    ],
+    "F06": [
+      -90.2,
+      160.2
+    ],
+    "F07": [
+      -43.1,
+      11.0
+    ],
+    "F08": [
+      -83.7,
+      116.6
+    ],
+    "F09": [
+      -117.0,
+      -8.6
+    ]
+  },
+  "qc_rule": "exclude a FITTING point if |offset - median| > 3.0 x 1.4826 x MAD in E or N (graticule-based, independent of all methods and of evaluation points)",
+  "qc_robust_sigma_E_N_m": [
+    57.9,
+    94.7
+  ],
+  "qc_flagged_z": {
+    "F02": [
+      -7.41,
+      -0.42
+    ],
+    "F05": [
+      3.62,
+      1.88
+    ]
+  },
+  "median_offset_E_N_m": [
+    -83.7,
+    52.8
+  ],
+  "median_offset_distance_m": 99.0,
+  "spread_mad_m": [
+    39.0,
+    63.9
+  ],
+  "proj_datum_shifts_at_sheet_centre": {
+    "EPSG:4243": [
+      {
+        "operation": "Ballpark geographic offset from Kalianpur 1880 to WGS 84 (with axis order normalized for visualization)",
+        "accuracy_m": -1.0,
+        "shift_E_m": 0.0,
+        "shift_N_m": 0.0
+      }
+    ],
+    "EPSG:4144": [
+      {
+        "operation": "Kalianpur 1937 to WGS 84 (2) (with axis order normalized for visualization)",
+        "accuracy_m": 5.0,
+        "shift_E_m": -23.2,
+        "shift_N_m": 160.1
+      },
+      {
+        "operation": "Kalianpur 1937 to WGS 84 (1) (with axis order normalized for visualization)",
+        "accuracy_m": 18.0,
+        "shift_E_m": -107.4,
+        "shift_N_m": 158.8
+      },
+      {
+        "operation": "Ballpark geographic offset from Kalianpur 1937 to WGS 84 (with axis order normalized for visualization)",
+        "accuracy_m": -1.0,
+        "shift_E_m": 0.0,
+        "shift_N_m": 0.0
+      }
+    ],
+    "EPSG:4146": [
+      {
+        "operation": "Kalianpur 1975 to WGS 84 (1) (with axis order normalized for visualization)",
+        "accuracy_m": 22.0,
+        "shift_E_m": -117.7,
+        "shift_N_m": 158.9
+      }
+    ]
+  },
+  "interpretation": "offset = true WGS84 position minus position implied by the printed graticule treated as WGS84; includes datum shift, graticule drafting error and paper distortion"
+}

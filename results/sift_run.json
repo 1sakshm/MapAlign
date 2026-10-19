@@ -1,0 +1,269 @@
+{
+  "method": "sift",
+  "created": "2026-10-19T10:23:11+00:00",
+  "status": "failed",
+  "direction": "historical_px -> reference_px",
+  "frames": {
+    "H_work": "historical working px -> reference working px",
+    "H_full": "historical full-res scan px -> reference GeoTIFF px (both OpenCV centre convention)",
+    "reference_geotransform": "rasterio corner-based; map = T*(col+0.5, row+0.5)"
+  },
+  "H_work": [
+    [
+      -1.1104978944858446,
+      -0.6380560340417372,
+      2387.0158751460663
+    ],
+    [
+      -1.3548063052962471,
+      -0.7784357897222872,
+      2912.16246487094
+    ],
+    [
+      -0.0004652233160803301,
+      -0.0002673053216952981,
+      1.0
+    ]
+  ],
+  "H_full": [
+    [
+      -1.010343283471644,
+      -0.5804169044171498,
+      4775.233614924438
+    ],
+    [
+      -1.2324128207118064,
+      -0.7079976337571571,
+      5824.824732585288
+    ],
+    [
+      -0.00021157930885635357,
+      -0.0001215484260094977,
+      1.0
+    ]
+  ],
+  "historical_full_to_work": [
+    [
+      0.5364500792393027,
+      0.0,
+      -221.24920760697304
+    ],
+    [
+      0.0,
+      0.5363636363636364,
+      -286.65000000000003
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "reference_full_to_work": [
+    [
+      0.4999263080324245,
+      0.0,
+      -0.2500368459837877
+    ],
+    [
+      0.0,
+      0.5,
+      -0.25
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "reference_geotransform_gdal": [
+    659715.0,
+    5.0,
+    0.0,
+    1385815.0,
+    0.0,
+    -5.0
+  ],
+  "reference_crs": "EPSG:32643",
+  "working_sizes": {
+    "historical": [
+      2708,
+      2773
+    ],
+    "reference": [
+      3392,
+      3450
+    ]
+  },
+  "working_resolution_m": {
+    "historical_nominal": 9.999961240768094,
+    "reference": 10.001474056603772
+  },
+  "matching": {
+    "keypoints0": 79923,
+    "keypoints1": 18547,
+    "detect_s": 2.52,
+    "candidate_matches": 79923,
+    "ratio_matches": 594,
+    "match_s": 6.29
+  },
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 594,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 3.0,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 1.0,
+    "inliers": 26,
+    "inlier_ratio": 0.0438,
+    "inlier_reproj_rmse_px": 0.07895564102831946,
+    "inlier_reproj_median_px": 0.027576958909313137,
+    "valid": false,
+    "problems": [
+      "ill-conditioned (cond=8.36e+13)",
+      "extreme anisotropy (singular values [2.0203, 0.0])",
+      "image0 corners cross the horizon line (w<=0)"
+    ],
+    "condition_number": 83641205000141.78,
+    "det_linear_part": 8.967426963145754e-06,
+    "singular_values_linear_part": [
+      2.020342416474468,
+      4.438567883344391e-06
+    ],
+    "mapped_corners_image1_px": null
+  },
+  "graticule_corner_check": {
+    "note": "development diagnostic only; graticule datum unverified (treated as WGS84)",
+    "corners": {
+      "nw": {
+        "predicted_m": [
+          683593.7,
+          1356688.4
+        ],
+        "graticule_m": [
+          662998.5,
+          1382305.5
+        ],
+        "offset_m": [
+          20595.2,
+          -25617.2
+        ],
+        "distance_m": 32869.4
+      },
+      "ne": {
+        "predicted_m": [
+          683593.9,
+          1356688.3
+        ],
+        "graticule_m": [
+          690172.1,
+          1382472.4
+        ],
+        "offset_m": [
+          -6578.1,
+          -25784.1
+        ],
+        "distance_m": 26610.0
+      },
+      "se": {
+        "predicted_m": [
+          683593.6,
+          1356688.4
+        ],
+        "graticule_m": [
+          690353.2,
+          1354815.3
+        ],
+        "offset_m": [
+          -6759.6,
+          1873.0
+        ],
+        "distance_m": 7014.3
+      },
+      "sw": {
+        "predicted_m": [
+          683594.3,
+          1356688.3
+        ],
+        "graticule_m": [
+          663153.7,
+          1354651.6
+        ],
+        "offset_m": [
+          20440.6,
+          2036.7
+        ],
+        "distance_m": 20541.8
+      }
+    },
+    "max_distance_m": 32869.4,
+    "mean_distance_m": 21758.9
+  },
+  "prior_diagnostics": {
+    "prior_consistency": {
+      "radius_m": 1000.0,
+      "matches": 594,
+      "matches_within": 2,
+      "inliers": 26,
+      "inliers_within": 0,
+      "median_distance_m": 14795.4
+    },
+    "max_corner_deviation_from_prior_m": 32935.6,
+    "aligned_tile_upper_bound": {
+      "tiles": 25,
+      "tile_px": 512,
+      "radius_px": 60.0,
+      "matches": 2041,
+      "correct": 97,
+      "correct_fraction": 0.0475,
+      "chance_fraction": 0.0431
+    }
+  },
+  "timing_s": {
+    "preprocess": 4.07,
+    "matching": 8.84,
+    "estimation": 0.549,
+    "total": 13.46
+  },
+  "device": "cpu",
+  "parameters": {
+    "preprocessing": {
+      "crop_to_neatline": true,
+      "working_resolution_m": 10.0,
+      "grayscale": true,
+      "clahe": false
+    },
+    "sift": {
+      "n_features": 0,
+      "contrast_threshold": 0.04,
+      "edge_threshold": 10,
+      "sigma": 1.6,
+      "matcher": "bf_knn_l2",
+      "lowe_ratio": 0.75
+    },
+    "transform": {
+      "model": "homography",
+      "direction": "historical_px -> reference_px",
+      "ransac_method": "USAC_MAGSAC",
+      "ransac_reproj_threshold_matcher_px": 3.0,
+      "ransac_max_iters": 1200000,
+      "ransac_confidence": 0.999,
+      "min_inliers": 12
+    }
+  },
+  "config_frozen": true,
+  "inputs": {
+    "historical_sha256": "c308d1f440e9d12dd68fd007d32b277f4fbf1b8b0e0c50010ce3f07114167c13",
+    "reference_render": "data/processed/osm_57D11_utm43n.tif"
+  },
+  "software": {
+    "opencv-python-headless": "5.0.0.93",
+    "numpy": "2.5.4",
+    "torch": "2.14.1+cpu",
+    "kornia": "0.8.3"
+  },
+  "platform": "Windows-11-10.0.22631-SP0"
+}

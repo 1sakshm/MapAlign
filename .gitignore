@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments and caches
+.venv/
+.cache/
+.uv-cache/
+
+# Raw and processed data are re-created by `python -m mapalign.fetch` (provenance in manifest.json)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/manifest.json
+data/processed/*
+!data/processed/.gitkeep
+
+# Large result rasters (metrics, CSVs and PNGs are committed)
+results/*.tif
+results/*.tiff
+*.part
+
+# Picking aids are regenerated with `python -m mapalign.gcp sheet/zoom`
+gcp/picking/

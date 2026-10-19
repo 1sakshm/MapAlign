@@ -1,0 +1,65 @@
+{
+  "purpose": "exploratory; selection criterion fixed in advance: most matches within 1 km of the graticule prior (development data only)",
+  "sizes": [
+    {
+      "max_side_px": 384,
+      "matches": 145,
+      "within_1km_of_prior": 86,
+      "fraction_within": 0.593,
+      "effective_resolution_m": 89.8,
+      "inference_s": 1.89
+    },
+    {
+      "max_side_px": 512,
+      "matches": 405,
+      "within_1km_of_prior": 319,
+      "fraction_within": 0.788,
+      "effective_resolution_m": 67.4,
+      "inference_s": 3.66
+    },
+    {
+      "max_side_px": 640,
+      "matches": 342,
+      "within_1km_of_prior": 210,
+      "fraction_within": 0.614,
+      "effective_resolution_m": 53.9,
+      "inference_s": 5.51
+    },
+    {
+      "max_side_px": 768,
+      "matches": 601,
+      "within_1km_of_prior": 429,
+      "fraction_within": 0.714,
+      "effective_resolution_m": 44.9,
+      "inference_s": 8.55
+    },
+    {
+      "max_side_px": 896,
+      "matches": 348,
+      "within_1km_of_prior": 151,
+      "fraction_within": 0.434,
+      "effective_resolution_m": 38.5,
+      "inference_s": 11.7
+    },
+    {
+      "max_side_px": 1024,
+      "matches": 312,
+      "within_1km_of_prior": 108,
+      "fraction_within": 0.346,
+      "effective_resolution_m": 33.7,
+      "inference_s": 16.08
+    },
+    {
+      "max_side_px": 1280,
+      "matches": 262,
+      "within_1km_of_prior": 18,
+      "fraction_within": 0.069,
+      "effective_resolution_m": 27.0,
+      "inference_s": 28.6
+    },
+    {
+      "max_side_px": 1536,
+      "error": "[enforce fail at alloc_cpu.cpp:117] data. DefaultCPUAllocator: not enough memory: you tried to allocate 3335270400 bytes."
+    }
+  ]
+}

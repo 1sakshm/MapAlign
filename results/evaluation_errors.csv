@@ -1,0 +1,73 @@
+model,method,point_id,true_easting_m,true_northing_m,pred_easting_m,pred_northing_m,dE_m,dN_m,error_m,prediction_status,confidence,feature_type
+homography,sift,E01,686991.53,1374170.28,,,,,,failed: method status failed,medium,landmark_centroid
+homography,sift,E02,682713.31,1378172.92,,,,,,failed: method status failed,medium,rail_road_crossing
+homography,sift,E03,684432.43,1373517.6,,,,,,failed: method status failed,low,landmark_centroid
+homography,sift,E04,679287.25,1370607.22,,,,,,failed: method status failed,medium,rail_road_crossing
+homography,sift,E05,680458.75,1372536.63,,,,,,failed: method status failed,medium,rail_water_crossing
+homography,sift,E06,670560.48,1371289.78,,,,,,failed: method status failed,medium,rail_road_crossing
+homography,sift,E07,674515.54,1377057.72,,,,,,failed: method status failed,medium,road_stream_crossing
+homography,sift,E08,685483.47,1374961.43,,,,,,failed: method status failed,high,road_stream_crossing
+homography,sift,E09,666015.3,1366513.41,,,,,,failed: method status failed,medium,road_road_junction
+homography,sift,E10,667232.48,1364974.33,,,,,,failed: method status failed,medium,road_road_junction
+homography,sift,E11,669954.53,1378916.19,,,,,,failed: method status failed,low,road_road_junction
+homography,sift,E12,687431.46,1360886.94,,,,,,failed: method status failed,low,road_road_junction
+homography,loftr,E01,686991.53,1374170.28,687030.49,1374215.63,38.96,45.35,59.79,ok,medium,landmark_centroid
+homography,loftr,E02,682713.31,1378172.92,682677.95,1378132.82,-35.36,-40.1,53.47,ok,medium,rail_road_crossing
+homography,loftr,E03,684432.43,1373517.6,684461.05,1373610.84,28.62,93.24,97.54,ok,low,landmark_centroid
+homography,loftr,E04,679287.25,1370607.22,679245.89,1370568.82,-41.36,-38.4,56.43,ok,medium,rail_road_crossing
+homography,loftr,E05,680458.75,1372536.63,680474.11,1372564.01,15.36,27.38,31.39,ok,medium,rail_water_crossing
+homography,loftr,E06,670560.48,1371289.78,670586.9,1371270.35,26.42,-19.43,32.8,ok,medium,rail_road_crossing
+homography,loftr,E07,674515.54,1377057.72,674488.75,1377091.18,-26.79,33.46,42.86,ok,medium,road_stream_crossing
+homography,loftr,E08,685483.47,1374961.43,685494.05,1374983.21,10.58,21.78,24.22,ok,high,road_stream_crossing
+homography,loftr,E09,666015.3,1366513.41,666001.24,1366556.04,-14.06,42.63,44.89,ok,medium,road_road_junction
+homography,loftr,E10,667232.48,1364974.33,667245.05,1365027.1,12.57,52.77,54.25,ok,medium,road_road_junction
+homography,loftr,E11,669954.53,1378916.19,670117.13,1379017.75,162.6,101.56,191.71,ok,low,road_road_junction
+homography,loftr,E12,687431.46,1360886.94,687370.66,1360941.02,-60.8,54.08,81.37,ok,low,road_road_junction
+homography,manual,E01,686991.53,1374170.28,687090.15,1374123.94,98.62,-46.34,108.97,ok,medium,landmark_centroid
+homography,manual,E02,682713.31,1378172.92,682731.61,1378029.98,18.3,-142.94,144.11,ok,medium,rail_road_crossing
+homography,manual,E03,684432.43,1373517.6,684512.82,1373529.14,80.39,11.54,81.22,ok,low,landmark_centroid
+homography,manual,E04,679287.25,1370607.22,679276.32,1370512.55,-10.93,-94.67,95.3,ok,medium,rail_road_crossing
+homography,manual,E05,680458.75,1372536.63,680513.2,1372498.17,54.45,-38.46,66.67,ok,medium,rail_water_crossing
+homography,manual,E06,670560.48,1371289.78,670600.06,1371239.4,39.58,-50.38,64.07,ok,medium,rail_road_crossing
+homography,manual,E07,674515.54,1377057.72,674535.49,1377017.49,19.95,-40.23,44.91,ok,medium,road_stream_crossing
+homography,manual,E08,685483.47,1374961.43,685549.52,1374892.37,66.05,-69.06,95.56,ok,high,road_stream_crossing
+homography,manual,E09,666015.3,1366513.41,665972.81,1366549.1,-42.49,35.69,55.49,ok,medium,road_road_junction
+homography,manual,E10,667232.48,1364974.33,667208.79,1365015.26,-23.69,40.93,47.29,ok,medium,road_road_junction
+homography,manual,E11,669954.53,1378916.19,670177.25,1378939.36,222.72,23.17,223.92,ok,low,road_road_junction
+homography,manual,E12,687431.46,1360886.94,687434.59,1360839.19,3.13,-47.75,47.85,ok,low,road_road_junction
+affine,sift,E01,686991.53,1374170.28,,,,,,failed: method status failed,medium,landmark_centroid
+affine,sift,E02,682713.31,1378172.92,,,,,,failed: method status failed,medium,rail_road_crossing
+affine,sift,E03,684432.43,1373517.6,,,,,,failed: method status failed,low,landmark_centroid
+affine,sift,E04,679287.25,1370607.22,,,,,,failed: method status failed,medium,rail_road_crossing
+affine,sift,E05,680458.75,1372536.63,,,,,,failed: method status failed,medium,rail_water_crossing
+affine,sift,E06,670560.48,1371289.78,,,,,,failed: method status failed,medium,rail_road_crossing
+affine,sift,E07,674515.54,1377057.72,,,,,,failed: method status failed,medium,road_stream_crossing
+affine,sift,E08,685483.47,1374961.43,,,,,,failed: method status failed,high,road_stream_crossing
+affine,sift,E09,666015.3,1366513.41,,,,,,failed: method status failed,medium,road_road_junction
+affine,sift,E10,667232.48,1364974.33,,,,,,failed: method status failed,medium,road_road_junction
+affine,sift,E11,669954.53,1378916.19,,,,,,failed: method status failed,low,road_road_junction
+affine,sift,E12,687431.46,1360886.94,,,,,,failed: method status failed,low,road_road_junction
+affine,loftr,E01,686991.53,1374170.28,687035.02,1374222.13,43.49,51.85,67.67,ok,medium,landmark_centroid
+affine,loftr,E02,682713.31,1378172.92,682679.1,1378147.71,-34.21,-25.21,42.5,ok,medium,rail_road_crossing
+affine,loftr,E03,684432.43,1373517.6,684467.22,1373614.78,34.79,97.18,103.22,ok,low,landmark_centroid
+affine,loftr,E04,679287.25,1370607.22,679255.28,1370561.08,-31.97,-46.14,56.13,ok,medium,rail_road_crossing
+affine,loftr,E05,680458.75,1372536.63,680481.8,1372563.38,23.05,26.75,35.31,ok,medium,rail_water_crossing
+affine,loftr,E06,670560.48,1371289.78,670591.92,1371261.58,31.44,-28.2,42.23,ok,medium,rail_road_crossing
+affine,loftr,E07,674515.54,1377057.72,674492.91,1377101.6,-22.63,43.88,49.37,ok,medium,road_stream_crossing
+affine,loftr,E08,685483.47,1374961.43,685498.04,1374991.27,14.57,29.84,33.21,ok,high,road_stream_crossing
+affine,loftr,E09,666015.3,1366513.41,666002.02,1366526.17,-13.28,12.76,18.42,ok,medium,road_road_junction
+affine,loftr,E10,667232.48,1364974.33,667247.21,1364990.88,14.73,16.55,22.16,ok,medium,road_road_junction
+affine,loftr,E11,669954.53,1378916.19,670120.62,1379031.86,166.09,115.67,202.4,ok,low,road_road_junction
+affine,loftr,E12,687431.46,1360886.94,687395.8,1360897.22,-35.66,10.28,37.11,ok,low,road_road_junction
+affine,manual,E01,686991.53,1374170.28,687097.71,1374100.36,106.18,-69.92,127.14,ok,medium,landmark_centroid
+affine,manual,E02,682713.31,1378172.92,682741.3,1378025.78,27.99,-147.14,149.78,ok,medium,rail_road_crossing
+affine,manual,E03,684432.43,1373517.6,684521.65,1373507.82,89.22,-9.78,89.75,ok,low,landmark_centroid
+affine,manual,E04,679287.25,1370607.22,679287.95,1370493.45,0.7,-113.77,113.77,ok,medium,rail_road_crossing
+affine,manual,E05,680458.75,1372536.63,680523.1,1372479.95,64.35,-56.68,85.75,ok,medium,rail_water_crossing
+affine,manual,E06,670560.48,1371289.78,670604.21,1371229.87,43.73,-59.91,74.17,ok,medium,rail_road_crossing
+affine,manual,E07,674515.54,1377057.72,674531.18,1377022.32,15.64,-35.4,38.7,ok,medium,road_stream_crossing
+affine,manual,E08,685483.47,1374961.43,685558.88,1374872.59,75.41,-88.84,116.53,ok,high,road_stream_crossing
+affine,manual,E09,666015.3,1366513.41,665989.56,1366539.53,-25.74,26.12,36.67,ok,medium,road_road_junction
+affine,manual,E10,667232.48,1364974.33,667233.77,1365006.39,1.29,32.06,32.09,ok,medium,road_road_junction
+affine,manual,E11,669954.53,1378916.19,670152.91,1378962.67,198.38,46.48,203.75,ok,low,road_road_junction
+affine,manual,E12,687431.46,1360886.94,687423.04,1360841.76,-8.42,-45.18,45.96,ok,low,road_road_junction

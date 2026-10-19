@@ -1,0 +1,178 @@
+{
+  "method": "manual",
+  "created": "2026-10-19T10:25:59+00:00",
+  "status": "valid",
+  "model": "homography",
+  "direction": "historical_px -> reference_px",
+  "fit": "least squares over all fitting points (no RANSAC)",
+  "n_fitting_points": 7,
+  "fitting_point_ids": [
+    "F01",
+    "F03",
+    "F04",
+    "F06",
+    "F07",
+    "F08",
+    "F09"
+  ],
+  "qc_excluded_fitting_points": {
+    "F02": [
+      -7.41,
+      -0.42
+    ],
+    "F05": [
+      3.62,
+      1.88
+    ]
+  },
+  "qc_rule": "exclude a FITTING point if |offset - median| > 3.0 x 1.4826 x MAD in E or N (graticule-based, independent of all methods and of evaluation points)",
+  "picked_by": "Claude (AI assistant) from zoomed crops; not yet human-verified",
+  "H_full": [
+    [
+      1.0699770052943969,
+      -0.004320993172737737,
+      220.88872125756828
+    ],
+    [
+      0.0007480981164420683,
+      1.0610316047295958,
+      99.3794511416075
+    ],
+    [
+      -5.567022003990065e-07,
+      -1.5483228650337038e-06,
+      1.0
+    ]
+  ],
+  "reference_geotransform_gdal": [
+    659715.0,
+    5.0,
+    0.0,
+    1385815.0,
+    0.0,
+    -5.0
+  ],
+  "reference_crs": "EPSG:32643",
+  "estimation": {
+    "valid": true,
+    "problems": [],
+    "condition_number": 54965.74338372361,
+    "det_linear_part": 1.135282651478135,
+    "singular_values_linear_part": [
+      1.0703235880394584,
+      1.060691050972411
+    ],
+    "mapped_corners_image1_px": [
+      [
+        220.88872125756828,
+        99.3794511416075
+      ],
+      [
+        6552.052677494076,
+        104.13284061218724
+      ],
+      [
+        6592.369597333767,
+        7450.669916166071
+      ],
+      [
+        193.4339753994567,
+        7421.490339597458
+      ]
+    ]
+  },
+  "fitting_diagnostics": {
+    "fit_residual_m": [
+      35.1,
+      33.26,
+      50.19,
+      29.86,
+      96.32,
+      75.01,
+      31.87
+    ],
+    "fit_rmse_m": 55.64,
+    "leave_one_out_error_m": [
+      161.77,
+      116.6,
+      67.52,
+      160.98,
+      140.04,
+      132.45,
+      208.86
+    ],
+    "leave_one_out_rmse_m": 146.88,
+    "note": "fitting diagnostics only; the independent evaluation is Phase 6"
+  },
+  "graticule_corner_check": {
+    "note": "development diagnostic only; graticule datum unverified (treated as WGS84)",
+    "corners": {
+      "nw": {
+        "predicted_m": [
+          663017.8,
+          1382387.2
+        ],
+        "graticule_m": [
+          662998.5,
+          1382305.5
+        ],
+        "offset_m": [
+          19.3,
+          81.7
+        ],
+        "distance_m": 83.9
+      },
+      "ne": {
+        "predicted_m": [
+          690106.1,
+          1382449.3
+        ],
+        "graticule_m": [
+          690172.1,
+          1382472.4
+        ],
+        "offset_m": [
+          -66.0,
+          -23.1
+        ],
+        "distance_m": 69.9
+      },
+      "se": {
+        "predicted_m": [
+          690265.7,
+          1354805.7
+        ],
+        "graticule_m": [
+          690353.2,
+          1354815.3
+        ],
+        "offset_m": [
+          -87.5,
+          -9.7
+        ],
+        "distance_m": 88.0
+      },
+      "sw": {
+        "predicted_m": [
+          662964.4,
+          1354777.5
+        ],
+        "graticule_m": [
+          663153.7,
+          1354651.6
+        ],
+        "offset_m": [
+          -189.3,
+          125.8
+        ],
+        "distance_m": 227.3
+      }
+    },
+    "max_distance_m": 227.3,
+    "mean_distance_m": 117.3
+  },
+  "timing_s": {
+    "fit_and_diagnostics": 0.15
+  },
+  "manual_interaction_time": "not reported: points were picked by an AI assistant, not a human"
+}

@@ -1,0 +1,128 @@
+# MapAlign experiment configuration.
+# Paths are relative to the repository root.
+#
+# Parameter status:
+#   fixed       - decided before any evaluation point was looked at; never change for the main comparison.
+#   provisional - may be adjusted during Phase 3/4 debugging using DEVELOPMENT data only
+#                 (fitting points / visual inspection), then frozen before Phase 6 evaluation.
+#                 Freezing = set `frozen: true` below and record the date.
+
+experiment:
+  name: mapalign-57D11-1926
+  random_seed: 42
+  output_dir: results
+  # FROZEN at the end of Phase 5, before any evaluation point was picked or any positional error computed.
+  # Preprocessing, matcher, RANSAC and transform-model parameters must not change from here on.
+  # (Method C fitting points may still be human-verified/re-picked BEFORE Phase 6; that is a data revision,
+  # to be logged in gcp/PROTOCOL.md.)
+  frozen: true
+  frozen_on: 2026-10-19
+
+historical_map:
+  path: data/raw/57_D11_Mysore_1926.jpg
+  source:
+    title: "MYSORE"
+    header: "MYSORE DISTRICT"
+    sheet_number: "57 D/11"
+    survey_season: "1924-25"
+    publication_year: 1926
+    authority: "Survey of India (published under Col. C. P. Gunter, Officiating Surveyor General of India)"
+    scale: "1:63,360 (1 inch to 1 mile)"
+    archive: "Zenodo record 8388121, 'Block 57--63k scale--Survey of India Maps', compiled by John Brown"
+    archive_filename: "57 D]11 Mysore District (1926).jpg"
+    url: "https://zenodo.org/records/8388121/files/57%20D%5D11%20Mysore%20District%20(1926).jpg?download=1"
+    licence: "CC BY 4.0 (Zenodo deposit); underlying 1926 Government of India work believed out of copyright"
+    scan_note: "University of Michigan Library 'Maps and Charts' stamp visible"
+  md5: 624bbfad28ccb57c3f062e70bd70be08      # published by Zenodo, verified Phase 1
+  sha256: c308d1f440e9d12dd68fd007d32b277f4fbf1b8b0e0c50010ce3f07114167c13                                 # filled by `python -m mapalign.fetch historical`
+  image_size_px: [5898, 6828]                  # width, height (verified Phase 1)
+  # Neatline corners as printed on the sheet (graticule values, Indian datum, NOT WGS84).
+  neatline_graticule_deg:
+    west: 76.50
+    east: 76.75
+    south: 12.25
+    north: 12.50
+  # Pixel (x, y) of the neatline corners in the full-resolution scan (OpenCV centre convention).
+  # Picked visually, then refined to the darkest line column/row (Phase 3). Development data only:
+  # used for cropping and for the coarse graticule sanity check, never as evaluation truth.
+  neatline_corners_px:
+    nw: [412, 551]
+    ne: [5454, 534]
+    sw: [418, 5703]
+    se: [5459, 5678]
+  scan_dpi: 300
+  # Original CRS / projection: UNVERIFIED. Expected Everest 1830 spheroid, Indian (Kalianpur)
+  # datum, possibly polyconic. To be investigated in Phase 5. Not used for evaluation truth.
+  original_crs_note: "unverified"
+
+modern_reference:
+  source: "OpenStreetMap (ODbL), raw data via Overpass API, rendered locally"
+  attribution: "© OpenStreetMap contributors, data available under the Open Database License"
+  raw_path: data/raw/osm_57D11_overpass.json
+  overpass_url: "https://overpass-api.de/api/interpreter"
+  # Download bbox (WGS84 degrees): sheet extent plus a 0.03 deg margin, to absorb the
+  # datum offset of the historical graticule.
+  bbox_wgs84_deg:
+    west: 76.47
+    east: 76.78
+    south: 12.22
+    north: 12.53
+  rendered_path: data/processed/osm_57D11_utm43n.tif   # produced in Phase 3
+  render_crs: "EPSG:32643"                             # WGS 84 / UTM zone 43N, metres
+  render_resolution_m: 5.0                             # provisional
+
+crs:
+  geographic: "EPSG:4326"      # WGS 84 lat/lon (degrees) - never used for distances
+  evaluation: "EPSG:32643"     # WGS 84 / UTM 43N (metres) - all positional errors computed here
+  historical_datum_candidates:  # for the Phase 5 investigation only
+    - "EPSG:4243"   # Kalianpur 1880
+    - "EPSG:4144"   # Kalianpur 1937
+    - "EPSG:4146"   # Kalianpur 1975
+
+preprocessing:            # provisional
+  crop_to_neatline: true
+  working_resolution_m: 10.0     # both images resampled to ~this ground sampling distance before matching
+  grayscale: true
+  clahe: false
+
+# Phase 3 (2026-10-19): the SIFT parameters below were NOT changed after debugging. Six preprocessing
+# variants (results/exploration/) gave no valid model, so the predefined values stand.
+sift:                     # provisional
+  n_features: 0                 # 0 = unlimited (OpenCV default)
+  contrast_threshold: 0.04
+  edge_threshold: 10
+  sigma: 1.6
+  matcher: bf_knn_l2
+  lowe_ratio: 0.75
+
+loftr:                    # provisional
+  pretrained: outdoor
+  # Both images scaled by ONE common factor so the largest side <= this (keeps equal ground
+  # resolution), then cropped to multiples of 8. Phase 4 dev sweep (results/exploration/
+  # loftr_input_size_sweep.json), criterion fixed in advance = most matches within 1 km of the
+  # graticule prior: 768 best (~45 m/px). 1536 runs out of memory on the 15 GB CPU machine.
+  # Original value was 1280.
+  max_side_px: 768
+  confidence_threshold: 0.0     # keep all LoFTR matches; RANSAC rejects outliers
+
+transform:
+  model: homography             # fixed (primary comparison)
+  direction: "historical_px -> reference_px"   # fixed; every stored matrix maps this way
+  ransac_method: USAC_MAGSAC    # provisional
+  # Threshold is expressed in pixels at the resolution where the matcher LOCALISED the points
+  # (SIFT: working res; LoFTR: its downscaled input) and converted to reference working px at run
+  # time. Phase 4 change (was 3.0 working px for every method).
+  ransac_reproj_threshold_matcher_px: 3.0
+  # N = log(1-p)/log(1-w^4) with p=0.999, w=0.05 minimum inlier ratio -> 1.1e6. Phase 4 change
+  # (was 10000, which only covers w >= ~0.16).
+  ransac_max_iters: 1200000
+  ransac_confidence: 0.999
+  min_inliers: 12
+
+gcp:
+  fitting_points: gcp/fitting_points.csv
+  evaluation_points: gcp/evaluation_points.csv
+  n_evaluation_points: 20
+
+compute:
+  device: auto                  # auto | cpu | cuda

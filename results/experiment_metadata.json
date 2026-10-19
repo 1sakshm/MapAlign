@@ -1,0 +1,108 @@
+{
+  "created": "2026-10-19T10:27:20+00:00",
+  "config_frozen": true,
+  "frozen_on": "2026-10-19",
+  "random_seed": 42,
+  "inputs": {
+    "historical_sha256": "c308d1f440e9d12dd68fd007d32b277f4fbf1b8b0e0c50010ce3f07114167c13",
+    "evaluation_points_sha256": "f0b45ff506427ae98091ddf069611a5ada0cda176875d84fd98c7c28715d48e8",
+    "manifest": {
+      "historical_map": {
+        "path": "data/raw/57_D11_Mysore_1926.jpg",
+        "url": "https://zenodo.org/records/8388121/files/57%20D%5D11%20Mysore%20District%20(1926).jpg?download=1",
+        "md5": "624bbfad28ccb57c3f062e70bd70be08",
+        "sha256": "c308d1f440e9d12dd68fd007d32b277f4fbf1b8b0e0c50010ce3f07114167c13",
+        "size_bytes": 4002790,
+        "verified_at": "2026-10-19T10:22:28+00:00"
+      },
+      "osm_extract": {
+        "path": "data/raw/osm_57D11_overpass.json",
+        "source": "OpenStreetMap (ODbL), raw data via Overpass API, rendered locally",
+        "attribution": "© OpenStreetMap contributors, data available under the Open Database License",
+        "overpass_url": "https://overpass-api.de/api/interpreter",
+        "query": "[out:json][timeout:300];\n(\n  way[\"highway\"](12.22,76.47,12.53,76.78);\n  way[\"railway\"](12.22,76.47,12.53,76.78);\n  way[\"waterway\"](12.22,76.47,12.53,76.78);\n  way[\"natural\"=\"water\"](12.22,76.47,12.53,76.78);\n  relation[\"natural\"=\"water\"](12.22,76.47,12.53,76.78);\n  way[\"landuse\"=\"reservoir\"](12.22,76.47,12.53,76.78);\n  relation[\"landuse\"=\"reservoir\"](12.22,76.47,12.53,76.78);\n  node[\"place\"](12.22,76.47,12.53,76.78);\n  node[\"railway\"=\"station\"](12.22,76.47,12.53,76.78);\n);\nout geom;\n",
+        "bbox_wgs84_deg": {
+          "west": 76.47,
+          "east": 76.78,
+          "south": 12.22,
+          "north": 12.53
+        },
+        "osm_base_timestamp": "2026-10-18T18:43:02Z",
+        "element_counts": {
+          "node": 283,
+          "way": 32355,
+          "relation": 10
+        },
+        "sha256": "a037e5e0c83a8ef00deae2cf7fb2d89b08acd05b2f2691aabf7a2100327c6b3f",
+        "size_bytes": 23047746,
+        "acquired_at": "2026-10-19T10:22:29+00:00"
+      },
+      "osm_landmarks": {
+        "path": "data/raw/osm_57D11_landmarks.json",
+        "source": "OpenStreetMap (ODbL), raw data via Overpass API, rendered locally",
+        "attribution": "© OpenStreetMap contributors, data available under the Open Database License",
+        "query": "[out:json][timeout:180];\n(\n  way[\"historic\"](12.22,76.47,12.53,76.78);\n  relation[\"historic\"](12.22,76.47,12.53,76.78);\n  way[\"building\"=\"palace\"](12.22,76.47,12.53,76.78);\n  way[\"amenity\"=\"place_of_worship\"][\"name\"](12.22,76.47,12.53,76.78);\n  node[\"natural\"=\"peak\"](12.22,76.47,12.53,76.78);\n  way[\"man_made\"=\"dyke\"](12.22,76.47,12.53,76.78);\n  way[\"waterway\"=\"dam\"](12.22,76.47,12.53,76.78);\n  way[\"barrier\"=\"wall\"][\"name\"](12.22,76.47,12.53,76.78);\n  way[\"barrier\"=\"city_wall\"](12.22,76.47,12.53,76.78);\n);\nout geom;\n",
+        "osm_base_timestamp": "2026-10-18T20:09:36Z",
+        "elements": 110,
+        "sha256": "8653908d0fc07f170c6f936e6c2923cb62f509655c309f3500df6f72f0eeca0c",
+        "acquired_at": "2026-10-19T10:22:29+00:00"
+      },
+      "evaluation_points_lock": {
+        "file": "gcp/evaluation_points.csv",
+        "sha256": "f0b45ff506427ae98091ddf069611a5ada0cda176875d84fd98c7c28715d48e8",
+        "locked_at": "2026-10-19T10:08:00+00:00",
+        "n_points": 12,
+        "note": "locked before any method prediction at these points was computed"
+      }
+    }
+  },
+  "crs": {
+    "geographic": "EPSG:4326",
+    "evaluation": "EPSG:32643",
+    "historical_datum_candidates": [
+      "EPSG:4243",
+      "EPSG:4144",
+      "EPSG:4146"
+    ]
+  },
+  "transform": {
+    "model": "homography",
+    "direction": "historical_px -> reference_px",
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "ransac_max_iters": 1200000,
+    "ransac_confidence": 0.999,
+    "min_inliers": 12
+  },
+  "preprocessing": {
+    "crop_to_neatline": true,
+    "working_resolution_m": 10.0,
+    "grayscale": true,
+    "clahe": false
+  },
+  "sift": {
+    "n_features": 0,
+    "contrast_threshold": 0.04,
+    "edge_threshold": 10,
+    "sigma": 1.6,
+    "matcher": "bf_knn_l2",
+    "lowe_ratio": 0.75
+  },
+  "loftr": {
+    "pretrained": "outdoor",
+    "max_side_px": 768,
+    "confidence_threshold": 0.0
+  },
+  "software": {
+    "torch": "2.14.1+cpu",
+    "kornia": "0.8.3",
+    "opencv-python-headless": "5.0.0.93",
+    "numpy": "2.5.4",
+    "rasterio": "1.5.2",
+    "pyproj": "3.8.0",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6"
+  },
+  "platform": "Windows-11-10.0.22631-SP0",
+  "python": "3.12.12 (main, Feb 12 2026, 00:40:26) [MSC v.1944 64 bit (AMD64)]"
+}

@@ -1,0 +1,16 @@
+{
+  "path": "results\\georef_loftr.tif",
+  "crs": "EPSG:32643",
+  "resolution_m": 5.0,
+  "width": 5453,
+  "height": 5559,
+  "transform_gdal": [
+    662910.0,
+    5.0,
+    0.0,
+    1382610.0,
+    0.0,
+    -5.0
+  ],
+  "bands": "RGB + alpha (alpha=0 outside neatline)"
+}

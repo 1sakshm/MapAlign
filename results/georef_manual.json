@@ -1,0 +1,16 @@
+{
+  "path": "results\\georef_manual.tif",
+  "crs": "EPSG:32643",
+  "resolution_m": 5.0,
+  "width": 5462,
+  "height": 5535,
+  "transform_gdal": [
+    662960.0,
+    5.0,
+    0.0,
+    1382450.0,
+    0.0,
+    -5.0
+  ],
+  "bands": "RGB + alpha (alpha=0 outside neatline)"
+}

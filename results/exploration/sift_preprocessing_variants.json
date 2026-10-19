@@ -1,0 +1,181 @@
+{
+  "purpose": "exploratory; scored only against the graticule-corner prior (development data)",
+  "variants": [
+    {
+      "variant": "gray_10m",
+      "working_resolution_m": 10,
+      "representation": "gray",
+      "keypoints": [
+        79923,
+        18547
+      ],
+      "ratio_matches": 594,
+      "inliers": 26,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 594,
+        "matches_within": 2,
+        "inliers": 26,
+        "inliers_within": 0,
+        "median_distance_m": 14795.4
+      },
+      "max_corner_deviation_from_prior_m": 32935.6,
+      "seconds": 9.5
+    },
+    {
+      "variant": "clahe_10m",
+      "working_resolution_m": 10,
+      "representation": "clahe",
+      "keypoints": [
+        122783,
+        29598
+      ],
+      "ratio_matches": 683,
+      "inliers": 16,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 683,
+        "matches_within": 5,
+        "inliers": 16,
+        "inliers_within": 0,
+        "median_distance_m": 14108.7
+      },
+      "max_corner_deviation_from_prior_m": 35274.2,
+      "seconds": 18.9
+    },
+    {
+      "variant": "gray_20m",
+      "working_resolution_m": 20,
+      "representation": "gray",
+      "keypoints": [
+        19099,
+        2663
+      ],
+      "ratio_matches": 50,
+      "inliers": 6,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 50,
+        "matches_within": 0,
+        "inliers": 6,
+        "inliers_within": 0,
+        "median_distance_m": 12920.4
+      },
+      "max_corner_deviation_from_prior_m": 213839.1,
+      "seconds": 1.0
+    },
+    {
+      "variant": "layers_10m",
+      "working_resolution_m": 10,
+      "representation": "layers",
+      "keypoints": [
+        29694,
+        36280
+      ],
+      "ratio_matches": 1351,
+      "inliers": 155,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 1351,
+        "matches_within": 3,
+        "inliers": 155,
+        "inliers_within": 0,
+        "median_distance_m": 15727.5
+      },
+      "max_corner_deviation_from_prior_m": 33835.3,
+      "seconds": 7.2
+    },
+    {
+      "variant": "layers_20m",
+      "working_resolution_m": 20,
+      "representation": "layers",
+      "keypoints": [
+        7778,
+        10050
+      ],
+      "ratio_matches": 421,
+      "inliers": 39,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 421,
+        "matches_within": 4,
+        "inliers": 39,
+        "inliers_within": 0,
+        "median_distance_m": 15275.3
+      },
+      "max_corner_deviation_from_prior_m": 38109.3,
+      "seconds": 1.2
+    },
+    {
+      "variant": "layers_30m",
+      "working_resolution_m": 30,
+      "representation": "layers",
+      "keypoints": [
+        3470,
+        5178
+      ],
+      "ratio_matches": 205,
+      "inliers": 27,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 205,
+        "matches_within": 1,
+        "inliers": 27,
+        "inliers_within": 0,
+        "median_distance_m": 15584.5
+      },
+      "max_corner_deviation_from_prior_m": 33489.6,
+      "seconds": 0.4
+    },
+    {
+      "variant": "gray_45m",
+      "working_resolution_m": 45,
+      "representation": "gray",
+      "keypoints": [
+        4468,
+        903
+      ],
+      "ratio_matches": 4,
+      "inliers": 0,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 4,
+        "matches_within": 0,
+        "inliers": 0,
+        "inliers_within": 0,
+        "median_distance_m": 19776.0
+      },
+      "max_corner_deviation_from_prior_m": null,
+      "seconds": 0.2
+    },
+    {
+      "variant": "layers_45m",
+      "working_resolution_m": 45,
+      "representation": "layers",
+      "keypoints": [
+        1521,
+        2848
+      ],
+      "ratio_matches": 97,
+      "inliers": 14,
+      "valid": false,
+      "prior_consistency_1km": {
+        "radius_m": 1000.0,
+        "matches": 97,
+        "matches_within": 0,
+        "inliers": 14,
+        "inliers_within": 0,
+        "median_distance_m": 15527.9
+      },
+      "max_corner_deviation_from_prior_m": 21855.7,
+      "seconds": 0.2
+    }
+  ]
+}
