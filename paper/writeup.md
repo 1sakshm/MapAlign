@@ -192,6 +192,10 @@ suggestive, not established.
 The projective terms give no measurable gain. With only 7 fitting points, the manual homography's two extra degrees of
 freedom are poorly constrained, which matches its large leave-one-out error.
 
+**CPU vs GPU.** Rerunning LoFTR on an RTX 3050 Laptop GPU (CUDA 12.6) with the same frozen settings gave the same
+601 matches and 389 inliers. Inference took 1.8 s against 8.0 s on the CPU. The transform moved by 1.9 m on average
+(8.5 m at most) across the sheet. The held-out RMSE was 77.2 m vs 77.4 m. Table 1 reports the CPU run.
+
 **Sensitivity.** Without the three low-confidence points (n = 9):
 
 | Method | Median | RMSE |

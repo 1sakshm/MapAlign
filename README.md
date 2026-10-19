@@ -154,6 +154,7 @@ python -m mapalign.georeference manual        # Method C
 python -m mapalign.georeference raster loftr  # georeferenced GeoTIFF (also: manual)
 python -m mapalign.georeference verify loftr  # file-level checks + OSM vector overlay figure
 python -m mapalign.evaluate                   # held-out evaluation (refuses to run if the config is unfrozen or the points changed)
+python -m mapalign.gpu_check                  # in a CUDA environment: rerun LoFTR on the GPU into results/gpu/ and compare
 ```
 
 Development-only exploration (it never touches evaluation points):
@@ -274,6 +275,12 @@ against a chance level of 4.31 %. Eight preprocessing variants did not help.
 
 Full numbers: `results/metrics.json`, `metrics.csv`, `evaluation_errors.csv`.
 
+**GPU check** (`results/gpu/gpu_check.json`). LoFTR was rerun on an RTX 3050 Laptop GPU (CUDA 12.6) with the same
+frozen settings. It found the same 601 matches and 389 inliers. Inference took 1.8 s on the GPU, against 8.0 s on the
+CPU. Floating-point differences between the devices shift the transform by 1.9 m on average (8.5 m at most) across the
+sheet. The held-out RMSE is 77.2 m on the GPU vs 77.4 m on the CPU. The reported results are the CPU run. Each device is
+deterministic on its own.
+
 ## Limitations
 
 - **One sheet, one OSM rendering style.** Nothing here generalises to "LoFTR is better for historical maps".
@@ -287,7 +294,7 @@ Full numbers: `results/metrics.json`, `metrics.csv`, `evaluation_errors.csv`.
   iterations, and the threshold rule. All were justified on development data only and frozen before the evaluation
   points existed. They are still choices made after seeing the first failures.
 - **Datum:** the 1926 datum is not identified. PROJ has no real Kalianpur 1880 → WGS84 transformation.
-- **Not done:** a visual check in QGIS (not installed on the development machine). A GPU run (all results are CPU).
+- **Not done:** a visual check in QGIS (not installed on the development machine).
 
 ## Reproducibility
 

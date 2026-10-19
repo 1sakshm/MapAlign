@@ -1,0 +1,293 @@
+{
+  "method": "loftr",
+  "created": "2026-10-19T13:31:36+00:00",
+  "status": "valid",
+  "direction": "historical_px -> reference_px",
+  "frames": {
+    "H_work": "historical working px -> reference working px",
+    "H_full": "historical full-res scan px -> reference GeoTIFF px (both OpenCV centre convention)",
+    "reference_geotransform": "rasterio corner-based; map = T*(col+0.5, row+0.5)"
+  },
+  "H_work": [
+    [
+      1.0026925530606796,
+      0.006142365660231382,
+      319.0454767519029
+    ],
+    [
+      -0.0012101718261353243,
+      1.0039315865713547,
+      323.5118603040509
+    ],
+    [
+      -1.674480574133085e-07,
+      8.824163180242169e-07,
+      1.0
+    ]
+  ],
+  "H_full": [
+    [
+      1.0761798754304968,
+      0.0065917142793241144,
+      191.44917904563914
+    ],
+    [
+      -0.0012987188471656637,
+      1.0771775888042203,
+      72.52079020638959
+    ],
+    [
+      -8.984692133850902e-08,
+      4.733982303265761e-07,
+      1.0
+    ]
+  ],
+  "historical_full_to_work": [
+    [
+      0.5364500792393027,
+      0.0,
+      -221.24920760697304
+    ],
+    [
+      0.0,
+      0.5363636363636364,
+      -286.65000000000003
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "reference_full_to_work": [
+    [
+      0.4999263080324245,
+      0.0,
+      -0.2500368459837877
+    ],
+    [
+      0.0,
+      0.5,
+      -0.25
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "reference_geotransform_gdal": [
+    659715.0,
+    5.0,
+    0.0,
+    1385815.0,
+    0.0,
+    -5.0
+  ],
+  "reference_crs": "EPSG:32643",
+  "working_sizes": {
+    "historical": [
+      2708,
+      2773
+    ],
+    "reference": [
+      3392,
+      3450
+    ]
+  },
+  "working_resolution_m": {
+    "historical_nominal": 9.999961240768094,
+    "reference": 10.001474056603772
+  },
+  "matching": {
+    "device": "cuda",
+    "pretrained": "outdoor",
+    "common_scale": 0.222609,
+    "loftr_input_px": [
+      [
+        600,
+        616
+      ],
+      [
+        752,
+        768
+      ]
+    ],
+    "raw_matches": 601,
+    "matches_after_confidence": 601,
+    "confidence_threshold": 0.0,
+    "confidence_mean": 0.5186,
+    "model_load_s": 1.48,
+    "inference_s": 0.72,
+    "torch_threads": 8
+  },
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 601,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 13.476544075037397,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 0.222609,
+    "inliers": 389,
+    "inlier_ratio": 0.6473,
+    "inlier_reproj_rmse_px": 6.405166128419958,
+    "inlier_reproj_median_px": 5.438146418093378,
+    "valid": true,
+    "problems": [],
+    "condition_number": 205310.05392279156,
+    "det_linear_part": 1.0066421589553582,
+    "singular_values_linear_part": [
+      1.0058615269315454,
+      1.000776082992451
+    ],
+    "mapped_corners_image1_px": [
+      [
+        319.0454767519029,
+        323.5118603040509
+      ],
+      [
+        3034.7097968837984,
+        320.3811481435077
+      ],
+      [
+        3044.2942585292576,
+        3096.9627297056277
+      ],
+      [
+        335.25206834701544,
+        3098.830299531029
+      ]
+    ]
+  },
+  "graticule_corner_check": {
+    "note": "development diagnostic only; graticule datum unverified (treated as WGS84)",
+    "corners": {
+      "nw": {
+        "predicted_m": [
+          662909.1,
+          1382485.7
+        ],
+        "graticule_m": [
+          662998.5,
+          1382305.5
+        ],
+        "offset_m": [
+          -89.4,
+          180.2
+        ],
+        "distance_m": 201.1
+      },
+      "ne": {
+        "predicted_m": [
+          690047.0,
+          1382608.5
+        ],
+        "graticule_m": [
+          690172.1,
+          1382472.4
+        ],
+        "offset_m": [
+          -125.1,
+          136.1
+        ],
+        "distance_m": 184.9
+      },
+      "se": {
+        "predicted_m": [
+          690169.3,
+          1354972.0
+        ],
+        "graticule_m": [
+          690353.2,
+          1354815.3
+        ],
+        "offset_m": [
+          -183.9,
+          156.7
+        ],
+        "distance_m": 241.6
+      },
+      "sw": {
+        "predicted_m": [
+          663102.9,
+          1354819.4
+        ],
+        "graticule_m": [
+          663153.7,
+          1354651.6
+        ],
+        "offset_m": [
+          -50.8,
+          167.8
+        ],
+        "distance_m": 175.3
+      }
+    },
+    "max_distance_m": 241.6,
+    "mean_distance_m": 200.7
+  },
+  "prior_diagnostics": {
+    "prior_consistency": {
+      "radius_m": 1000.0,
+      "matches": 601,
+      "matches_within": 429,
+      "inliers": 389,
+      "inliers_within": 389,
+      "median_distance_m": 209.0
+    },
+    "max_corner_deviation_from_prior_m": 242.1,
+    "aligned_tile_upper_bound": {
+      "tiles": 25,
+      "tile_px": 512,
+      "radius_px": 60.0,
+      "matches": 2486,
+      "correct": 322,
+      "correct_fraction": 0.1295,
+      "chance_fraction": 0.0431
+    }
+  },
+  "timing_s": {
+    "preprocess": 1.73,
+    "matching": 2.22,
+    "estimation": 0.008,
+    "total": 3.96
+  },
+  "device": "cuda",
+  "parameters": {
+    "preprocessing": {
+      "crop_to_neatline": true,
+      "working_resolution_m": 10.0,
+      "grayscale": true,
+      "clahe": false
+    },
+    "loftr": {
+      "pretrained": "outdoor",
+      "max_side_px": 768,
+      "confidence_threshold": 0.0
+    },
+    "transform": {
+      "model": "homography",
+      "direction": "historical_px -> reference_px",
+      "ransac_method": "USAC_MAGSAC",
+      "ransac_reproj_threshold_matcher_px": 3.0,
+      "ransac_max_iters": 1200000,
+      "ransac_confidence": 0.999,
+      "min_inliers": 12
+    }
+  },
+  "config_frozen": true,
+  "inputs": {
+    "historical_sha256": "c308d1f440e9d12dd68fd007d32b277f4fbf1b8b0e0c50010ce3f07114167c13",
+    "reference_render": "data/processed/osm_57D11_utm43n.tif"
+  },
+  "software": {
+    "opencv-python-headless": "5.0.0.93",
+    "numpy": "2.5.4",
+    "torch": "2.14.1+cu126",
+    "kornia": "0.8.3"
+  },
+  "platform": "Windows-11-10.0.22631-SP0"
+}

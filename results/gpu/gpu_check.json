@@ -1,0 +1,75 @@
+{
+  "gpu_name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "torch": "2.14.1+cu126",
+  "cuda": "12.6",
+  "peak_gpu_memory_mb": 1060.5,
+  "transform_difference_over_sheet_m": {
+    "max": 8.538,
+    "mean": 1.857
+  },
+  "identical_matrices": false,
+  "cpu": {
+    "device": "cpu",
+    "status": "valid",
+    "matches": 601,
+    "inliers": 389,
+    "inference_s": 7.95,
+    "total_s": 18.26,
+    "heldout": {
+      "n_valid": 12,
+      "mean_m": 64.23,
+      "median_m": 53.86,
+      "rmse_m": 77.43,
+      "max_m": 191.71,
+      "min_m": 24.22,
+      "std_m": 43.25,
+      "p90_m": 95.92
+    },
+    "errors_m": [
+      59.79,
+      53.47,
+      97.54,
+      56.43,
+      31.39,
+      32.8,
+      42.86,
+      24.22,
+      44.89,
+      54.25,
+      191.71,
+      81.37
+    ]
+  },
+  "gpu": {
+    "device": "cuda",
+    "status": "valid",
+    "matches": 601,
+    "inliers": 389,
+    "inference_s": 0.72,
+    "total_s": 3.96,
+    "heldout": {
+      "n_valid": 12,
+      "mean_m": 64.09,
+      "median_m": 53.64,
+      "rmse_m": 77.19,
+      "max_m": 190.21,
+      "min_m": 23.92,
+      "std_m": 43.02,
+      "p90_m": 95.91
+    },
+    "errors_m": [
+      59.6,
+      53.82,
+      97.29,
+      56.51,
+      31.13,
+      32.7,
+      42.64,
+      23.92,
+      44.41,
+      53.47,
+      190.21,
+      83.44
+    ]
+  }
+}
