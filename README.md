@@ -13,9 +13,9 @@ Every method is scored by one shared evaluation on the same held-out control poi
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
-> (Claude) from zoomed image crops, at the project owner's request, and are **not yet human-verified**. Only **12**
-> held-out points could be established (the target was 20), and none lie in the southern fifth of the sheet or in
-> Mysore city. See [Limitations](#limitations).
+> (Claude) from zoomed image crops, and were then **reviewed by a human (Saksham Sharma, 2026-10-19), who made no
+> changes**. Only **12** held-out points could be established (the target was 20), and none lie in the southern fifth
+> of the sheet or in Mysore city. See [Limitations](#limitations).
 
 ## Contents
 [Research question](#research-question) · [Motivation](#motivation) · [Data and licensing](#data-and-licensing) ·
@@ -277,8 +277,9 @@ Full numbers: `results/metrics.json`, `metrics.csv`, `evaluation_errors.csv`.
 ## Limitations
 
 - **One sheet, one OSM rendering style.** Nothing here generalises to "LoFTR is better for historical maps".
-- **AI-picked, unverified GCPs** for both the manual baseline and the ground truth. The manual baseline is therefore
-  "assistant-picked GCPs", not human georeferencing.
+- **AI-picked, human-reviewed GCPs** for both the manual baseline and the ground truth. The review accepted every pick
+  unchanged. The manual baseline is still "AI-picked, human-reviewed GCPs", not independent human georeferencing, and
+  no human interaction time exists to report.
 - **12 evaluation points, not 20, with no coverage of the south or of Mysore city.** That area is mostly
   extrapolation for every method.
 - **Truth accuracy:** OSM geometry has unknown accuracy (plausibly 5–20 m). Point-picking adds roughly ±5 px (±27 m).
@@ -306,6 +307,7 @@ See [`CITATION.cff`](CITATION.cff). Report: [`paper/writeup.md`](paper/writeup.m
   Michigan Library stamp.
 - **Modern data:** © OpenStreetMap contributors (ODbL).
 - **Software:** Kornia LoFTR (Sun et al., CVPR 2021) and OpenCV SIFT (Lowe, IJCV 2004).
-- **Assistance:** much of the code and all GCP picks were produced with an AI assistant (Claude, Anthropic).
+- **Assistance:** much of the code and all GCP picks were produced with an AI assistant (Claude, Anthropic); the GCPs
+  were reviewed by Saksham Sharma.
 
 **Licence:** code under MIT (see `LICENSE`); data under their own licences.

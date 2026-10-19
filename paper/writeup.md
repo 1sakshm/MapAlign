@@ -4,8 +4,8 @@
 this repository. Every number below is read from `results/`.*
 
 > **Disclosure.** All ground-control points (9 for fitting, 12 for evaluation) were picked by an AI assistant
-> (Claude) from zoomed image crops, at the project owner's request. They have not been verified by a human. Most of the
-> code was also written with that assistant.
+> (Claude) from zoomed image crops. They were then reviewed by the author (Saksham Sharma), who accepted every pick
+> unchanged. Most of the code was also written with that assistant.
 
 ## Abstract
 
@@ -27,7 +27,7 @@ of the median paired difference [−44.0, +2.5] m). An affine model performed ab
 The evidence is limited:
 - one sheet;
 - 12 rather than the planned 20 evaluation points, with no coverage in the south;
-- unverified, AI-picked control points.
+- AI-picked control points that were human-reviewed but not independently re-picked.
 
 ## 1. Introduction and motivation
 
@@ -165,7 +165,7 @@ With n = 12 both are low-powered and are reported as descriptive.
 | LoFTR + MAGSAC | valid (601 matches; 389 inliers, 64.7 %) | 12 | **53.9** | **64.2** | **77.4** | 191.7 | 24.2 | 43.3 | 95.9 | ≈ 20 s |
 | Manual GCPs | valid (7 points) | 12 | 73.9 | 89.6 | 102.4 | 223.9 | 44.9 | 49.5 | 140.6 | 0.15 s* |
 
-\* Fitting time only. Human interaction time is not applicable, because the points were assistant-picked.
+\* Fitting time only. Human interaction time is not applicable: the points were AI-picked and only reviewed by a human.
 CPU: AMD Ryzen 7 5800HS, PyTorch 2.14.1 (CPU build).
 
 **Paired comparison.** LoFTR was more accurate at 9 of 12 points. The median paired difference (LoFTR − manual) was
@@ -254,14 +254,15 @@ supports a datum shift of roughly 100–200 m. The precise datum remains unident
 ## 8. Limitations
 
 - **Scope.** One sheet and one OSM rendering style. Conclusions are specific to this pair.
-- **Control points.** All 21 GCPs were picked by an AI assistant and are unverified. Method C is therefore
-  "assistant-picked GCPs", not human georeferencing, and the evaluation truth inherits the same picking uncertainty
+- **Control points.** All 21 GCPs were picked by an AI assistant and reviewed, unchanged, by the author. Method C is
+  therefore "AI-picked, human-reviewed GCPs", not independent human georeferencing, and the evaluation truth inherits
+  the same picking uncertainty
   (≈ ±27 m).
 - **Truth.** OSM geometry is of unknown accuracy, plausibly 5–20 m.
 - **Sample.** 12 evaluation points, with no coverage in the south or in Mysore city.
 - **Development choices.** Three settings were changed after the first failures (Section 4). They were justified on
   development data and frozen before evaluation, but they remain post-hoc choices.
-- **Not done.** QGIS verification; GPU runs; non-linear transforms; a human-verified repeat.
+- **Not done.** QGIS verification; non-linear transforms; an independent human re-picking of the GCPs.
 
 ## 9. Conclusion
 
@@ -275,7 +276,7 @@ supports a datum shift of roughly 100–200 m. The precise datum remains unident
 The comparison favours LoFTR on this sheet, but with 12 points the evidence is weak.
 
 The most valuable next steps:
-1. human verification and re-picking of the GCPs, including southern points, with the evaluation repeated as a
+1. independent human re-picking of the GCPs, including southern points, with the evaluation repeated as a
    documented revision;
 2. more sheets;
 3. local non-linear transforms to absorb paper distortion and datum effects.

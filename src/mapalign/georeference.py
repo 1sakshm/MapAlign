@@ -183,11 +183,11 @@ def run_manual(cfg: dict) -> dict:
     hist, ref = prepare_historical(cfg), prepare_reference(cfg)
     H_work = ref.full_to_work @ H @ np.linalg.inv(hist.full_to_work)
     plot_overlay(hist.color, ref.color, H_work / H_work[2, 2],
-                 f"Manual GCP overlay ({len(df)} assistant-picked fitting points, {model}, least squares)",
+                 f"Manual GCP overlay ({len(df)} AI-picked, human-reviewed fitting points, {model}, least squares)",
                  out_dir / "overlay_manual.png")
     plot_gcps(hist.color, ref.color, apply_h(hist.full_to_work, src), apply_h(ref.full_to_work, map_to_ref_px(dst_m, gt)),
               df.point_id.tolist(), apply_h(H_work, apply_h(hist.full_to_work, src)),
-              "Method C fitting GCPs (assistant-picked, pending human verification): residual vectors x20",
+              "Method C fitting GCPs (AI-picked, human-reviewed): residual vectors x20",
               out_dir / "manual_gcp_visualization.png")
 
     record = {"method": "manual", "created": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -196,7 +196,7 @@ def run_manual(cfg: dict) -> dict:
               "n_fitting_points": int(len(df)), "fitting_point_ids": df.point_id.tolist(),
               "qc_excluded_fitting_points": {p: qc["qc_flagged_z"][p] for p in excluded},
               "qc_rule": qc["qc_rule"],
-              "picked_by": "Claude (AI assistant) from zoomed crops; not yet human-verified",
+              "picked_by": "Claude (AI assistant) from zoomed crops; reviewed unchanged by Saksham Sharma, 2026-10-19",
               "H_full": H.tolist(), "reference_geotransform_gdal": list(gt.to_gdal()), "reference_crs": crs,
               "estimation": checks, "fitting_diagnostics": diag, "graticule_corner_check": grat,
               "timing_s": {"fit_and_diagnostics": round(t_fit, 3)},

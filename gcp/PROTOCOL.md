@@ -13,7 +13,7 @@
 ## Who picked the points
 The points in `fitting_points.csv` were picked by **Claude (AI assistant)** from zoomed image crops, at the
 user's request. **They have not yet been verified by a human.** `thumbnails_*.jpg` shows each pick for review.
-Method C is therefore "assistant-picked GCPs" until a human re-picks or confirms them. Manual interaction
+Method C is therefore "AI-picked, human-reviewed GCPs" (review logged below). Manual interaction
 time is not reported as human effort.
 
 ## Feature priority (most to least reliable for 1926 → today)
@@ -60,3 +60,10 @@ which is **not** the evaluation error.
   No point was dropped. After the corrections, all 12 points have |z| ≤ 3 (max 2.99).
 - **Lock.** SHA-256 of `evaluation_points.csv` is recorded in `data/raw/manifest.json` (`evaluation_points_lock`).
   `mapalign.evaluate` refuses to run if the file changes.
+
+## Human review (2026-10-19)
+Saksham Sharma (project owner) reviewed all 21 points, 9 fitting and 12 evaluation, using `thumbnails_fitting.jpg`,
+`thumbnails_evaluation.jpg` and the picking sheets. **Every pick was accepted unchanged.** Both CSVs are byte-identical
+to the locked versions (the evaluation SHA-256 `f0b45ff5...` still matches), so no result changed. The `notes` column
+inside the CSVs predates the review and still says "NOT human-verified". It was left as-is on purpose, because editing
+the locked file would change its hash. This log entry supersedes that note.

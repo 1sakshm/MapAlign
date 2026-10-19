@@ -5,9 +5,8 @@ version: 0.1.0
 date-released: 2026-10-19
 license: MIT
 authors:
-  # TODO: replace with the author's full name (and ORCID if available) before publishing
-  - given-names: "TODO"
-    family-names: "TODO"
+  - given-names: "Saksham"
+    family-names: "Sharma"
 references:
   - type: dataset
     title: "Old Survey of India Maps collection"

@@ -260,7 +260,7 @@ def write_outputs(cfg: dict, r: dict) -> None:
                 "sensitivity_without_low_confidence": r["sensitivity_without_low_confidence"],
                 "excluded_points": r["excluded_points"], "evaluation_points_sha256": r["lock_sha256"],
                 "caveats": ["12 evaluation points (target was 20); none in the southern fifth or Mysore city",
-                            "fitting and evaluation points were picked by an AI assistant and are not human-verified",
+                            "fitting and evaluation points were picked by an AI assistant and reviewed unchanged by a human (gcp/PROTOCOL.md)",
                             "truth is OSM vector geometry of unknown accuracy (plausibly 5-20 m)",
                             "single historical sheet; results do not generalise beyond it"]},
                out / "metrics.json")

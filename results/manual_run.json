@@ -1,6 +1,6 @@
 {
   "method": "manual",
-  "created": "2026-10-19T10:25:59+00:00",
+  "created": "2026-10-19T10:33:44+00:00",
   "status": "valid",
   "model": "homography",
   "direction": "historical_px -> reference_px",
@@ -26,7 +26,7 @@
     ]
   },
   "qc_rule": "exclude a FITTING point if |offset - median| > 3.0 x 1.4826 x MAD in E or N (graticule-based, independent of all methods and of evaluation points)",
-  "picked_by": "Claude (AI assistant) from zoomed crops; not yet human-verified",
+  "picked_by": "Claude (AI assistant) from zoomed crops; reviewed unchanged by Saksham Sharma, 2026-10-19",
   "H_full": [
     [
       1.0699770052943969,
@@ -172,7 +172,7 @@
     "mean_distance_m": 117.3
   },
   "timing_s": {
-    "fit_and_diagnostics": 0.15
+    "fit_and_diagnostics": 0.149
   },
   "manual_interaction_time": "not reported: points were picked by an AI assistant, not a human"
 }
