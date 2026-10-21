@@ -1,0 +1,61 @@
+{
+  "qgis_version": "3.44.14-Solothurn",
+  "gdal_check": {},
+  "layers": {
+    "osm_vectors": {
+      "crs": "EPSG:4326",
+      "features": {
+        "road": 1917,
+        "river": 15,
+        "rail": 246
+      },
+      "reprojected_on_the_fly_to": "EPSG:32643"
+    },
+    "georef_loftr": {
+      "valid": true,
+      "crs": "EPSG:32643",
+      "crs_description": "WGS 84 / UTM zone 43N",
+      "width": 5453,
+      "height": 5559,
+      "bands": 4,
+      "pixel_size_m": [
+        5.0,
+        5.0
+      ],
+      "extent_m": [
+        662910.0,
+        1354815.0,
+        690175.0,
+        1382610.0
+      ],
+      "rendered": [
+        "results/qgis/qgis_loftr_sheet.png",
+        "results/qgis/qgis_loftr_points.png"
+      ],
+      "truth_points_inside_alpha": "12/12"
+    },
+    "georef_manual": {
+      "valid": true,
+      "crs": "EPSG:32643",
+      "crs_description": "WGS 84 / UTM zone 43N",
+      "width": 5462,
+      "height": 5535,
+      "bands": 4,
+      "pixel_size_m": [
+        5.0,
+        5.0
+      ],
+      "extent_m": [
+        662960.0,
+        1354775.0,
+        690270.0,
+        1382450.0
+      ],
+      "rendered": [
+        "results/qgis/qgis_manual_sheet.png",
+        "results/qgis/qgis_manual_points.png"
+      ],
+      "truth_points_inside_alpha": "12/12"
+    }
+  }
+}

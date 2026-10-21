@@ -359,6 +359,13 @@ ax.set_ylabel("m")
 ax.legend(frameon=False, fontsize=6.5)
 save(fig, "fig11_methodc_fit")
 
+# ------------------------------------------------------------------ Fig 12: QGIS render (produced by tools/qgis_check.py)
+import shutil  # noqa: E402
+_q = R / "qgis" / "qgis_loftr_points.png"
+if _q.is_file():
+    shutil.copyfile(_q, FIG / "fig12_qgis_points.png")
+    NUM["qgis"] = read_json(R / "qgis" / "qgis_check.json")
+
 # ------------------------------------------------------------------ numbers
 nmas_m = 63360 * 0.0254 / 50
 for m in ("loftr", "manual"):

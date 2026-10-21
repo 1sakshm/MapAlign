@@ -166,9 +166,18 @@ Development-only exploration (it never touches evaluation points):
 - `python -m mapalign.diagnostics sift-variants`
 - `python -m mapalign.diagnostics loftr-sizes`
 
-**QGIS check:** load `results/georef_loftr.tif` or `georef_manual.tif` (EPSG:32643), then add *XYZ Tiles → OpenStreetMap*
-for on-screen comparison. The alpha band masks everything outside the neatline. *(This check was not performed for the
-reported results; see Limitations.)*
+**QGIS check** (`tools/qgis_check.py`, run with QGIS's own Python, e.g. `"D:\QGIS\QGIS 3.44.14\bin\python-qgis-ltr.bat" tools\qgis_check.py`).
+The script uses no MapAlign code. In QGIS 3.44.14 LTR it opens both GeoTIFFs, loads the raw OSM railways, rivers and major roads
+in WGS 84 and lets QGIS reproject them, overlays the 12 held-out points and each method's predictions, and renders the sheet and
+one 700 m window per point (`results/qgis/`). Results:
+- QGIS reads the same CRS (EPSG:32643), extent, size and 5 m pixel size that the pipeline wrote, for both files.
+- All 12 truth points fall inside the georeferenced data.
+- In every window, the 1926 feature sits under the method's predicted position, offset from the OSM truth by the reported
+  error. At E11 the 1926 and OSM roads coincide, but the picked junction lies about 190 m along the road from the OSM
+  junction. This is consistent with a mis-identified or moved junction, not a method failure.
+
+To inspect the files by hand, load `results/georef_loftr.tif` or `georef_manual.tif` in QGIS, then add *XYZ Tiles →
+OpenStreetMap* for comparison. The alpha band masks everything outside the neatline.
 
 ## GCP collection
 
@@ -311,7 +320,7 @@ deterministic on its own.
   iterations, and the threshold rule. All were justified on development data only and frozen before the evaluation
   points existed. They are still choices made after seeing the first failures.
 - **Datum:** the 1926 datum is not identified. PROJ has no real Kalianpur 1880 → WGS84 transformation.
-- **Not done:** a visual check in QGIS (not installed on the development machine).
+- **Not tested:** non-linear (local) transforms, other learned matchers, and LoFTR input sizes above 1280 px (1536 px ran out of memory).
 
 ## Reproducibility
 

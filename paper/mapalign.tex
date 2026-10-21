@@ -237,11 +237,20 @@ A homography cannot be stored as a GeoTIFF affine geotransform. We therefore res
 
 We also tested the written files using only their own georeferencing. At 2{,}000 random points inside the neatline, the GeoTIFF sampled at the predicted coordinate returns the source scan pixel, with a mean absolute colour difference of 4.6. A deliberate 10\metre{} shift raises this to 14.8. Figure~\ref{fig:windows} draws OSM vectors on the LoFTR GeoTIFF. Railways, roads and the Cauvery fall on the 1926 linework to within a few tens of metres. That includes Mysore station, where neither method was fitted.
 
+As an independent check we opened both GeoTIFFs in QGIS~3.44.14 LTR from a standalone PyQGIS script that uses none of our code. QGIS reads the same CRS, extent, size and 5\metre{} pixel size that the pipeline wrote. We loaded the raw OSM railways, rivers and major roads in WGS\,84 and let QGIS reproject them on the fly. Across the whole sheet they fall on the 1926 linework. Figure~\ref{fig:qgis} shows a 700\metre{} window around each held-out point. In every window the 1926 feature sits under LoFTR's predicted position, and is offset from the OSM truth by the reported error. At E11 the 1926 and OSM roads coincide, but the picked junction lies about 190\metre{} along the road from the OSM junction. This is what a mis-identified or moved junction would look like, and it supports our reading of E11 below.
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig5_alignment_windows}
 \caption{Windows of the LoFTR GeoTIFF with OSM vectors drawn using only the file's own geotransform. Black: railway. Blue: river. Magenta: major roads. (c)~lies about 4\,km from the nearest fitting point and contains no evaluation point.}
 \label{fig:windows}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{fig12_qgis_points}
+\caption{QGIS~3.44 render of the LoFTR GeoTIFF around each held-out point (700\metre{} windows, 200\metre{} scale bars). Magenta, black and blue lines: OSM roads, railways and rivers, reprojected by QGIS. Black dot: OSM truth. Blue cross: LoFTR's prediction. The distance between the two is the error in Table~\ref{tab:points}.}
+\label{fig:qgis}
 \end{figure*}
 
 \subsection{Held-out accuracy}
@@ -341,7 +350,7 @@ The absolute numbers should be read against the sources of error that no method 
 \item Only 12 evaluation points were available, none in the southern fifth of the sheet or in Mysore city. Results there are untested extrapolation.
 \item The control points were proposed with AI assistance and accepted by one reviewer. They were not re-picked independently, so the manual baseline is not a measure of expert human georeferencing.
 \item Three development settings were changed after initial failures, although all were frozen before the evaluation data existed.
-\item We did not test non-linear transforms, other learned matchers or GPU-scale input sizes.
+\item We did not test non-linear (local) transforms, other learned matchers, or LoFTR inputs above 1280 pixels. At 1536 pixels LoFTR ran out of memory.
 \end{itemize}
 
 \section{Conclusion}
