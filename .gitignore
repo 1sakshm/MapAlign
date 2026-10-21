@@ -30,3 +30,13 @@ results/gpu/*.png
 
 # Cloudflare Wrangler local state
 .wrangler/
+
+# LaTeX build by-products (the PDF itself is committed)
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz

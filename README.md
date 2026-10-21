@@ -12,6 +12,7 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
+**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 9 pages; LaTeX source in `paper/`)  
 **Interactive report:** https://mysore-1926.pages.dev
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
@@ -74,7 +75,8 @@ src/mapalign/             config, io, fetch, reference (OSM render), preprocess,
 tests/                    pytest suite (53 tests)
 notebooks/                01_matching_baselines.ipynb (exploration only; it reads saved results)
 results/                  metrics, per-point errors, run records, figures (GeoTIFFs are git-ignored)
-paper/writeup.md          technical report
+paper/                    research paper: mapalign.tex, mapalign.pdf, refs.bib, figures/, tables/,
+                          make_figures.py (regenerates every figure and table from results/)
 site/                     static report website (deployed to Cloudflare Pages)
 ```
 
@@ -193,6 +195,13 @@ which re-runs the QC and stores the new hash. Then run `mapalign.run_all`. Recor
 
 CSV columns (units in the names): `point_id, historical_x_px, historical_y_px, reference_x_px, reference_y_px,
 true_easting_m, true_northing_m, crs, feature_type, truth_source, confidence, valid_for_evaluation, exclusion_reason, notes`.
+
+## Building the paper
+
+```powershell
+python paper/make_figures.py      # figures, tables and numbers.json from results/
+cd paper; latexmk -pdf mapalign.tex
+```
 
 ## Report website
 
@@ -316,7 +325,7 @@ deterministic on its own.
 
 ## Citation and acknowledgements
 
-See [`CITATION.cff`](CITATION.cff). Report: [`paper/writeup.md`](paper/writeup.md).
+See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign.pdf).
 
 - **Map scan:** Old Survey of India Maps collection (J. Brown, Zenodo, CC BY 4.0); the scan bears a University of
   Michigan Library stamp.

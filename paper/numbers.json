@@ -1,0 +1,511 @@
+{
+ "bias": {
+  "loftr": {
+   "mean_dE_m": 9.7,
+   "mean_dN_m": 31.2,
+   "magnitude_m": 32.7,
+   "ci95_dE_m": [
+    -18.7,
+    43.0
+   ],
+   "ci95_dN_m": [
+    5.6,
+    55.7
+   ]
+  },
+  "manual": {
+   "mean_dE_m": 43.8,
+   "mean_dN_m": -34.9,
+   "magnitude_m": 56.0,
+   "ci95_dE_m": [
+    8.4,
+    84.7
+   ],
+   "ci95_dN_m": [
+    -65.6,
+    -5.5
+   ]
+  }
+ },
+ "distance_correlation": {
+  "loftr_vs_nearest_inlier": {
+   "rho": 0.39,
+   "p": 0.208,
+   "median_distance_m": 1260.0
+  },
+  "manual_vs_nearest_fitting_point": {
+   "rho": -0.1,
+   "p": 0.746,
+   "median_distance_m": 2500.0
+  }
+ },
+ "bands": {
+  "homography/loftr": {
+   "within_50m": 5,
+   "within_100m": 11,
+   "within_nmas": 2,
+   "n": 12,
+   "rmse_in_map_mm": 1.22,
+   "median_in_map_mm": 0.85
+  },
+  "affine/loftr": {
+   "within_50m": 8,
+   "within_100m": 10,
+   "within_nmas": 2,
+   "n": 12,
+   "rmse_in_map_mm": 1.2,
+   "median_in_map_mm": 0.67
+  },
+  "homography/manual": {
+   "within_50m": 3,
+   "within_100m": 9,
+   "within_nmas": 0,
+   "n": 12,
+   "rmse_in_map_mm": 1.62,
+   "median_in_map_mm": 1.17
+  },
+  "affine/manual": {
+   "within_50m": 4,
+   "within_100m": 7,
+   "within_nmas": 1,
+   "n": 12,
+   "rmse_in_map_mm": 1.66,
+   "median_in_map_mm": 1.38
+  }
+ },
+ "nmas_threshold_m": 32.2,
+ "metrics": {
+  "homography/sift": {
+   "model": "homography",
+   "method": "sift",
+   "label": "SIFT + RANSAC",
+   "method_status": "failed",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 12,
+   "n_valid": 0,
+   "mean_m": null,
+   "median_m": null,
+   "rmse_m": null,
+   "max_m": null,
+   "min_m": null,
+   "std_m": null,
+   "p90_m": null,
+   "runtime_s": 13.46,
+   "device": "cpu",
+   "proposed_matches": 594,
+   "ransac_inliers": 26,
+   "inlier_ratio": 0.0438,
+   "inlier_reprojection_rmse_working_px": 0.07895564102831946
+  },
+  "homography/loftr": {
+   "model": "homography",
+   "method": "loftr",
+   "label": "LoFTR + RANSAC",
+   "method_status": "valid",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 0,
+   "n_valid": 12,
+   "mean_m": 64.23,
+   "median_m": 53.86,
+   "rmse_m": 77.43,
+   "max_m": 191.71,
+   "min_m": 24.22,
+   "std_m": 43.25,
+   "p90_m": 95.92,
+   "runtime_s": 18.26,
+   "device": "cpu",
+   "proposed_matches": 601,
+   "ransac_inliers": 389,
+   "inlier_ratio": 0.6473,
+   "inlier_reprojection_rmse_working_px": 6.403360421903218
+  },
+  "homography/manual": {
+   "model": "homography",
+   "method": "manual",
+   "label": "Manual GCPs (Method C)",
+   "method_status": "valid",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 0,
+   "n_valid": 12,
+   "mean_m": 89.61,
+   "median_m": 73.94,
+   "rmse_m": 102.37,
+   "max_m": 223.92,
+   "min_m": 44.91,
+   "std_m": 49.5,
+   "p90_m": 140.6,
+   "runtime_s": 0.149,
+   "device": null,
+   "n_fitting_points": 7,
+   "fit_rmse_m": 55.64,
+   "leave_one_out_rmse_m": 146.88,
+   "manual_interaction_time": "not reported: points were picked by an AI assistant, not a human"
+  },
+  "affine/sift": {
+   "model": "affine",
+   "method": "sift",
+   "label": "SIFT + RANSAC",
+   "method_status": "failed",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 12,
+   "n_valid": 0,
+   "mean_m": null,
+   "median_m": null,
+   "rmse_m": null,
+   "max_m": null,
+   "min_m": null,
+   "std_m": null,
+   "p90_m": null
+  },
+  "affine/loftr": {
+   "model": "affine",
+   "method": "loftr",
+   "label": "LoFTR + RANSAC",
+   "method_status": "valid",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 0,
+   "n_valid": 12,
+   "mean_m": 59.15,
+   "median_m": 42.37,
+   "rmse_m": 76.34,
+   "max_m": 202.4,
+   "min_m": 18.42,
+   "std_m": 48.27,
+   "p90_m": 99.67
+  },
+  "affine/manual": {
+   "model": "affine",
+   "method": "manual",
+   "label": "Manual GCPs (Method C)",
+   "method_status": "valid",
+   "n_evaluation_points": 12,
+   "n_failed_predictions": 0,
+   "n_valid": 12,
+   "mean_m": 92.84,
+   "median_m": 87.75,
+   "rmse_m": 105.49,
+   "max_m": 203.75,
+   "min_m": 32.09,
+   "std_m": 50.08,
+   "p90_m": 147.51
+  }
+ },
+ "paired": {
+  "homography": {
+   "loftr_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": -31.74,
+    "a_better_count": 9,
+    "b_better_count": 3,
+    "wilcoxon_statistic": 13.0,
+    "wilcoxon_p_two_sided": 0.0425,
+    "bootstrap_ci95_median_diff_m": [
+     -44.02,
+     2.46
+    ]
+   }
+  },
+  "affine": {
+   "loftr_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": -25.1,
+    "a_better_count": 10,
+    "b_better_count": 2,
+    "wilcoxon_statistic": 9.0,
+    "wilcoxon_p_two_sided": 0.0161,
+    "bootstrap_ci95_median_diff_m": [
+     -58.55,
+     -5.1
+    ]
+   }
+  }
+ },
+ "sensitivity": {
+  "n_points": 9,
+  "metrics": {
+   "sift": {
+    "n_valid": 0,
+    "mean_m": null,
+    "median_m": null,
+    "rmse_m": null,
+    "max_m": null,
+    "min_m": null,
+    "std_m": null,
+    "p90_m": null
+   },
+   "loftr": {
+    "n_valid": 9,
+    "mean_m": 44.46,
+    "median_m": 44.89,
+    "rmse_m": 46.02,
+    "max_m": 59.79,
+    "min_m": 24.22,
+    "std_m": 11.9,
+    "p90_m": 57.1
+   },
+   "manual": {
+    "n_valid": 9,
+    "mean_m": 80.26,
+    "median_m": 66.67,
+    "rmse_m": 86.11,
+    "max_m": 144.11,
+    "min_m": 44.91,
+    "std_m": 31.2,
+    "p90_m": 116.0
+   }
+  }
+ },
+ "gpu": {
+  "gpu_name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "torch": "2.14.1+cu126",
+  "cuda": "12.6",
+  "peak_gpu_memory_mb": 1060.5,
+  "transform_difference_over_sheet_m": {
+   "max": 8.538,
+   "mean": 1.857
+  },
+  "identical_matrices": false,
+  "cpu": {
+   "device": "cpu",
+   "status": "valid",
+   "matches": 601,
+   "inliers": 389,
+   "inference_s": 7.95,
+   "total_s": 18.26,
+   "heldout": {
+    "n_valid": 12,
+    "mean_m": 64.23,
+    "median_m": 53.86,
+    "rmse_m": 77.43,
+    "max_m": 191.71,
+    "min_m": 24.22,
+    "std_m": 43.25,
+    "p90_m": 95.92
+   },
+   "errors_m": [
+    59.79,
+    53.47,
+    97.54,
+    56.43,
+    31.39,
+    32.8,
+    42.86,
+    24.22,
+    44.89,
+    54.25,
+    191.71,
+    81.37
+   ]
+  },
+  "gpu": {
+   "device": "cuda",
+   "status": "valid",
+   "matches": 601,
+   "inliers": 389,
+   "inference_s": 0.72,
+   "total_s": 3.96,
+   "heldout": {
+    "n_valid": 12,
+    "mean_m": 64.09,
+    "median_m": 53.64,
+    "rmse_m": 77.19,
+    "max_m": 190.21,
+    "min_m": 23.92,
+    "std_m": 43.02,
+    "p90_m": 95.91
+   },
+   "errors_m": [
+    59.6,
+    53.82,
+    97.29,
+    56.51,
+    31.13,
+    32.7,
+    42.64,
+    23.92,
+    44.41,
+    53.47,
+    190.21,
+    83.44
+   ]
+  }
+ },
+ "matching": {
+  "sift": {
+   "keypoints0": 79923,
+   "keypoints1": 18547,
+   "detect_s": 2.52,
+   "candidate_matches": 79923,
+   "ratio_matches": 594,
+   "match_s": 6.29
+  },
+  "loftr": {
+   "device": "cpu",
+   "pretrained": "outdoor",
+   "common_scale": 0.222609,
+   "loftr_input_px": [
+    [
+     600,
+     616
+    ],
+    [
+     752,
+     768
+    ]
+   ],
+   "raw_matches": 601,
+   "matches_after_confidence": 601,
+   "confidence_threshold": 0.0,
+   "confidence_mean": 0.5186,
+   "model_load_s": 1.63,
+   "inference_s": 7.95,
+   "torch_threads": 8
+  },
+  "sift_est": {
+   "model": "homography",
+   "input_correspondences": 594,
+   "ransac_method": "USAC_MAGSAC",
+   "ransac_reproj_threshold_px": 3.0,
+   "threshold_units": "image1 (reference) working pixels",
+   "seed": 42,
+   "ransac_max_iters": 1200000,
+   "ransac_reproj_threshold_matcher_px": 3.0,
+   "matcher_scale": 1.0,
+   "inliers": 26,
+   "inlier_ratio": 0.0438,
+   "inlier_reproj_rmse_px": 0.07895564102831946,
+   "inlier_reproj_median_px": 0.027576958909313137,
+   "valid": false,
+   "problems": [
+    "ill-conditioned (cond=8.36e+13)",
+    "extreme anisotropy (singular values [2.0203, 0.0])",
+    "image0 corners cross the horizon line (w<=0)"
+   ],
+   "condition_number": 83641205000141.78,
+   "det_linear_part": 8.967426963145754e-06,
+   "singular_values_linear_part": [
+    2.020342416474468,
+    4.438567883344391e-06
+   ],
+   "mapped_corners_image1_px": null
+  },
+  "loftr_est": {
+   "model": "homography",
+   "input_correspondences": 601,
+   "ransac_method": "USAC_MAGSAC",
+   "ransac_reproj_threshold_px": 13.476544075037397,
+   "threshold_units": "image1 (reference) working pixels",
+   "seed": 42,
+   "ransac_max_iters": 1200000,
+   "ransac_reproj_threshold_matcher_px": 3.0,
+   "matcher_scale": 0.222609,
+   "inliers": 389,
+   "inlier_ratio": 0.6473,
+   "inlier_reproj_rmse_px": 6.403360421903218,
+   "inlier_reproj_median_px": 5.454809485189497,
+   "valid": true,
+   "problems": [],
+   "condition_number": 205611.03293249555,
+   "det_linear_part": 1.0060753207400213,
+   "singular_values_linear_part": [
+    1.0055049109041032,
+    1.0005672869716815
+   ],
+   "mapped_corners_image1_px": [
+    [
+     319.4200479419438,
+     323.50308333977966
+    ],
+    [
+     3034.6843580084274,
+     320.3008065726398
+    ],
+    [
+     3044.4356273359963,
+     3097.463508553016
+    ],
+    [
+     335.27531619350646,
+     3098.8618614284187
+    ]
+   ]
+  },
+  "tiles": {
+   "sift": {
+    "tiles": 25,
+    "tile_px": 512,
+    "radius_px": 60.0,
+    "matches": 2041,
+    "correct": 97,
+    "correct_fraction": 0.0475,
+    "chance_fraction": 0.0431
+   },
+   "loftr": {
+    "tiles": 25,
+    "tile_px": 512,
+    "radius_px": 60.0,
+    "matches": 2485,
+    "correct": 321,
+    "correct_fraction": 0.1292,
+    "chance_fraction": 0.0431
+   }
+  }
+ },
+ "datum": {
+  "median_offset_E_N_m": [
+   -83.7,
+   52.8
+  ],
+  "qc_robust_sigma_E_N_m": [
+   57.9,
+   94.7
+  ],
+  "qc_flagged_z": {
+   "F02": [
+    -7.41,
+    -0.42
+   ],
+   "F05": [
+    3.62,
+    1.88
+   ]
+  }
+ },
+ "methodc": {
+  "fit": {
+   "fit_residual_m": [
+    35.1,
+    33.26,
+    50.19,
+    29.86,
+    96.32,
+    75.01,
+    31.87
+   ],
+   "fit_rmse_m": 55.64,
+   "leave_one_out_error_m": [
+    161.77,
+    116.6,
+    67.52,
+    160.98,
+    140.04,
+    132.45,
+    208.86
+   ],
+   "leave_one_out_rmse_m": 146.88,
+   "note": "fitting diagnostics only; the independent evaluation is Phase 6"
+  },
+  "excluded": {
+   "F02": [
+    -7.41,
+    -0.42
+   ],
+   "F05": [
+    3.62,
+    1.88
+   ]
+  },
+  "graticule_corners": 117.3
+ },
+ "loftr_graticule_corner_mean_m": 199.3
+}
