@@ -32,11 +32,65 @@ def resolve_device(requested: str) -> str:
     return requested
 
 
+# Pinned pretrained weights. Kornia downloads them from the original author's server; if that URL ever
+# disappears, an identical copy is mirrored as a release asset of this repository (LoFTR is Apache-2.0).
+LOFTR_WEIGHTS = {
+    "outdoor": {
+        "file": "loftr_outdoor.ckpt",
+        "sha256": "21f5bec5968178e8bc8b7633441836fe5de4f47d861dd2cd7dc38e271b0479ec",
+        "urls": ["http://cmp.felk.cvut.cz/~mishkdmy/models/loftr_outdoor.ckpt",
+                 "https://github.com/1sakshm/MapAlign/releases/download/loftr-weights-v1/loftr_outdoor.ckpt"],
+    },
+}
+
+
+def ensure_loftr_weights(pretrained: str):
+    """Make sure the checkpoint is in the torch hub cache with the pinned SHA-256; download it if missing."""
+    import hashlib
+
+    import requests
+
+    spec = LOFTR_WEIGHTS.get(pretrained)
+    if spec is None:
+        return None
+    path = ensure_torch_home() / "hub" / "checkpoints" / spec["file"]
+
+    def sha(p):
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for block in iter(lambda: f.read(1 << 20), b""):
+                h.update(block)
+        return h.hexdigest()
+
+    if path.is_file() and sha(path) == spec["sha256"]:
+        return path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    errors = []
+    for url in spec["urls"]:
+        tmp = path.with_suffix(".part")
+        try:
+            with requests.get(url, stream=True, timeout=120) as r:
+                r.raise_for_status()
+                with open(tmp, "wb") as f:
+                    for chunk in r.iter_content(1 << 20):
+                        f.write(chunk)
+            if sha(tmp) != spec["sha256"]:
+                raise ValueError("SHA-256 mismatch")
+            tmp.replace(path)
+            log.info("LoFTR weights downloaded from %s and verified", url)
+            return path
+        except Exception as e:  # try the next mirror
+            errors.append(f"{url}: {e}")
+            tmp.unlink(missing_ok=True)
+    raise RuntimeError("Could not obtain verified LoFTR weights:\n  " + "\n  ".join(errors))
+
+
 @functools.lru_cache(maxsize=2)
 def _load_model(pretrained: str, device: str):
     import kornia.feature as KF
 
     ensure_torch_home()
+    ensure_loftr_weights(pretrained)
     return KF.LoFTR(pretrained=pretrained).to(device).eval()
 
 

@@ -1,0 +1,163 @@
+{
+  "path": "data/processed/osm_57D11_utm43n.tif",
+  "crs": "EPSG:32643",
+  "resolution_m": 5.0,
+  "width": 6785,
+  "height": 6900,
+  "transform_gdal": [
+    659715.0,
+    5.0,
+    0.0,
+    1385815.0,
+    0.0,
+    -5.0
+  ],
+  "bounds_m": [
+    659715.0,
+    1351315.0,
+    693640.0,
+    1385815.0
+  ],
+  "pixel_convention": "rasterio corner-based transform; centre of (col,row) = T*(col+0.5,row+0.5)",
+  "style_version": "robustness:white_background",
+  "line_styles": [
+    [
+      "waterway",
+      [
+        "river"
+      ],
+      [
+        190,
+        150,
+        90
+      ],
+      25.0
+    ],
+    [
+      "waterway",
+      [
+        "canal"
+      ],
+      [
+        190,
+        150,
+        90
+      ],
+      8.0
+    ],
+    [
+      "waterway",
+      [
+        "ditch",
+        "drain",
+        "stream"
+      ],
+      [
+        190,
+        150,
+        90
+      ],
+      3.0
+    ],
+    [
+      "highway",
+      [
+        "living_street",
+        "residential",
+        "service",
+        "track"
+      ],
+      [
+        150,
+        150,
+        215
+      ],
+      4.0
+    ],
+    [
+      "highway",
+      [
+        "road",
+        "tertiary",
+        "tertiary_link",
+        "unclassified"
+      ],
+      [
+        80,
+        80,
+        200
+      ],
+      7.0
+    ],
+    [
+      "highway",
+      [
+        "primary",
+        "primary_link",
+        "secondary",
+        "secondary_link"
+      ],
+      [
+        40,
+        40,
+        190
+      ],
+      11.0
+    ],
+    [
+      "highway",
+      [
+        "motorway",
+        "motorway_link",
+        "trunk",
+        "trunk_link"
+      ],
+      [
+        30,
+        30,
+        170
+      ],
+      14.0
+    ],
+    [
+      "railway",
+      [
+        "rail"
+      ],
+      [
+        20,
+        20,
+        20
+      ],
+      7.0
+    ]
+  ],
+  "features_drawn": {
+    "highway=living_street": 227,
+    "highway=motorway": 103,
+    "highway=motorway_link": 8,
+    "highway=primary": 265,
+    "highway=primary_link": 33,
+    "highway=residential": 23899,
+    "highway=secondary": 338,
+    "highway=secondary_link": 31,
+    "highway=service": 2663,
+    "highway=tertiary": 1188,
+    "highway=tertiary_link": 29,
+    "highway=track": 867,
+    "highway=trunk": 126,
+    "highway=trunk_link": 56,
+    "highway=unclassified": 860,
+    "railway=rail": 246,
+    "water_relation_inner": 55,
+    "water_relation_outer": 10,
+    "water_way": 245,
+    "waterway=canal": 137,
+    "waterway=ditch": 4,
+    "waterway=drain": 208,
+    "waterway=river": 15,
+    "waterway=stream": 32
+  },
+  "osm_base_timestamp": "2026-10-18T18:43:02Z",
+  "attribution": "© OpenStreetMap contributors, data available under the Open Database License"
+}

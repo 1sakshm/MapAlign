@@ -101,7 +101,7 @@ def estimator_params(transform_cfg: dict, matcher_scale: float) -> dict:
 
 
 def estimate_transform(src: np.ndarray, dst: np.ndarray, size0: tuple[int, int], size1: tuple[int, int],
-                       params: dict, seed: int) -> TransformResult:
+                       params: dict, seed: int, usac_seed: int | None = None) -> TransformResult:
     """Estimate image0 -> image1 transform with RANSAC; never raises on poor data, reports instead."""
     model = params["model"]
     n = len(src)
@@ -112,7 +112,11 @@ def estimate_transform(src: np.ndarray, dst: np.ndarray, size0: tuple[int, int],
                    "threshold_units": "image1 (reference) working pixels", "seed": seed,
                    "ransac_max_iters": params["ransac_max_iters"],
                    "ransac_reproj_threshold_matcher_px": params.get("ransac_reproj_threshold_matcher_px"),
-                   "matcher_scale": params.get("matcher_scale")}
+                   "matcher_scale": params.get("matcher_scale"),
+                   # OpenCV's flag-based USAC/RANSAC calls ignore cv2.setRNGSeed and use a fixed internal state (0).
+                   # Results are therefore deterministic; `seed` is recorded but does not reach the estimator.
+                   "effective_rng": ("cv2.UsacParams.randomGeneratorState=%d" % usac_seed) if usac_seed is not None
+                                    else "OpenCV internal fixed state (cv2.setRNGSeed has no effect on this call)"}
     empty = np.zeros(n, bool)
     if n < max(min_needed, params["min_inliers"]):
         stats.update(valid=False, problems=[f"only {n} correspondences"], inliers=0, inlier_ratio=0.0)
@@ -122,7 +126,17 @@ def estimate_transform(src: np.ndarray, dst: np.ndarray, size0: tuple[int, int],
     cv2.setRNGSeed(seed)
     src32, dst32 = src.astype(np.float32), dst.astype(np.float32)
     thr = float(params["ransac_reproj_threshold_px"])
-    if model == "homography":
+    if model == "homography" and usac_seed is not None:
+        # Explicitly seeded MAGSAC++ (used only by robustness analyses). With randomGeneratorState=0 it finds the
+        # same inlier set as the flag-based call below, with sub-metre differences after polishing (tests/test_robustness.py).
+        if params["ransac_method"] != "USAC_MAGSAC":
+            raise ValueError("usac_seed is only supported with ransac_method USAC_MAGSAC")
+        up = cv2.UsacParams()
+        up.sampler, up.score, up.loMethod = cv2.SAMPLING_UNIFORM, cv2.SCORE_METHOD_MAGSAC, cv2.LOCAL_OPTIM_SIGMA
+        up.threshold, up.confidence = thr, params["ransac_confidence"]
+        up.maxIterations, up.randomGeneratorState = int(params["ransac_max_iters"]), int(usac_seed)
+        H, mask = cv2.findHomography(src32, dst32, up)
+    elif model == "homography":
         H, mask = cv2.findHomography(src32, dst32, _METHODS[params["ransac_method"]], thr,
                                      maxIters=params["ransac_max_iters"], confidence=params["ransac_confidence"])
     elif model == "affine":

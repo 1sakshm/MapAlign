@@ -1,0 +1,13 @@
+point_id,feature_type,true_easting_m,true_northing_m,picker,historical_x_px,historical_y_px,seconds_spent,confident_yes_no,notes
+E01,landmark_centroid,686991.53,1374170.28,,,,,,
+E02,rail_road_crossing,682713.31,1378172.92,,,,,,
+E03,landmark_centroid,684432.43,1373517.6,,,,,,
+E04,rail_road_crossing,679287.25,1370607.22,,,,,,
+E05,rail_water_crossing,680458.75,1372536.63,,,,,,
+E06,rail_road_crossing,670560.48,1371289.78,,,,,,
+E07,road_stream_crossing,674515.54,1377057.72,,,,,,
+E08,road_stream_crossing,685483.47,1374961.43,,,,,,
+E09,road_road_junction,666015.3,1366513.41,,,,,,
+E10,road_road_junction,667232.48,1364974.33,,,,,,
+E11,road_road_junction,669954.53,1378916.19,,,,,,
+E12,road_road_junction,687431.46,1360886.94,,,,,,

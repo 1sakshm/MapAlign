@@ -1,0 +1,58 @@
+{
+  "purpose": "5 repeated CPU runs (first run includes model loading / cache warm-up)",
+  "machine": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "summary": {
+    "loftr": {
+      "match_s": {
+        "median": 4.831,
+        "min": 4.73,
+        "max": 5.471
+      },
+      "estimate_s": {
+        "median": 0.001,
+        "min": 0.001,
+        "max": 0.001
+      },
+      "total_s": {
+        "median": 6.54,
+        "min": 6.523,
+        "max": 7.081
+      }
+    },
+    "manual_fit_only": {
+      "match_s": {
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "estimate_s": {
+        "median": 0.002,
+        "min": 0.002,
+        "max": 0.002
+      },
+      "total_s": {
+        "median": 0.002,
+        "min": 0.002,
+        "max": 0.002
+      }
+    },
+    "sift": {
+      "match_s": {
+        "median": 5.288,
+        "min": 5.189,
+        "max": 5.301
+      },
+      "estimate_s": {
+        "median": 0.204,
+        "min": 0.2,
+        "max": 0.206
+      },
+      "total_s": {
+        "median": 7.193,
+        "min": 7.109,
+        "max": 7.246
+      }
+    }
+  },
+  "not_measurable": "the human (or assisted) time spent picking the manual control points was not recorded"
+}

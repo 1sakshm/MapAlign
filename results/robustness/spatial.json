@@ -1,0 +1,109 @@
+{
+  "purpose": "are held-out errors spatially correlated? and a cluster bootstrap that respects it",
+  "morans_I/loftr": {
+    "error_m": {
+      "I": -0.109,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.8111
+    },
+    "dE_m": {
+      "I": -0.082,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.915
+    },
+    "dN_m": {
+      "I": -0.112,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.8458
+    }
+  },
+  "morans_I/manual": {
+    "error_m": {
+      "I": -0.057,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.6805
+    },
+    "dE_m": {
+      "I": 0.025,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.2216
+    },
+    "dN_m": {
+      "I": 0.043,
+      "expected_under_null": -0.091,
+      "p_permutation": 0.2044
+    }
+  },
+  "clusters": {
+    "link_km": 3.0,
+    "n_clusters": 8,
+    "members": {
+      "0": [
+        "E01",
+        "E03",
+        "E08"
+      ],
+      "1": [
+        "E02"
+      ],
+      "2": [
+        "E04",
+        "E05"
+      ],
+      "3": [
+        "E06"
+      ],
+      "4": [
+        "E07"
+      ],
+      "5": [
+        "E09",
+        "E10"
+      ],
+      "6": [
+        "E11"
+      ],
+      "7": [
+        "E12"
+      ]
+    }
+  },
+  "cluster_bootstrap_loftr_minus_manual": {
+    "median_diff_m": -31.74,
+    "ci95_median_diff_m": [
+      -44.02,
+      -2.05
+    ],
+    "mean_diff_m": -25.39,
+    "ci95_mean_diff_m": [
+      -43.73,
+      -6.26
+    ],
+    "fraction_of_resamples_favouring_loftr_median": 0.99
+  },
+  "point_bootstrap_reference": {
+    "n_pairs": 12,
+    "median_diff_m": -31.74,
+    "a_better_count": 9,
+    "b_better_count": 3,
+    "wilcoxon_statistic": 13.0,
+    "wilcoxon_p_two_sided": 0.0425,
+    "bootstrap_ci95_median_diff_m": [
+      -44.02,
+      2.46
+    ]
+  },
+  "cluster_sign_flip_test": {
+    "cluster_mean_diffs_m": [
+      -34.73,
+      -90.64,
+      -37.08,
+      -31.27,
+      -2.05,
+      -1.82,
+      -32.21,
+      33.52
+    ],
+    "p_two_sided": 0.0703
+  }
+}

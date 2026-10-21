@@ -19,6 +19,7 @@ from __future__ import annotations
 import logging
 import sys
 import time
+from pathlib import Path
 from collections import Counter
 
 import cv2
@@ -81,7 +82,13 @@ def _stitch_rings(segments: list[list[tuple[float, float]]]) -> list[list[tuple[
     return rings
 
 
-def render_osm(cfg: dict) -> dict:
+def render_osm(cfg: dict, line_styles=None, width_scale: float = 1.0, water: bool = True,
+               background=None, water_colour=None, out_path=None, style_name: str = STYLE_VERSION) -> dict:
+    """Render the OSM extract. The defaults reproduce the frozen reference exactly; the keyword arguments
+    exist only for the rendering-style robustness check (mapalign.robustness)."""
+    line_styles = LINE_STYLES if line_styles is None else line_styles
+    bg = BACKGROUND if background is None else background
+    wc = WATER if water_colour is None else water_colour
     mr = cfg["modern_reference"]
     res = float(mr["render_resolution_m"])
     crs = mr["render_crs"]
@@ -105,7 +112,7 @@ def render_osm(cfg: dict) -> dict:
         return np.round(np.stack([col, row], 1) * (1 << SUBPIXEL_SHIFT)).astype(np.int32)
 
     canvas = np.empty((height, width, 3), np.uint8)
-    canvas[:] = BACKGROUND
+    canvas[:] = bg
     drawn: Counter = Counter()
 
     # 1. Water areas (ways and multipolygon relations), inner rings cut back out.
@@ -115,7 +122,8 @@ def render_osm(cfg: dict) -> dict:
         if not _is_water_area(tags):
             continue
         if el["type"] == "way" and "geometry" in el:
-            cv2.fillPoly(canvas, [to_px(el["geometry"])], WATER, cv2.LINE_AA, SUBPIXEL_SHIFT)
+            if water:
+                cv2.fillPoly(canvas, [to_px(el["geometry"])], wc, cv2.LINE_AA, SUBPIXEL_SHIFT)
             drawn["water_way"] += 1
         elif el["type"] == "relation":
             for role, store in (("outer", None), ("inner", inner_rings)):
@@ -124,18 +132,20 @@ def render_osm(cfg: dict) -> dict:
                 for ring in _stitch_rings(segs):
                     pts = to_px([{"lon": x, "lat": y} for x, y in ring])
                     if store is None:
-                        cv2.fillPoly(canvas, [pts], WATER, cv2.LINE_AA, SUBPIXEL_SHIFT)
+                        if water:
+                            cv2.fillPoly(canvas, [pts], wc, cv2.LINE_AA, SUBPIXEL_SHIFT)
                         drawn["water_relation_outer"] += 1
                     else:
                         store.append(pts)
     for pts in inner_rings:
-        cv2.fillPoly(canvas, [pts], BACKGROUND, cv2.LINE_AA, SUBPIXEL_SHIFT)
+        if water:
+            cv2.fillPoly(canvas, [pts], bg, cv2.LINE_AA, SUBPIXEL_SHIFT)
         drawn["water_relation_inner"] += 1
 
     # 2. Linear features by style, in drawing order.
     ways = [el for el in data["elements"] if el["type"] == "way" and "geometry" in el]
-    for (key, values), colour, width_m in LINE_STYLES:
-        thickness = max(1, int(round(width_m / res)))
+    for (key, values), colour, width_m in line_styles:
+        thickness = max(1, int(round(width_m * width_scale / res)))
         for el in ways:
             tags = el.get("tags", {})
             if tags.get(key) in values and not _is_water_area(tags):
@@ -143,7 +153,7 @@ def render_osm(cfg: dict) -> dict:
                               cv2.LINE_AA, SUBPIXEL_SHIFT)
                 drawn[f"{key}={tags[key]}"] += 1
 
-    out = resolve_path(mr["rendered_path"])
+    out = resolve_path(mr["rendered_path"]) if out_path is None else Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     rgb = canvas[:, :, ::-1]
     with rasterio.open(out, "w", driver="GTiff", width=width, height=height, count=3, dtype="uint8",
@@ -157,8 +167,8 @@ def render_osm(cfg: dict) -> dict:
     meta = {"path": mr["rendered_path"], "crs": crs, "resolution_m": res, "width": width, "height": height,
             "transform_gdal": list(transform.to_gdal()), "bounds_m": [xmin, ymin, xmax, ymax],
             "pixel_convention": "rasterio corner-based transform; centre of (col,row) = T*(col+0.5,row+0.5)",
-            "style_version": STYLE_VERSION,
-            "line_styles": [[k, sorted(v), list(c), w] for (k, v), c, w in LINE_STYLES],
+            "style_version": style_name,
+            "line_styles": [[k, sorted(v), list(c), w * width_scale] for (k, v), c, w in line_styles],
             "features_drawn": dict(sorted(drawn.items())),
             "osm_base_timestamp": data.get("osm3s", {}).get("timestamp_osm_base"),
             "attribution": mr["attribution"]}

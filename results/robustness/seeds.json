@@ -1,0 +1,37 @@
+{
+  "purpose": "variability of the MAGSAC++ outcome over random seeds (explicit cv2.UsacParams.randomGeneratorState 0..n-1); frozen settings otherwise. Seed 0 finds the published run's inlier set exactly; its polished matrix differs by < 1 m.",
+  "n_seeds": 200,
+  "published_run_effective_seed": 0,
+  "note": "cv2.setRNGSeed(42) in the pipeline has no effect on OpenCV's USAC; the published run used state 0",
+  "loftr": {
+    "valid_fraction": 1.0,
+    "inliers": {
+      "min": 389,
+      "median": 389.0,
+      "max": 390
+    },
+    "median_m": {
+      "min": 44.27,
+      "p5": 49.4,
+      "median": 53.42,
+      "p95": 54.84,
+      "max": 56.42
+    },
+    "rmse_m": {
+      "min": 74.44,
+      "p5": 76.24,
+      "median": 77.11,
+      "p95": 77.43,
+      "max": 95.3
+    },
+    "published_seed0_rmse_percentile": 91.5
+  },
+  "sift": {
+    "valid_fraction": 0.0,
+    "inliers": {
+      "min": 26,
+      "median": 28.0,
+      "max": 31
+    }
+  }
+}

@@ -293,6 +293,38 @@ def lock_evaluation_points(cfg: dict, force: bool = False) -> str:
     return h
 
 
+def blind_kit(cfg: dict, which: str, out_dir: Path) -> Path:
+    """Material for an independent person to re-pick points without seeing the existing picks.
+
+    For each point: a crop of the 1926 scan centred with the printed-corner prior only (never with the
+    existing pick), with a labelled 10 px grid, next to the OSM render with the target marked. Plus a CSV
+    template with columns for the new pick and the time spent. Existing pixel coordinates are not included.
+    """
+    df = read_gcps(cfg["gcp"][f"{which}_points"])
+    cand = df.rename(columns={"point_id": "cand_id", "true_easting_m": "E", "true_northing_m": "N"})
+    cand["label"] = cand["feature_type"]
+    px = prior_full_px(cfg)(cand[["E", "N"]].to_numpy(float))
+    cand["prior_x_px"], cand["prior_y_px"] = px[:, 0], px[:, 1]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for pid in cand.cand_id:
+        picking_sheet(cfg, cand, [pid], out_dir / f"{pid}.jpg", half=220, scale=1.5)
+    tmpl = pd.DataFrame({"point_id": df.point_id, "feature_type": df.feature_type,
+                         "true_easting_m": df.true_easting_m, "true_northing_m": df.true_northing_m,
+                         "picker": "", "historical_x_px": "", "historical_y_px": "", "seconds_spent": "",
+                         "confident_yes_no": "", "notes": ""})
+    path = out_dir / f"repick_{which}_template.csv"
+    tmpl.to_csv(path, index=False)
+    (out_dir / "INSTRUCTIONS.md").write_text(
+        "# Independent re-pick\n\n"
+        "For each point, open `<point_id>.jpg`. The left panel is the 1926 scan with full-resolution pixel coordinates "
+        "on its grid; the right panel is today's OSM with the target feature marked by a cross. Find the same feature "
+        "on the 1926 map and write its pixel x/y (read from the grid labels, or measure in any image viewer on "
+        "`data/raw/57_D11_Mysore_1926.jpg`) into the template. Record how many seconds each point took. Do not look at "
+        "`gcp/*_points.csv` or any results before finishing.\n\n"
+        "Then run: `python -m mapalign.robustness picker --repick <filled template>`\n", encoding="utf-8")
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -308,6 +340,8 @@ def main(argv: list[str] | None = None) -> int:
     z.add_argument("--out", required=True)
     lk = sub.add_parser("lock")
     lk.add_argument("--force", action="store_true")
+    bk = sub.add_parser("blind")
+    bk.add_argument("which", choices=["fitting", "evaluation"])
     t = sub.add_parser("thumbs")
     t.add_argument("which", choices=["fitting", "evaluation"])
     args = p.parse_args(argv)
@@ -327,6 +361,8 @@ def main(argv: list[str] | None = None) -> int:
         log.info("Wrote %s", args.out)
     elif args.cmd == "lock":
         log.info("Locked evaluation points: sha256 %s", lock_evaluation_points(cfg, args.force))
+    elif args.cmd == "blind":
+        log.info("Wrote %s", blind_kit(cfg, args.which, resolve_path(f"gcp/repick_kit_{args.which}")))
     elif args.cmd == "thumbs":
         df = read_gcps(cfg["gcp"][f"{args.which}_points"])
         out = resolve_path(f"gcp/thumbnails_{args.which}.jpg")

@@ -1,0 +1,84 @@
+{
+  "purpose": "test whether LoFTR's held-out accuracy depends on OSM features near the truth points",
+  "rows": [
+    {
+      "radius_km": 1.0,
+      "matches_removed_median": 1.5,
+      "all_valid": true,
+      "n_valid": 12,
+      "median_m": 55.28,
+      "mean_m": 64.43,
+      "rmse_m": 77.44,
+      "max_m": 191.71,
+      "per_point_change_m": {
+        "E01": -0.6,
+        "E02": 2.8,
+        "E03": 0.7,
+        "E04": 2.4,
+        "E05": 0.6,
+        "E06": -0.0,
+        "E07": -0.5,
+        "E08": 1.6,
+        "E09": -0.0,
+        "E10": -0.0,
+        "E11": 0.0,
+        "E12": -4.5
+      }
+    },
+    {
+      "radius_km": 2.0,
+      "matches_removed_median": 8.5,
+      "all_valid": true,
+      "n_valid": 12,
+      "median_m": 55.38,
+      "mean_m": 65.5,
+      "rmse_m": 78.42,
+      "max_m": 191.71,
+      "per_point_change_m": {
+        "E01": -3.3,
+        "E02": 5.5,
+        "E03": 6.1,
+        "E04": 6.4,
+        "E05": -0.3,
+        "E06": -1.6,
+        "E07": 2.2,
+        "E08": 4.8,
+        "E09": -0.0,
+        "E10": -0.0,
+        "E11": 0.0,
+        "E12": -4.5
+      }
+    },
+    {
+      "radius_km": 3.0,
+      "matches_removed_median": 30.0,
+      "all_valid": true,
+      "n_valid": 12,
+      "median_m": 58.13,
+      "mean_m": 68.2,
+      "rmse_m": 80.59,
+      "max_m": 191.71,
+      "per_point_change_m": {
+        "E01": 4.4,
+        "E02": 8.9,
+        "E03": 10.7,
+        "E04": 8.5,
+        "E05": -1.1,
+        "E06": -1.0,
+        "E07": 11.0,
+        "E08": 8.4,
+        "E09": -0.3,
+        "E10": -1.4,
+        "E11": 0.0,
+        "E12": -0.4
+      }
+    }
+  ],
+  "baseline": {
+    "n_valid": 12,
+    "median_m": 53.86,
+    "mean_m": 64.23,
+    "rmse_m": 77.43,
+    "max_m": 191.71
+  }
+}

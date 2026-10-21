@@ -1,0 +1,35 @@
+{
+  "purpose": "offset of true WGS84 positions from the printed graticule read as WGS84, with bootstrap CIs; the evaluation points give a second, larger, independent sample (no method involved)",
+  "fitting_points_qc_passed": {
+    "n": 7,
+    "median_E_N_m": [
+      -83.7,
+      52.8
+    ],
+    "ci95_E_m": [
+      -101.3,
+      -43.1
+    ],
+    "ci95_N_m": [
+      -8.6,
+      153.3
+    ],
+    "magnitude_m": 99.0
+  },
+  "evaluation_points": {
+    "n": 12,
+    "median_E_N_m": [
+      -104.5,
+      104.7
+    ],
+    "ci95_E_m": [
+      -145.0,
+      -74.4
+    ],
+    "ci95_N_m": [
+      80.5,
+      138.1
+    ],
+    "magnitude_m": 147.9
+  }
+}

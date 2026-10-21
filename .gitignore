@@ -14,6 +14,11 @@ __pycache__/
 data/raw/*
 !data/raw/.gitkeep
 !data/raw/manifest.json
+# The exact inputs behind the published results are versioned (licences: data/raw/ATTRIBUTION.md)
+!data/raw/57_D11_Mysore_1926.jpg
+!data/raw/osm_57D11_overpass.json
+!data/raw/osm_57D11_landmarks.json
+!data/raw/ATTRIBUTION.md
 data/processed/*
 !data/processed/.gitkeep
 

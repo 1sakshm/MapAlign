@@ -1,0 +1,64 @@
+{
+  "purpose": "drop points whose truth is a landmark centroid (definition differs from the 1926 symbol)",
+  "excluded": [
+    "E01",
+    "E03"
+  ],
+  "n": 10,
+  "homography": {
+    "loftr": {
+      "n_valid": 10,
+      "median_m": 49.18,
+      "mean_m": 61.34,
+      "rmse_m": 76.72,
+      "max_m": 191.71
+    },
+    "manual": {
+      "n_valid": 10,
+      "median_m": 65.37,
+      "mean_m": 88.52,
+      "rmse_m": 103.58,
+      "max_m": 223.92
+    },
+    "paired": {
+      "n_pairs": 10,
+      "median_diff_m": -31.74,
+      "a_better_count": 8,
+      "b_better_count": 2,
+      "wilcoxon_statistic": 8.0,
+      "wilcoxon_p_two_sided": 0.0488,
+      "bootstrap_ci95_median_diff_m": [
+        -53.31,
+        -1.82
+      ]
+    }
+  },
+  "affine": {
+    "loftr": {
+      "n_valid": 10,
+      "median_m": 39.67,
+      "mean_m": 53.88,
+      "rmse_m": 73.96,
+      "max_m": 202.4
+    },
+    "manual": {
+      "n_valid": 10,
+      "median_m": 79.96,
+      "mean_m": 89.72,
+      "rmse_m": 104.55,
+      "max_m": 203.75
+    },
+    "paired": {
+      "n_pairs": 10,
+      "median_diff_m": -25.1,
+      "a_better_count": 9,
+      "b_better_count": 1,
+      "wilcoxon_statistic": 4.0,
+      "wilcoxon_p_two_sided": 0.0137,
+      "bootstrap_ci95_median_diff_m": [
+        -66.88,
+        -8.85
+      ]
+    }
+  }
+}

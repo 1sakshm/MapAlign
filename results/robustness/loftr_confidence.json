@@ -1,0 +1,115 @@
+{
+  "purpose": "LoFTR match-confidence threshold (frozen value 0.0 keeps all matches)",
+  "rows": [
+    {
+      "threshold": 0.0,
+      "matches": 601,
+      "valid": true,
+      "inliers": 389,
+      "n_valid": 12,
+      "median_m": 53.86,
+      "mean_m": 64.23,
+      "rmse_m": 77.43,
+      "max_m": 191.71
+    },
+    {
+      "threshold": 0.1,
+      "matches": 601,
+      "valid": true,
+      "inliers": 389,
+      "n_valid": 12,
+      "median_m": 53.86,
+      "mean_m": 64.23,
+      "rmse_m": 77.43,
+      "max_m": 191.71
+    },
+    {
+      "threshold": 0.2,
+      "matches": 601,
+      "valid": true,
+      "inliers": 389,
+      "n_valid": 12,
+      "median_m": 53.86,
+      "mean_m": 64.23,
+      "rmse_m": 77.43,
+      "max_m": 191.71
+    },
+    {
+      "threshold": 0.3,
+      "matches": 449,
+      "valid": true,
+      "inliers": 341,
+      "n_valid": 12,
+      "median_m": 37.49,
+      "mean_m": 58.38,
+      "rmse_m": 74.24,
+      "max_m": 193.54
+    },
+    {
+      "threshold": 0.4,
+      "matches": 349,
+      "valid": true,
+      "inliers": 284,
+      "n_valid": 12,
+      "median_m": 46.74,
+      "mean_m": 63.13,
+      "rmse_m": 79.66,
+      "max_m": 210.22
+    },
+    {
+      "threshold": 0.5,
+      "matches": 270,
+      "valid": true,
+      "inliers": 242,
+      "n_valid": 12,
+      "median_m": 40.62,
+      "mean_m": 63.83,
+      "rmse_m": 81.91,
+      "max_m": 216.54
+    },
+    {
+      "threshold": 0.6,
+      "matches": 207,
+      "valid": true,
+      "inliers": 195,
+      "n_valid": 12,
+      "median_m": 39.78,
+      "mean_m": 60.59,
+      "rmse_m": 78.84,
+      "max_m": 207.03
+    },
+    {
+      "threshold": 0.7,
+      "matches": 165,
+      "valid": true,
+      "inliers": 158,
+      "n_valid": 12,
+      "median_m": 45.2,
+      "mean_m": 61.84,
+      "rmse_m": 78.31,
+      "max_m": 201.14
+    },
+    {
+      "threshold": 0.8,
+      "matches": 112,
+      "valid": true,
+      "inliers": 112,
+      "n_valid": 12,
+      "median_m": 64.21,
+      "mean_m": 80.86,
+      "rmse_m": 98.04,
+      "max_m": 228.99
+    },
+    {
+      "threshold": 0.9,
+      "matches": 66,
+      "valid": true,
+      "inliers": 66,
+      "n_valid": 12,
+      "median_m": 82.6,
+      "mean_m": 94.48,
+      "rmse_m": 111.84,
+      "max_m": 242.72
+    }
+  ]
+}

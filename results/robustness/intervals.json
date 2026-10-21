@@ -1,0 +1,96 @@
+{
+  "purpose": "percentile bootstrap 95% CIs over evaluation points (resampled with replacement)",
+  "n_boot": 20000,
+  "homography/loftr": {
+    "median_m": {
+      "estimate": 53.86,
+      "ci95": [
+        37.83,
+        70.58
+      ]
+    },
+    "mean_m": {
+      "estimate": 64.23,
+      "ci95": [
+        44.2,
+        91.38
+      ]
+    },
+    "rmse_m": {
+      "estimate": 77.43,
+      "ci95": [
+        46.76,
+        109.93
+      ]
+    }
+  },
+  "homography/manual": {
+    "median_m": {
+      "estimate": 73.94,
+      "ci95": [
+        51.67,
+        102.27
+      ]
+    },
+    "mean_m": {
+      "estimate": 89.61,
+      "ci95": [
+        65.35,
+        120.73
+      ]
+    },
+    "rmse_m": {
+      "estimate": 102.37,
+      "ci95": [
+        68.85,
+        137.63
+      ]
+    }
+  },
+  "affine/loftr": {
+    "median_m": {
+      "estimate": 42.36,
+      "ci95": [
+        34.26,
+        61.9
+      ]
+    },
+    "mean_m": {
+      "estimate": 59.14,
+      "ci95": [
+        37.09,
+        90.23
+      ]
+    },
+    "rmse_m": {
+      "estimate": 76.34,
+      "ci95": [
+        39.49,
+        113.22
+      ]
+    }
+  },
+  "affine/manual": {
+    "median_m": {
+      "estimate": 87.75,
+      "ci95": [
+        42.33,
+        121.84
+      ]
+    },
+    "mean_m": {
+      "estimate": 92.84,
+      "ci95": [
+        65.91,
+        122.59
+      ]
+    },
+    "rmse_m": {
+      "estimate": 105.49,
+      "ci95": [
+        74.69,
+        135.0
+      ]
+    }
+  }
+}

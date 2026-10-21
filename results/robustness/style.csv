@@ -1,0 +1,8 @@
+variant,matches,valid,inliers,n_valid,median_m,mean_m,rmse_m,max_m
+frozen,601,True,389,12,53.86,64.23,77.43,191.71
+thin_lines_x0.5,564,True,369,12,49.67,61.85,75.6,191.32
+thick_lines_x2,339,True,185,12,54.28,64.79,78.75,189.89
+monochrome,285,True,121,12,46.91,62.82,78.94,201.86
+no_water_fill,403,True,204,12,51.21,65.92,77.07,178.63
+no_minor_roads,389,True,174,12,60.48,73.61,91.86,236.42
+white_background,494,True,325,12,45.06,61.4,75.2,190.77

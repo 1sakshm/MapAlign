@@ -1,0 +1,112 @@
+{
+  "purpose": "sensitivity of LoFTR to the OSM rendering style (frozen LoFTR/RANSAC settings, seed 42, CPU)",
+  "variants": {
+    "frozen": {},
+    "thin_lines_x0.5": {
+      "width_scale": 0.5
+    },
+    "thick_lines_x2": {
+      "width_scale": 2.0
+    },
+    "monochrome": {
+      "line_styles": "[(('waterway', {'river'}), (40, 40, 40), 25.0), (('waterway', {'canal'}), (40, 40, 40), 8.0), (('waterway', {'drain', 'ditch', 'stream'}), (40, 40, 40), 3.0), (('highway', {'residential', 'living_street', 'track', 'service'}), (40, 40, 40), 4.0), (('highway', {'tertiary', 'unclassified', 'tertiary_link', 'road'}), (40, 40, 40), 7.0), (('highway', {'primary', 'primary_link', 'secondary_link', 'secondary'}), (40, 40, 40), 11.0), (('highway', {'motorway', 'trunk_link', 'motorway_link', 'trunk'}), (40, 40, 40), 14.0), (('railway', {'rail'}), (40, 40, 40), 7.0)]",
+      "water_colour": [
+        150,
+        150,
+        150
+      ]
+    },
+    "no_water_fill": {
+      "water": false
+    },
+    "no_minor_roads": {
+      "line_styles": "[(('waterway', {'river'}), (190, 150, 90), 25.0), (('waterway', {'canal'}), (190, 150, 90), 8.0), (('waterway', {'drain', 'ditch', 'stream'}), (190, 150, 90), 3.0), (('highway', {'tertiary', 'unclassified', 'tertiary_link', 'road'}), (80, 80, 200), 7.0), (('highway', {'primary', 'primary_link', 'secondary_link', 'secondary'}), (40, 40, 190), 11.0), (('highway', {'motorway', 'trunk_link', 'motorway_link', 'trunk'}), (30, 30, 170), 14.0), (('railway', {'rail'}), (20, 20, 20), 7.0)]"
+    },
+    "white_background": {
+      "background": [
+        255,
+        255,
+        255
+      ]
+    }
+  },
+  "rows": [
+    {
+      "variant": "frozen",
+      "matches": 601,
+      "valid": true,
+      "inliers": 389,
+      "n_valid": 12,
+      "median_m": 53.86,
+      "mean_m": 64.23,
+      "rmse_m": 77.43,
+      "max_m": 191.71
+    },
+    {
+      "variant": "thin_lines_x0.5",
+      "matches": 564,
+      "valid": true,
+      "inliers": 369,
+      "n_valid": 12,
+      "median_m": 49.67,
+      "mean_m": 61.85,
+      "rmse_m": 75.6,
+      "max_m": 191.32
+    },
+    {
+      "variant": "thick_lines_x2",
+      "matches": 339,
+      "valid": true,
+      "inliers": 185,
+      "n_valid": 12,
+      "median_m": 54.28,
+      "mean_m": 64.79,
+      "rmse_m": 78.75,
+      "max_m": 189.89
+    },
+    {
+      "variant": "monochrome",
+      "matches": 285,
+      "valid": true,
+      "inliers": 121,
+      "n_valid": 12,
+      "median_m": 46.91,
+      "mean_m": 62.82,
+      "rmse_m": 78.94,
+      "max_m": 201.86
+    },
+    {
+      "variant": "no_water_fill",
+      "matches": 403,
+      "valid": true,
+      "inliers": 204,
+      "n_valid": 12,
+      "median_m": 51.21,
+      "mean_m": 65.92,
+      "rmse_m": 77.07,
+      "max_m": 178.63
+    },
+    {
+      "variant": "no_minor_roads",
+      "matches": 389,
+      "valid": true,
+      "inliers": 174,
+      "n_valid": 12,
+      "median_m": 60.48,
+      "mean_m": 73.61,
+      "rmse_m": 91.86,
+      "max_m": 236.42
+    },
+    {
+      "variant": "white_background",
+      "matches": 494,
+      "valid": true,
+      "inliers": 325,
+      "n_valid": 12,
+      "median_m": 45.06,
+      "mean_m": 61.4,
+      "rmse_m": 75.2,
+      "max_m": 190.77
+    }
+  ]
+}

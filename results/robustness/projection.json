@@ -1,0 +1,23 @@
+{
+  "purpose": "projection mismatch between a polyconic sheet and UTM 43N, as residual after best-fit transforms",
+  "polyconic_everest_sheet_centre": {
+    "homography": {
+      "max_m": 0.457,
+      "rms_m": 0.164
+    },
+    "affine": {
+      "max_m": 0.822,
+      "rms_m": 0.346
+    }
+  },
+  "polyconic_everest_lon0_76": {
+    "homography": {
+      "max_m": 0.209,
+      "rms_m": 0.085
+    },
+    "affine": {
+      "max_m": 0.516,
+      "rms_m": 0.236
+    }
+  }
+}
