@@ -27,3 +27,6 @@ gcp/picking/
 
 # GPU-check figures duplicate the CPU ones; the JSON, run record and correspondences are committed
 results/gpu/*.png
+
+# Cloudflare Wrangler local state
+.wrangler/

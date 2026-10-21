@@ -12,6 +12,8 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
+**Interactive report:** https://mysore-1926.pages.dev
+
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
 > (Claude) from zoomed image crops, and were then **reviewed by a human (Saksham Sharma, 2026-10-19), who made no
 > changes**. Only **12** held-out points could be established (the target was 20), and none lie in the southern fifth
@@ -73,6 +75,7 @@ tests/                    pytest suite (53 tests)
 notebooks/                01_matching_baselines.ipynb (exploration only; it reads saved results)
 results/                  metrics, per-point errors, run records, figures (GeoTIFFs are git-ignored)
 paper/writeup.md          technical report
+site/                     static report website (deployed to Cloudflare Pages)
 ```
 
 ## Methods compared
@@ -96,7 +99,7 @@ line, a convex mapped outline, and plausible bounds.
 With [uv](https://docs.astral.sh/uv/):
 
 ```powershell
-git clone <repo-url> MapAlign; cd MapAlign
+git clone https://github.com/1sakshm/MapAlign.git MapAlign; cd MapAlign
 uv venv .venv --python 3.12
 uv pip install --python .venv\Scripts\python.exe torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
 uv pip install --python .venv\Scripts\python.exe -r requirements.txt
@@ -112,7 +115,7 @@ it needs about 5 GB of disk. All reported results were produced on CPU.
 ### Google Colab
 
 ```python
-!git clone <repo-url> MapAlign
+!git clone https://github.com/1sakshm/MapAlign.git MapAlign
 %cd MapAlign
 !pip install -q -e ".[dev]"        # keeps Colab's CUDA torch
 !python -m mapalign.run_all
@@ -190,6 +193,11 @@ which re-runs the QC and stores the new hash. Then run `mapalign.run_all`. Recor
 
 CSV columns (units in the names): `point_id, historical_x_px, historical_y_px, reference_x_px, reference_y_px,
 true_easting_m, true_northing_m, crs, feature_type, truth_source, confidence, valid_for_evaluation, exclusion_reason, notes`.
+
+## Report website
+
+`site/` holds the static website published at https://mysore-1926.pages.dev, built from the results in `results/`.
+To redeploy it: `npx wrangler@4 pages deploy site --project-name mysore-1926 --branch main`.
 
 ## Coordinate conventions
 
