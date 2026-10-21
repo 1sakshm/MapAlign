@@ -439,6 +439,73 @@ if (RB / "synthetic.json").is_file():
     ]
     (TAB / "robustness.tex").write_text(chr(10).join(f"{a} & {b} " + chr(92) * 2 for a, b in rows) + chr(10), encoding="utf-8")
 
+# ------------------------------------------------------------------ Fig 14 + Table: method extensions (results/extensions, post hoc)
+EX = R / "extensions"
+if (EX / "aliked_lightglue.json").is_file() and (EX / "nonprojective.json").is_file():
+    lgd = {f: read_json(EX / f"{f}_lightglue.json") for f in ("aliked", "disk")}
+    npj = read_json(EX / "nonprojective.json")
+    lsw = read_json(R / "exploration" / "loftr_input_size_sweep.json")["sizes"]
+    fig, axes = plt.subplots(1, 3, figsize=(COL2, 2.1), gridspec_kw={"width_ratios": [1, 1.25, 1.25], "wspace": 0.45})
+    ax = axes[0]
+    ax.plot([r["max_side_px"] for r in lsw if "within_1km_of_prior" in r],
+            [r["within_1km_of_prior"] for r in lsw if "within_1km_of_prior" in r], "o-", color=BLUE, ms=3, label="LoFTR")
+    for f, col, mk in (("aliked", BROWN, "s-"), ("disk", GREY, "^-")):
+        sw = [r for r in lgd[f]["sweep"] if "within_1km_of_prior" in r]
+        ax.plot([r["max_side_px"] for r in sw], [r["within_1km_of_prior"] for r in sw], mk, color=col, ms=3,
+                label=f"{f.upper()}+LightGlue")
+    ax.set_xlabel("input max side (px)")
+    ax.set_ylabel("matches within 1 km of prior")
+    ax.set_ylim(-25, 830)
+    ax.legend(frameon=False, loc="upper right", bbox_to_anchor=(1.06, 1.02), handlelength=1.2, fontsize=5.5)
+    ax.set_title("(a) development rule", loc="left")
+    ax = axes[1]
+    ids = sorted(lgd["aliked"]["per_point_m"])
+    xi = np.arange(len(ids))
+    el = errs("homography", "loftr").error_m.reindex(ids)
+    em = errs("homography", "manual").error_m.reindex(ids)
+    ea = pd.Series(lgd["aliked"]["per_point_m"]).reindex(ids)
+    for k, (s, col, lab) in enumerate(((el, BLUE, "LoFTR"), (ea, BROWN, "ALIKED+LG"), (em, RED, "manual"))):
+        ax.bar(xi + (k - 1) * 0.27, s.to_numpy(), 0.27, color=col, label=lab)
+    ax.set_xticks(xi, [i[1:] for i in ids], fontsize=6)
+    ax.set_xlabel("evaluation point E..")
+    ax.set_ylabel("held-out error (m)")
+    ax.legend(frameon=False, fontsize=6, ncol=3, loc="upper left")
+    ax.set_ylim(0, 260)
+    ax.set_title("(b) per-point error", loc="left")
+    ax = axes[2]
+    rows_np = npj["loftr"]["rows"]
+    lab = {"affine": "affine", "homography": "homog.", "poly:2": "poly 2", "poly:3": "poly 3"}
+    for r in rows_np:
+        tps = r["model"].startswith("tps")
+        ax.scatter(r["cv_rmse_m"], r["rmse_m"], s=14, color=GREY if tps else BLUE, zorder=3)
+        if r["model"] in ("poly:3", "tps:0", "tps:0.01", "tps:0.1"):
+            ax.annotate(lab.get(r["model"]) or "TPS " + chr(955) + "=" + r["model"].split(":")[1], (r["cv_rmse_m"], r["rmse_m"]),
+                        xytext=(4, -2), textcoords="offset points", fontsize=5.8)
+    lo = [r for r in rows_np if r["model"] in ("affine", "homography", "poly:2", "tps:1", "tps:10")]
+    ax.annotate("affine, homography," + chr(10) + "poly 2, TPS " + chr(955) + "=1, 10", (min(r["cv_rmse_m"] for r in lo), min(r["rmse_m"] for r in lo)),
+                xytext=(14, 22), textcoords="offset points", fontsize=5.8, arrowprops=dict(arrowstyle="-", lw=0.5, color=GREY))
+    ax.set_xlabel("spatial-block CV RMSE on matches (m)")
+    ax.set_ylabel("held-out RMSE (m)")
+    ax.set_title("(c) LoFTR: non-projective models", loc="left")
+    save(fig, "fig14_extensions")
+
+    a = lgd["aliked"]
+    nl, nm = npj["loftr"], npj["manual"]
+    sel_l = next(r for r in nl["rows"] if r["model"] == nl["selected_model"])
+    sel_m = next(r for r in nm["rows"] if r["model"] == nm["selected_model"])
+    best_tps = min((r for r in nl["rows"] if r["model"].startswith("tps")), key=lambda r: r["cv_rmse_m"])
+    rows = [
+        ("DISK + LightGlue", f"no valid transform at any input size (0--2 matches); on prior-aligned tiles {100 * lgd['disk']['aligned_tile_upper_bound']['correct_fraction']:.0f}\\% correct (chance {100 * lgd['disk']['aligned_tile_upper_bound']['chance_fraction']:.1f}\\%)"),
+        ("ALIKED + LightGlue", f"{a['estimation']['inliers']} inliers of {a['matching']['matches']} at {a['selected_max_side_px']} px; median {a['heldout']['median_m']:.1f}, RMSE {a['heldout']['rmse_m']:.1f}"),
+        ("ALIKED + LightGlue vs LoFTR", f"LoFTR closer at {a['paired_vs_loftr']['a_better_count']} of 12, $p$={a['paired_vs_loftr']['wilcoxon_p_two_sided']:.2f}"),
+        ("Non-projective, LoFTR matches", f"CV selects {sel_l['model']} (RMSE {sel_l['rmse_m']:.1f}); best TPS by CV {best_tps['model'].replace('tps:', '$' + chr(92) + 'lambda$=')} gives {best_tps['rmse_m']:.1f}; poly 3 gives {next(r for r in nl['rows'] if r['model'] == 'poly:3')['rmse_m']:.1f}"),
+        ("Non-projective, 7 manual points", f"LOO selects {sel_m['model']} (RMSE {sel_m['rmse_m']:.1f}); TPS RMSE {min(r['rmse_m'] for r in nm['rows'] if r['model'].startswith('tps')):.1f}--{max(r['rmse_m'] for r in nm['rows'] if r['model'].startswith('tps')):.1f}"),
+    ]
+    (TAB / "extensions.tex").write_text(chr(10).join(f"{x} & {y} " + chr(92) * 2 for x, y in rows) + chr(10), encoding="utf-8")
+    NUM["extensions"] = {"aliked_lightglue": {k: a[k] for k in ("heldout", "paired_vs_loftr", "paired_vs_manual", "selected_max_side_px")},
+                         "disk_lightglue_tile": lgd["disk"]["aligned_tile_upper_bound"],
+                         "nonprojective_selected": {"loftr": nl["selected_model"], "manual": nm["selected_model"]}}
+
 # ------------------------------------------------------------------ numbers
 nmas_m = 63360 * 0.0254 / 50
 for m in ("loftr", "manual"):

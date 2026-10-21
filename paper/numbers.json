@@ -100,6 +100,55 @@
    }
   }
  },
+ "extensions": {
+  "aliked_lightglue": {
+   "heldout": {
+    "n_valid": 12,
+    "median_m": 54.57,
+    "mean_m": 85.82,
+    "rmse_m": 104.91,
+    "max_m": 201.37
+   },
+   "paired_vs_loftr": {
+    "n_pairs": 12,
+    "median_diff_m": -11.95,
+    "a_better_count": 8,
+    "b_better_count": 4,
+    "wilcoxon_statistic": 20.0,
+    "wilcoxon_p_two_sided": 0.1514,
+    "bootstrap_ci95_median_diff_m": [
+     -45.01,
+     6.53
+    ]
+   },
+   "paired_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": 17.35,
+    "a_better_count": 3,
+    "b_better_count": 9,
+    "wilcoxon_statistic": 30.0,
+    "wilcoxon_p_two_sided": 0.5186,
+    "bootstrap_ci95_median_diff_m": [
+     -8.6,
+     24.1
+    ]
+   },
+   "selected_max_side_px": 1024
+  },
+  "disk_lightglue_tile": {
+   "tiles": 25,
+   "tile_px": 512,
+   "radius_px": 60.0,
+   "matches": 602,
+   "correct": 320,
+   "correct_fraction": 0.5316,
+   "chance_fraction": 0.0431
+  },
+  "nonprojective_selected": {
+   "loftr": "affine",
+   "manual": "affine"
+  }
+ },
  "bands": {
   "homography/loftr": {
    "within_50m": 5,

@@ -1,0 +1,387 @@
+{
+  "purpose": "non-projective transform models (post hoc, secondary)",
+  "selection": {
+    "loftr": "lowest 4x4 spatial-block CV RMSE on the inlier correspondences",
+    "manual": "lowest leave-one-out RMSE on the 7 fitting points"
+  },
+  "loftr": {
+    "n_correspondences": 389,
+    "working_resolution_m": 10.001474056603772,
+    "note": "inliers were selected by the homography MAGSAC++ run (3 px at ~45 m/px), so a non-projective model can only redistribute residuals within that tolerance",
+    "rows": [
+      {
+        "model": "affine",
+        "cv_rmse_m": 66.94,
+        "fit_rmse_m": 64.02,
+        "n_valid": 12,
+        "median_m": 50.82,
+        "mean_m": 64.6,
+        "rmse_m": 78.5,
+        "max_m": 196.64
+      },
+      {
+        "model": "homography",
+        "cv_rmse_m": 68.08,
+        "fit_rmse_m": 63.99,
+        "n_valid": 12,
+        "median_m": 53.77,
+        "mean_m": 66.13,
+        "rmse_m": 79.44,
+        "max_m": 195.14
+      },
+      {
+        "model": "poly:2",
+        "cv_rmse_m": 76.04,
+        "fit_rmse_m": 63.86,
+        "n_valid": 12,
+        "median_m": 57.84,
+        "mean_m": 66.2,
+        "rmse_m": 82.64,
+        "max_m": 217.14
+      },
+      {
+        "model": "poly:3",
+        "cv_rmse_m": 97.35,
+        "fit_rmse_m": 63.51,
+        "n_valid": 12,
+        "median_m": 59.73,
+        "mean_m": 122.99,
+        "rmse_m": 170.56,
+        "max_m": 362.17
+      },
+      {
+        "model": "tps:0",
+        "cv_rmse_m": 122.87,
+        "fit_rmse_m": 0.0,
+        "n_valid": 12,
+        "median_m": 108.2,
+        "mean_m": 134.66,
+        "rmse_m": 160.84,
+        "max_m": 335.5
+      },
+      {
+        "model": "tps:0.0001",
+        "cv_rmse_m": 121.84,
+        "fit_rmse_m": 1.35,
+        "n_valid": 12,
+        "median_m": 106.75,
+        "mean_m": 132.64,
+        "rmse_m": 158.9,
+        "max_m": 334.28
+      },
+      {
+        "model": "tps:0.001",
+        "cv_rmse_m": 115.1,
+        "fit_rmse_m": 9.62,
+        "n_valid": 12,
+        "median_m": 96.74,
+        "mean_m": 118.83,
+        "rmse_m": 146.12,
+        "max_m": 323.75
+      },
+      {
+        "model": "tps:0.01",
+        "cv_rmse_m": 95.88,
+        "fit_rmse_m": 28.89,
+        "n_valid": 12,
+        "median_m": 93.54,
+        "mean_m": 95.01,
+        "rmse_m": 114.78,
+        "max_m": 268.17
+      },
+      {
+        "model": "tps:0.1",
+        "cv_rmse_m": 76.22,
+        "fit_rmse_m": 44.99,
+        "n_valid": 12,
+        "median_m": 55.02,
+        "mean_m": 72.6,
+        "rmse_m": 89.75,
+        "max_m": 163.7
+      },
+      {
+        "model": "tps:1",
+        "cv_rmse_m": 71.39,
+        "fit_rmse_m": 55.42,
+        "n_valid": 12,
+        "median_m": 52.44,
+        "mean_m": 66.75,
+        "rmse_m": 82.45,
+        "max_m": 172.33
+      },
+      {
+        "model": "tps:10",
+        "cv_rmse_m": 69.97,
+        "fit_rmse_m": 61.38,
+        "n_valid": 12,
+        "median_m": 53.61,
+        "mean_m": 66.78,
+        "rmse_m": 81.2,
+        "max_m": 194.92
+      }
+    ],
+    "selected_model": "affine",
+    "selected_vs_homography": {
+      "n_pairs": 12,
+      "median_diff_m": 0.29,
+      "a_better_count": 6,
+      "b_better_count": 6,
+      "wilcoxon_statistic": 36.0,
+      "wilcoxon_p_two_sided": 0.8501,
+      "bootstrap_ci95_median_diff_m": [
+        -1.55,
+        2.02
+      ]
+    },
+    "per_point_m": {
+      "affine": {
+        "E01": 62.5,
+        "E02": 51.2,
+        "E03": 101.0,
+        "E04": 55.8,
+        "E05": 34.3,
+        "E06": 27.4,
+        "E07": 42.3,
+        "E08": 27.2,
+        "E09": 50.5,
+        "E10": 48.0,
+        "E11": 196.6,
+        "E12": 78.3
+      },
+      "homography": {
+        "E01": 60.9,
+        "E02": 52.0,
+        "E03": 99.0,
+        "E04": 55.6,
+        "E05": 33.1,
+        "E06": 30.5,
+        "E07": 43.3,
+        "E08": 25.5,
+        "E09": 51.4,
+        "E10": 60.6,
+        "E11": 195.1,
+        "E12": 86.6
+      },
+      "poly:2": {
+        "E01": 59.0,
+        "E02": 49.2,
+        "E03": 97.2,
+        "E04": 56.7,
+        "E05": 33.4,
+        "E06": 29.0,
+        "E07": 38.8,
+        "E08": 23.2,
+        "E09": 59.7,
+        "E10": 59.1,
+        "E11": 217.1,
+        "E12": 72.0
+      },
+      "poly:3": {
+        "E01": 56.7,
+        "E02": 45.5,
+        "E03": 97.8,
+        "E04": 62.8,
+        "E05": 31.0,
+        "E06": 24.2,
+        "E07": 22.1,
+        "E08": 23.0,
+        "E09": 289.5,
+        "E10": 287.3,
+        "E11": 173.9,
+        "E12": 362.2
+      },
+      "tps:0": {
+        "E01": 86.3,
+        "E02": 100.8,
+        "E03": 141.5,
+        "E04": 25.4,
+        "E05": 76.1,
+        "E06": 201.5,
+        "E07": 115.6,
+        "E08": 42.4,
+        "E09": 204.0,
+        "E10": 230.8,
+        "E11": 56.0,
+        "E12": 335.5
+      },
+      "tps:0.0001": {
+        "E01": 86.2,
+        "E02": 99.5,
+        "E03": 141.1,
+        "E04": 24.9,
+        "E05": 75.2,
+        "E06": 197.9,
+        "E07": 114.0,
+        "E08": 41.0,
+        "E09": 200.0,
+        "E10": 226.5,
+        "E11": 51.1,
+        "E12": 334.3
+      },
+      "tps:0.001": {
+        "E01": 86.0,
+        "E02": 90.4,
+        "E03": 138.0,
+        "E04": 21.9,
+        "E05": 69.0,
+        "E06": 174.5,
+        "E07": 103.1,
+        "E08": 32.7,
+        "E09": 173.5,
+        "E10": 197.6,
+        "E11": 15.5,
+        "E12": 323.8
+      },
+      "tps:0.01": {
+        "E01": 82.2,
+        "E02": 60.0,
+        "E03": 122.0,
+        "E04": 15.3,
+        "E05": 45.3,
+        "E06": 105.8,
+        "E07": 60.1,
+        "E08": 22.2,
+        "E09": 121.7,
+        "E10": 132.4,
+        "E11": 104.8,
+        "E12": 268.2
+      },
+      "tps:0.1": {
+        "E01": 67.4,
+        "E02": 42.6,
+        "E03": 98.8,
+        "E04": 7.3,
+        "E05": 24.2,
+        "E06": 41.3,
+        "E07": 28.6,
+        "E08": 15.5,
+        "E09": 108.9,
+        "E10": 111.6,
+        "E11": 161.4,
+        "E12": 163.7
+      },
+      "tps:1": {
+        "E01": 59.6,
+        "E02": 45.3,
+        "E03": 85.6,
+        "E04": 25.4,
+        "E05": 33.9,
+        "E06": 15.8,
+        "E07": 18.1,
+        "E08": 15.9,
+        "E09": 103.9,
+        "E10": 103.2,
+        "E11": 172.3,
+        "E12": 122.0
+      },
+      "tps:10": {
+        "E01": 59.8,
+        "E02": 46.0,
+        "E03": 91.8,
+        "E04": 47.4,
+        "E05": 33.3,
+        "E06": 22.0,
+        "E07": 29.2,
+        "E08": 22.6,
+        "E09": 78.7,
+        "E10": 78.2,
+        "E11": 194.9,
+        "E12": 97.5
+      }
+    }
+  },
+  "manual": {
+    "n_points": 7,
+    "note": "poly:2 has 6 coefficients per axis, so with 7 points each leave-one-out fit is exactly determined; it is reported for completeness, not as a credible model",
+    "rows": [
+      {
+        "model": "affine",
+        "loo_rmse_m": 111.29,
+        "n_valid": 12,
+        "median_m": 87.75,
+        "mean_m": 92.84,
+        "rmse_m": 105.49,
+        "max_m": 203.75
+      },
+      {
+        "model": "homography",
+        "loo_rmse_m": 146.88,
+        "n_valid": 12,
+        "median_m": 73.94,
+        "mean_m": 89.61,
+        "rmse_m": 102.37,
+        "max_m": 223.92
+      },
+      {
+        "model": "poly:2",
+        "loo_rmse_m": 495.89,
+        "n_valid": 12,
+        "median_m": 94.08,
+        "mean_m": 100.82,
+        "rmse_m": 113.46,
+        "max_m": 208.14
+      },
+      {
+        "model": "tps:0",
+        "loo_rmse_m": 134.67,
+        "n_valid": 12,
+        "median_m": 71.48,
+        "mean_m": 82.58,
+        "rmse_m": 95.45,
+        "max_m": 198.79
+      },
+      {
+        "model": "tps:0.01",
+        "loo_rmse_m": 134.27,
+        "n_valid": 12,
+        "median_m": 71.42,
+        "mean_m": 82.67,
+        "rmse_m": 95.5,
+        "max_m": 198.9
+      },
+      {
+        "model": "tps:0.1",
+        "loo_rmse_m": 131.22,
+        "n_valid": 12,
+        "median_m": 70.78,
+        "mean_m": 83.7,
+        "rmse_m": 95.93,
+        "max_m": 199.69
+      },
+      {
+        "model": "tps:1",
+        "loo_rmse_m": 120.52,
+        "n_valid": 12,
+        "median_m": 76.87,
+        "mean_m": 88.32,
+        "rmse_m": 98.31,
+        "max_m": 201.96
+      }
+    ],
+    "selected_model": "affine",
+    "selected_vs_homography": {
+      "n_pairs": 12,
+      "median_diff_m": -7.1,
+      "a_better_count": 7,
+      "b_better_count": 5,
+      "wilcoxon_statistic": 30.0,
+      "wilcoxon_p_two_sided": 0.5186,
+      "bootstrap_ci95_median_diff_m": [
+        -18.32,
+        10.71
+      ]
+    }
+  },
+  "selected_loftr_vs_manual_homography": {
+    "n_pairs": 12,
+    "median_diff_m": 29.81,
+    "a_better_count": 3,
+    "b_better_count": 9,
+    "wilcoxon_statistic": 11.0,
+    "wilcoxon_p_two_sided": 0.0269,
+    "bootstrap_ci95_median_diff_m": [
+      0.94,
+      43.02
+    ]
+  }
+}

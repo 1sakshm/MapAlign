@@ -1,0 +1,102 @@
+{
+  "purpose": "fourth method (post hoc, secondary): DISK + LightGlue matches into the frozen MAGSAC++ pipeline",
+  "selection_rule": "input size with the most matches within 1 km of the graticule prior (the Phase 4 LoFTR rule)",
+  "sweep": [
+    {
+      "max_side_px": 768,
+      "matches": 0,
+      "within_1km_of_prior": 0,
+      "effective_resolution_m": 44.9,
+      "inference_s": 11.7
+    },
+    {
+      "max_side_px": 1024,
+      "matches": 2,
+      "within_1km_of_prior": 0,
+      "effective_resolution_m": 33.7,
+      "inference_s": 14.43
+    },
+    {
+      "max_side_px": 1536,
+      "matches": 2,
+      "within_1km_of_prior": 0,
+      "effective_resolution_m": 22.5,
+      "inference_s": 21.98
+    },
+    {
+      "max_side_px": 2048,
+      "matches": 0,
+      "within_1km_of_prior": 0,
+      "effective_resolution_m": 16.8,
+      "inference_s": 35.41
+    }
+  ],
+  "selected_max_side_px": 768,
+  "matching": {
+    "device": "cpu",
+    "common_scale": 0.222609,
+    "features": "disk",
+    "max_side_px": 768,
+    "n_keypoints": 4096,
+    "filter_threshold": 0.1,
+    "input_px": [
+      [
+        600,
+        616
+      ],
+      [
+        752,
+        768
+      ]
+    ],
+    "matches": 0,
+    "model_load_s": 1.98,
+    "inference_s": 11.7,
+    "weights_sha256": {
+      "aliked-n16.pth": "5be8704840ed662d9d8c561bf7279c222092674e7eb05fd0feab94899e9d82f2",
+      "aliked_lightglue_v0-1_arxiv-pth": "d975e965b105311a6143194852297dff4f02aea5cc2e10cecfed966ca0e22503",
+      "depth-save.pth": "9c2ee4ded238892dfa51569941372601e35e4a74aa6f84ea80053d2ab1c07abe",
+      "disk_lightglue_v0-1_arxiv-pth": "b5b21d47ea24f2c5e501aec9c91b9716e4c8c3429a4dc1e615c133c4c9378335"
+    }
+  },
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 0,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 13.476544075037397,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 0.222609,
+    "effective_rng": "OpenCV internal fixed state (cv2.setRNGSeed has no effect on this call)",
+    "valid": false,
+    "problems": [
+      "only 0 correspondences"
+    ],
+    "inliers": 0,
+    "inlier_ratio": 0.0
+  },
+  "estimation_s": 0.003,
+  "prior_consistency": {
+    "radius_m": 1000.0,
+    "matches_within": 0,
+    "matches": 0,
+    "inliers_within": 0,
+    "inliers": 0
+  },
+  "aligned_tile_upper_bound": {
+    "tiles": 25,
+    "tile_px": 512,
+    "radius_px": 60.0,
+    "matches": 602,
+    "correct": 320,
+    "correct_fraction": 0.5316,
+    "chance_fraction": 0.0431
+  },
+  "status": "failed",
+  "heldout": {
+    "n_valid": 0,
+    "note": "no valid transform, scored as failed like SIFT"
+  }
+}

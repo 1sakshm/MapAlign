@@ -17,7 +17,8 @@ Usage:
     python -m mapalign.robustness scan           # neatline straightness, scale anisotropy, JPEG quality
     python -m mapalign.robustness datum          # bootstrap CI of the graticule offset, two point sets
     python -m mapalign.robustness timing         # repeated runtime measurements
-    python -m mapalign.robustness picker --repick <csv>   # independent re-pick agreement
+    python -m mapalign.robustness picker --repick <csv> --fitting <csv>   # independent human re-pick
+    python -m mapalign.robustness extra_points --points <csv>             # supplementary points in empty cells
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ import copy
 import logging
 import sys
 import time
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -498,31 +500,114 @@ def timing(c: Ctx, repeats=5):
     return out
 
 
-def picker(c: Ctx, repick_path: str):
-    """Agreement between the original picks and an independent re-pick, and the effect on the evaluation.
+def _refit_manual(c: Ctx, fit_df: pd.DataFrame):
+    """Method C refitted on a set of fitting picks with the frozen QC rule (|z| > 3 robust sigma in E or N)."""
+    from mapalign.gcp import graticule_offset_z
+    from mapalign.georeference import QC_Z, fit_gcp_transform
 
-    Truth (OSM coordinates) is unchanged; only the historical pixel of each evaluation point is replaced by the
-    second picker's. Both methods are re-scored with the frozen transforms.
+    z = graticule_offset_z(c.cfg, fit_df)
+    keep = ~np.any(np.abs(z) > QC_Z, axis=1)
+    used = fit_df[keep]
+    src = used[["historical_x_px", "historical_y_px"]].to_numpy(float)
+    dst = map_to_ref_px(used[["true_easting_m", "true_northing_m"]].to_numpy(float), c.gt)
+    return fit_gcp_transform(src, dst, "homography"), used.point_id.tolist(), fit_df.point_id[~keep].tolist()
+
+
+def _read_picks(path) -> pd.DataFrame:
+    rp = pd.read_csv(path, dtype={"point_id": str})
+    return rp.dropna(subset=["historical_x_px", "historical_y_px"])
+
+
+def picker(c: Ctx, repick_path: str | None = None, fitting_path: str | None = None):
+    """Agreement between the original (AI-proposed, human-reviewed) picks and an independent human re-pick, and the
+    effect on the evaluation.
+
+    repick_path  (evaluation points): truth is unchanged; only the historical pixel of each evaluation point is
+                 replaced by the second picker's, and the frozen transforms are re-scored.
+    fitting_path (fitting points): Method C is refitted on the human picks with the frozen QC rule; its human
+                 interaction time is the sum of the recorded seconds. Scored on the original and, if given, the
+                 re-picked evaluation pixels.
     """
-    rp = pd.read_csv(repick_path, dtype={"point_id": str}).dropna(subset=["historical_x_px", "historical_y_px"])
-    m = c.ev.set_index("point_id").join(rp.set_index("point_id")[["historical_x_px", "historical_y_px", "seconds_spent"]],
-                                        rsuffix="_2", how="inner")
-    d = np.hypot(m.historical_x_px - m.historical_x_px_2, m.historical_y_px - m.historical_y_px_2).to_numpy()
-    out = {"purpose": "inter-picker agreement and its effect on held-out errors", "n_points": int(len(m)),
-           "picker_difference_px": {"median": round(float(np.median(d)), 1), "max": round(float(d.max()), 1)},
-           "picker_difference_m_nominal": {"median": round(float(np.median(d)) * 5.36, 1), "max": round(float(d.max()) * 5.36, 1)},
-           "per_point_px": dict(zip(m.index, np.round(d, 1).tolist())),
-           "human_seconds_total": float(pd.to_numeric(m.seconds_spent, errors="coerce").sum())}
-    px2 = m[["historical_x_px_2", "historical_y_px_2"]].to_numpy(float)
-    tr = m[["true_easting_m", "true_northing_m"]].to_numpy(float)
-    for meth in ("loftr", "manual"):
-        r_ = c.runs[meth]
-        H = np.array(r_["H_full"])
-        e2 = positional_errors(tr, predict(H, c.gt, px2))
-        e1 = c.errors("homography", meth)[[c.ids.index(i) for i in m.index]]
-        out[meth] = {"original_picks": _summ(e1), "second_picker": _summ(e2)}
+    out = {"purpose": "inter-picker agreement and its effect on held-out errors"}
+    ev2 = None
+    loftr_H, manual_H = np.array(c.runs["loftr"]["H_full"]), np.array(c.runs["manual"]["H_full"])
+    if repick_path:
+        rp = _read_picks(repick_path)
+        m = c.ev.set_index("point_id").join(rp.set_index("point_id")[["historical_x_px", "historical_y_px", "seconds_spent"]],
+                                            rsuffix="_2", how="inner")
+        d = np.hypot(m.historical_x_px - m.historical_x_px_2, m.historical_y_px - m.historical_y_px_2).to_numpy()
+        ev2 = m
+        res = {"n_points": int(len(m)),
+               "picker_difference_px": {"median": round(float(np.median(d)), 1), "max": round(float(d.max()), 1)},
+               "picker_difference_m_nominal": {"median": round(float(np.median(d)) * 5.36, 1),
+                                               "max": round(float(d.max()) * 5.36, 1)},
+               "per_point_px": dict(zip(m.index, np.round(d, 1).tolist())),
+               "human_seconds_total": float(pd.to_numeric(m.seconds_spent, errors="coerce").sum())}
+        px2 = m[["historical_x_px_2", "historical_y_px_2"]].to_numpy(float)
+        tr = m[["true_easting_m", "true_northing_m"]].to_numpy(float)
+        idx = [c.ids.index(i) for i in m.index]
+        e2 = {}
+        for meth, H in (("loftr", loftr_H), ("manual", manual_H)):
+            e2[meth] = positional_errors(tr, predict(H, c.gt, px2))
+            res[meth] = {"original_picks": _summ(c.errors("homography", meth)[idx]), "second_picker": _summ(e2[meth])}
+        res["loftr_vs_manual_second_picker"] = paired_comparison(e2["loftr"], e2["manual"], c.seed)
+        out["evaluation"] = res
+    if fitting_path:
+        fp = _read_picks(fitting_path)
+        f2 = c.fit.set_index("point_id").drop(columns=["historical_x_px", "historical_y_px"]).join(
+            fp.set_index("point_id")[["historical_x_px", "historical_y_px", "seconds_spent"]], how="inner").reset_index()
+        H, used, excluded = _refit_manual(c, f2)
+        secs = pd.to_numeric(f2.seconds_spent, errors="coerce")
+        e = positional_errors(c.truth, predict(H, c.gt, c.px))
+        orig = c.fit.set_index("point_id").loc[f2.point_id]
+        res = {"n_picked": int(len(f2)), "qc_excluded": excluded, "used": used,
+               "human_seconds_total": float(secs.sum()), "human_seconds_per_point_median": float(secs.median()),
+               "picker_difference_px": dict(zip(f2.point_id, np.round(np.hypot(
+                   orig.historical_x_px.to_numpy() - f2.historical_x_px.to_numpy(),
+                   orig.historical_y_px.to_numpy() - f2.historical_y_px.to_numpy()), 1).tolist())),
+               "heldout_original_eval_picks": _summ(e),
+               "loftr_vs_human_manual": paired_comparison(c.errors("homography", "loftr"), e, c.seed),
+               "H_full": H.tolist()}
+        if ev2 is not None:
+            px2 = ev2[["historical_x_px_2", "historical_y_px_2"]].to_numpy(float)
+            tr = ev2[["true_easting_m", "true_northing_m"]].to_numpy(float)
+            eh, el = positional_errors(tr, predict(H, c.gt, px2)), positional_errors(tr, predict(loftr_H, c.gt, px2))
+            res["fully_human"] = {"manual": _summ(eh), "loftr": _summ(el), "loftr_vs_manual": paired_comparison(el, eh, c.seed)}
+        out["fitting"] = res
     write_json(out, OUT / "picker_agreement.json")
     log.info("picker: %s", out)
+    return out
+
+
+def extra_points(c: Ctx, path: str):
+    """Score the frozen transforms on supplementary evaluation points picked with `gcp blind extra` (cells that had
+    no evaluation point). The file is hashed and the hash recorded, as for the main set. Reported alone and pooled
+    with the original 12 points; the original analysis is unchanged."""
+    import hashlib
+
+    from mapalign.gcp import grid_cell
+
+    raw = Path(path).read_bytes()
+    pts = _read_picks(path)
+    px = pts[["historical_x_px", "historical_y_px"]].to_numpy(float)
+    tr = pts[["true_easting_m", "true_northing_m"]].to_numpy(float)
+    out = {"purpose": "supplementary evaluation points in previously empty cells (post hoc, secondary)",
+           "file_sha256": hashlib.sha256(raw).hexdigest(), "n_points": int(len(pts)),
+           "n_skipped": int(pd.read_csv(path).notes.fillna("").astype(str).str.startswith("SKIPPED").sum()),
+           "cells": sorted(set(grid_cell(c.cfg, px))),
+           "human_seconds_total": float(pd.to_numeric(pts.seconds_spent, errors="coerce").sum())}
+    errs = {}
+    for meth in ("loftr", "manual"):
+        e = positional_errors(tr, predict(np.array(c.runs[meth]["H_full"]), c.gt, px))
+        errs[meth] = e
+        out[meth] = {"supplementary": _summ(e),
+                     "pooled_with_original_12": _summ(np.concatenate([c.errors("homography", meth), e]))}
+    out["paired_supplementary"] = paired_comparison(errs["loftr"], errs["manual"], c.seed)
+    out["paired_pooled"] = paired_comparison(np.concatenate([c.errors("homography", "loftr"), errs["loftr"]]),
+                                             np.concatenate([c.errors("homography", "manual"), errs["manual"]]), c.seed)
+    out["per_point_m"] = {m: dict(zip(pts.point_id, np.round(e, 1).tolist())) for m, e in errs.items()}
+    write_json(out, OUT / "extra_points.json")
+    log.info("extra_points: %s", out)
     return out
 
 
@@ -534,14 +619,21 @@ TASKS = {"seeds": seeds, "confidence": confidence, "intervals": intervals, "spat
 def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("what", choices=["all", "picker", *TASKS])
-    p.add_argument("--repick", help="filled re-pick template (for 'picker')")
+    p.add_argument("what", choices=["all", "picker", "extra_points", *TASKS])
+    p.add_argument("--repick", help="filled evaluation re-pick template (for 'picker')")
+    p.add_argument("--fitting", help="filled fitting re-pick template (for 'picker')")
+    p.add_argument("--points", help="filled supplementary-point template (for 'extra_points')")
     args = p.parse_args(argv)
     c = Ctx()
     if args.what == "picker":
-        if not args.repick:
-            p.error("picker needs --repick <csv>")
-        picker(c, args.repick)
+        if not (args.repick or args.fitting):
+            p.error("picker needs --repick and/or --fitting <csv>")
+        picker(c, args.repick, args.fitting)
+        return 0
+    if args.what == "extra_points":
+        if not args.points:
+            p.error("extra_points needs --points <csv>")
+        extra_points(c, args.points)
         return 0
     for name in (TASKS if args.what == "all" else [args.what]):
         logging.getLogger("mapalign.estimate_transform").setLevel(logging.WARNING)

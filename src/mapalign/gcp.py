@@ -321,7 +321,71 @@ def blind_kit(cfg: dict, which: str, out_dir: Path) -> Path:
         "on the 1926 map and write its pixel x/y (read from the grid labels, or measure in any image viewer on "
         "`data/raw/57_D11_Mysore_1926.jpg`) into the template. Record how many seconds each point took. Do not look at "
         "`gcp/*_points.csv` or any results before finishing.\n\n"
-        "Then run: `python -m mapalign.robustness picker --repick <filled template>`\n", encoding="utf-8")
+        "Easiest: the timed picking tool fills the template and records the seconds for you:\n\n"
+        f"`python -m mapalign.picktool gcp/repick_kit_{which}/repick_{which}_template.csv --picker \"Your Name\"`\n\n"
+        f"Then run: `python -m mapalign.robustness picker --{'fitting' if which == 'fitting' else 'repick'} "
+        "<filled template>`\n", encoding="utf-8")
+    return path
+
+
+FEATURE_PRIORITY = ["rail_road_crossing", "rail_water_crossing", "road_water_crossing", "landmark_peak",
+                    "road_road_junction", "landmark_corner", "landmark_centroid", "railway_station"]
+
+
+def grid_cell(cfg: dict, px: np.ndarray) -> list[str]:
+    """5 x 5 protocol cell (r0 = north, c0 = west) of full-resolution scan pixels, from the neatline corners."""
+    c = cfg["historical_map"]["neatline_corners_px"]
+    x0, x1 = (c["nw"][0] + c["sw"][0]) / 2, (c["ne"][0] + c["se"][0]) / 2
+    y0, y1 = (c["nw"][1] + c["ne"][1]) / 2, (c["sw"][1] + c["se"][1]) / 2
+    col = np.clip(((px[:, 0] - x0) / (x1 - x0) * 5).astype(int), 0, 4)
+    row = np.clip(((px[:, 1] - y0) / (y1 - y0) * 5).astype(int), 0, 4)
+    return [f"r{r}c{k}" for r, k in zip(row, col)]
+
+
+def extra_kit(cfg: dict, out_dir: Path, per_cell: int = 4, min_sep_m: float = 1000.0) -> Path:
+    """Blind kit of NEW evaluation candidates in the protocol cells that have no evaluation point yet.
+
+    Candidates must be >= min_sep_m from every fitting and evaluation point and from each other, and are taken in
+    the protocol's feature-priority order. Only OSM truth is shown; the picker decides whether the feature exists
+    on the 1926 sheet (skip it if not). Accepted picks become a separately locked supplementary evaluation set.
+    """
+    cand = pd.read_csv(resolve_path("gcp/candidates.csv"))
+    ev, fit = read_gcps(cfg["gcp"]["evaluation_points"]), read_gcps(cfg["gcp"]["fitting_points"])
+    used = pd.concat([ev, fit])[["true_easting_m", "true_northing_m"]].to_numpy(float)
+    covered = set(grid_cell(cfg, ev[["historical_x_px", "historical_y_px"]].to_numpy(float)))
+    cand["cell"] = grid_cell(cfg, cand[["prior_x_px", "prior_y_px"]].to_numpy(float))
+    cand["prio"] = cand.feature_type.map({f: i for i, f in enumerate(FEATURE_PRIORITY)}).fillna(99)
+    en = cand[["E", "N"]].to_numpy(float)
+    cand["sep_m"] = np.min(np.hypot(*(en[:, None, :] - used[None, :, :]).transpose(2, 0, 1)), axis=1)
+    pool = cand[(~cand.cell.isin(covered)) & (cand.sep_m >= min_sep_m)].sort_values(["cell", "prio", "cand_id"])
+    chosen = []
+    for _, g in pool.groupby("cell"):
+        taken = []
+        for _, r in g.iterrows():
+            if all(np.hypot(r.E - q.E, r.N - q.N) >= min_sep_m for q in taken):
+                taken.append(r)
+            if len(taken) == per_cell:
+                break
+        chosen += taken
+    sel = pd.DataFrame(chosen).reset_index(drop=True)
+    sel["point_id"] = [f"X{i + 1:02d}" for i in range(len(sel))]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for _, r in sel.iterrows():
+        picking_sheet(cfg, sel.assign(cand_id=sel.point_id), [r.point_id], out_dir / f"{r.point_id}.jpg", half=220, scale=1.5)
+    tmpl = pd.DataFrame({"point_id": sel.point_id, "feature_type": sel.feature_type, "cell": sel.cell,
+                         "candidate_id": sel.cand_id, "true_easting_m": sel.E, "true_northing_m": sel.N,
+                         "picker": "", "historical_x_px": "", "historical_y_px": "", "seconds_spent": "",
+                         "confident_yes_no": "", "notes": ""})
+    path = out_dir / "repick_extra_template.csv"
+    tmpl.to_csv(path, index=False)
+    (out_dir / "INSTRUCTIONS.md").write_text(
+        "# Supplementary evaluation points\n\n"
+        f"{len(sel)} OSM candidates in the {pool.cell.nunique()} protocol cells that have no evaluation point "
+        f"(cells: {', '.join(sorted(pool.cell.unique()))}). Each is at least 1 km from every existing point. "
+        "Many will not exist on the 1926 sheet; skip those. Pick with the timed tool:\n\n"
+        "`python -m mapalign.picktool gcp/repick_kit_extra/repick_extra_template.csv --picker \"Your Name\"`\n\n"
+        "Then score the frozen methods on them: `python -m mapalign.robustness extra_points "
+        "--points gcp/repick_kit_extra/repick_extra_template.csv`\n", encoding="utf-8")
     return path
 
 
@@ -341,7 +405,7 @@ def main(argv: list[str] | None = None) -> int:
     lk = sub.add_parser("lock")
     lk.add_argument("--force", action="store_true")
     bk = sub.add_parser("blind")
-    bk.add_argument("which", choices=["fitting", "evaluation"])
+    bk.add_argument("which", choices=["fitting", "evaluation", "extra"])
     t = sub.add_parser("thumbs")
     t.add_argument("which", choices=["fitting", "evaluation"])
     args = p.parse_args(argv)
@@ -362,7 +426,8 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "lock":
         log.info("Locked evaluation points: sha256 %s", lock_evaluation_points(cfg, args.force))
     elif args.cmd == "blind":
-        log.info("Wrote %s", blind_kit(cfg, args.which, resolve_path(f"gcp/repick_kit_{args.which}")))
+        kit = extra_kit if args.which == "extra" else (lambda c, o: blind_kit(c, args.which, o))
+        log.info("Wrote %s", kit(cfg, resolve_path(f"gcp/repick_kit_{args.which}")))
     elif args.cmd == "thumbs":
         df = read_gcps(cfg["gcp"][f"{args.which}_points"])
         out = resolve_path(f"gcp/thumbnails_{args.which}.jpg")

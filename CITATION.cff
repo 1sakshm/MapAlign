@@ -1,9 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "MapAlign: Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison"
-version: 0.1.0
-date-released: 2026-10-19
+version: 1.0.0
+date-released: 2026-10-22
 license: MIT
+repository-code: "https://github.com/1sakshm/MapAlign"
+url: "https://mysore-1926.pages.dev"
+keywords:
+  - historical maps
+  - georeferencing
+  - digital humanities
+  - Survey of India
+  - feature matching
 authors:
   - given-names: "Saksham"
     family-names: "Sharma"

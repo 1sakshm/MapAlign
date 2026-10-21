@@ -67,3 +67,17 @@ Saksham Sharma (project owner) reviewed all 21 points, 9 fitting and 12 evaluati
 to the locked versions (the evaluation SHA-256 `f0b45ff5...` still matches), so no result changed. The `notes` column
 inside the CSVs predates the review and still says "NOT human-verified". It was left as-is on purpose, because editing
 the locked file would change its hash. This log entry supersedes that note.
+
+## Independent re-pick (procedure fixed 2026-10-22, before any re-pick)
+- **Kits:** `gcp/repick_kit_fitting/` (9), `gcp/repick_kit_evaluation/` (12) and `gcp/repick_kit_extra/` (57 new
+  candidates in the 15 cells with no evaluation point, each ≥ 1 km from every existing point). Crops are centred with
+  the printed-corner prior only; no existing pick appears in any kit.
+- **Picking:** with `python -m mapalign.picktool <template> --picker "<name>"`, which records full-resolution pixel
+  coordinates and the seconds per point. The picker does not open `gcp/*_points.csv`, `results/` or the report site
+  until all three kits are done. A feature that cannot be identified on the 1926 sheet is skipped, never guessed.
+- **Scoring:** `python -m mapalign.robustness picker --fitting … --repick …` and `… extra_points --points …`. Method C
+  is refitted on the human fitting picks with the same QC rule (> 3 robust σ). The frozen transforms of the automatic
+  methods are not changed.
+- **Reporting:** the original (AI-proposed, human-reviewed) results stay as published and locked; the human re-pick is
+  reported next to them as a separate run, with the picker-to-picker distances and the total human time. The filled
+  templates are committed unchanged and their SHA-256 recorded in the output JSON.

@@ -474,6 +474,17 @@ def multiple_testing(c: Ctx):
             p = read_json(R / f)["paired_vs_loftr"][key].get("wilcoxon_p_two_sided")
             if p is not None:
                 tests.append((f"LoFTR vs {key} (Wilcoxon)", p, "secondary"))
+    X = resolve_path("results/extensions")
+    if (X / "aliked_lightglue.json").is_file():
+        lg = read_json(X / "aliked_lightglue.json")
+        for key in ("paired_vs_loftr", "paired_vs_manual"):
+            if key in lg:
+                tests.append((f"ALIKED+LightGlue {key.replace('paired_', '')} (Wilcoxon)", lg[key]["wilcoxon_p_two_sided"], "secondary"))
+    if (X / "nonprojective.json").is_file():
+        npj = read_json(X / "nonprojective.json")
+        for m in ("loftr", "manual"):
+            tests.append((f"{m} selected non-projective model vs homography (Wilcoxon)",
+                          npj[m]["selected_vs_homography"]["wilcoxon_p_two_sided"], "secondary"))
     df = pd.DataFrame(tests, columns=["test", "p", "family"])
     sec = df[df.family == "secondary"].copy()
     m = len(sec)

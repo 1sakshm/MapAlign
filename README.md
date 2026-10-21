@@ -2,6 +2,8 @@
 
 **Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison**
 
+![The georeferenced 1926 sheet with today's OpenStreetMap roads (magenta), railways (black) and rivers (blue) drawn on top using only the GeoTIFF's own geotransform](paper/figures/fig5_alignment_windows.png)
+
 MapAlign compares three ways of aligning a 1926 Survey of India topographic sheet (57 D/11, Mysore) with a modern
 geographic reference:
 - **Method A:** learned feature matching (Kornia LoFTR + RANSAC);
@@ -12,7 +14,7 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
-**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 11 pages; LaTeX source in `paper/`)  
+**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 13 pages; LaTeX source in `paper/`)  
 **Interactive report:** https://mysore-1926.pages.dev
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
@@ -25,7 +27,8 @@ This is an engineering benchmark on **one** map sheet, not a claim of methodolog
 [Architecture](#system-architecture) · [Methods](#methods-compared) · [Installation](#installation) ·
 [Data preparation](#data-preparation) · [Running](#running-the-experiment) · [GCP collection](#gcp-collection) ·
 [Coordinate conventions](#coordinate-conventions) · [Metrics](#evaluation-metrics) · [Figures](#example-visualizations) ·
-[Results](#results) · [Robustness](#robustness-and-sensitivity) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
+[Results](#results) · [Robustness](#robustness-and-sensitivity) · [Other matchers and models](#other-matchers-and-transform-models) ·
+[Re-picking](#re-picking-the-control-points) · [Related work](#related-work) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
 
 ## Research question
 
@@ -69,12 +72,15 @@ OSM vectors ─► candidate GCPs ─► manual picking ─► least-squares H (
 
 ```
 configs/experiment.yaml   paths, source metadata, CRSs, all parameters (frozen 2026-10-19)
-data/                     raw/ and processed/ (git-ignored) + manifest.json + SOURCES.md
-gcp/                      fitting_points.csv, evaluation_points.csv, candidates.csv, PROTOCOL.md, thumbnails
+data/                     raw/ (versioned inputs) and processed/ (git-ignored) + manifest.json + SOURCES.md
+docs/DECISIONS.md         every design decision, with the reason for it
+gcp/                      fitting_points.csv, evaluation_points.csv, candidates.csv, PROTOCOL.md, thumbnails,
+                          repick_kit_fitting|evaluation|extra/ (blind re-pick kits)
 src/mapalign/             config, io, fetch, reference (OSM render), preprocess, match_sift, match_loftr,
                           estimate_transform, diagnostics, pipeline, gcp, georeference, evaluate, visualize,
-                          envcheck, run_all
-tests/                    pytest suite (59 tests)
+                          envcheck, run_all; post hoc: robustness, robustness_extra, match_lightglue,
+                          extensions, picktool
+tests/                    pytest suite (64 tests)
 notebooks/                01_matching_baselines.ipynb (exploration only; it reads saved results)
 results/                  metrics, per-point errors, run records, figures (GeoTIFFs are git-ignored)
 paper/                    research paper: mapalign.tex, mapalign.pdf, refs.bib, figures/, tables/,
@@ -133,7 +139,7 @@ it needs about 5 GB of disk. All reported results were produced on CPU.
 
 ```powershell
 python -m mapalign.envcheck    # expect 4 PASS lines (SIFT+RANSAC, LoFTR, pyproj, rasterio) and "0 failed"
-python -m pytest -q            # expect "59 passed"
+python -m pytest -q            # expect "64 passed"
 ```
 
 ## Data preparation
@@ -335,8 +341,8 @@ python -m mapalign.robustness_extra all    # synthetic benchmark, plates, symbol
 | Does LoFTR win by matching the truth features? | No. Removing all its matches within 1 / 2 / 3 km of each test point: RMSE 77.4 / 78.4 / 80.6 m. |
 | Spatial correlation | Moran's I: none (p = 0.20–0.92). A cluster bootstrap (8 clusters) gives a median difference of −31.7 m [−44.0, −2.0]; a cluster sign-flip test gives p = 0.070. |
 | Landmark definitions | Without the two landmark-centroid points: LoFTR 49.2 m vs manual 65.4 m median, p = 0.049. |
-| Multiple testing (14 secondary tests) | Holm / Benjamini–Hochberg: only LoFTR vs printed corners survives (Holm p = 0.007). No secondary LoFTR-vs-manual test does (q = 0.07–0.14). |
-| Classical baselines | Printed sheet corners alone: median 169.8 m, RMSE 173.3. Corners + ECC image alignment: median 99.5 m, RMSE 119.7 (LoFTR closer at 9 of 12, p = 0.021, Holm 0.23). |
+| Multiple testing (18 secondary tests, including the extensions below) | Holm / Benjamini–Hochberg: only LoFTR vs printed corners survives (Holm p = 0.009). No secondary LoFTR-vs-manual test does (q = 0.09–0.18). |
+| Classical baselines | Printed sheet corners alone: median 169.8 m, RMSE 173.3. Corners + ECC image alignment: median 99.5 m, RMSE 119.7 (LoFTR closer at 9 of 12, p = 0.021, Holm 0.32). |
 | Fairer tuning for the manual fit | Choosing its model by leave-one-out on its own points picks a similarity transform: median 90.2 m, RMSE 106.2 m. |
 | Hand-picked development thresholds | Size rule picks 768 px at every radius from 0.5 to 2 km. LoFTR beats chance on aligned tiles at every radius (1.7–14×); SIFT stays at 1.0–1.5×. |
 | Projection (polyconic vs UTM) | One homography absorbs it to within 0.46 m. |
@@ -346,9 +352,92 @@ python -m mapalign.robustness_extra all    # synthetic benchmark, plates, symbol
 | Datum | Graticule offset (−84, +53) m from fitting points; (−105, +105) m from the 12 evaluation points. |
 | Repeated timing (5 warm runs) | LoFTR 6.5 s, SIFT 7.2 s, manual fit 0.002 s. Human picking time was not recorded. |
 
-**Still open** (these need people, not code): an independent, blind re-pick of the control points, a stronger
-manual baseline with 20+ points, and a dedicated road-network registration method. Blind kits for the first two are
-in `gcp/repick_kit_*`. Once a template is filled in, run `python -m mapalign.robustness picker --repick <file>`.
+## Other matchers and transform models
+
+Two more questions, answered after the evaluation under the same rules as the original methods (settings chosen on
+development data by a rule written down first, then scored once on the 12 locked points). Outputs are in
+`results/extensions/`; design choices are logged in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+
+```powershell
+python -m mapalign.extensions all    # DISK / ALIKED + LightGlue, polynomial and thin-plate-spline models
+```
+
+**Is LoFTR special?** LightGlue was paired with two learned keypoint detectors (Kornia implementations, 4096
+keypoints), feeding the frozen MAGSAC++ estimator. The input size was chosen by LoFTR's Phase 4 rule (most matches
+within 1 km of the printed-corner prior).
+
+| Matcher | Input | Matches / inliers | Median | RMSE | vs LoFTR |
+|---|---|---|---|---|---|
+| LoFTR (frozen) | 768 px | 601 / 389 | 53.9 m | 77.4 m | – |
+| ALIKED + LightGlue | 1024 px | 604 / 216 | 54.6 m | 104.9 m | LoFTR closer at 8 of 12, p = 0.15 |
+| DISK + LightGlue | 768–2048 px | 0–2 / – | failed | failed | – |
+
+DISK finds the right local matches when the tiles are already aligned (53 % correct vs 4.3 % chance, better than
+LoFTR's 12.9 %), but not the global correspondence. ALIKED collapses above 1024 px, the same scale sensitivity LoFTR
+shows. So LoFTR is not the only learned matcher that crosses the style gap, but it was the more reliable one.
+
+**Does the homography limit accuracy?** No. Second- and third-order polynomials and thin-plate splines (seven
+smoothing values) were fitted to LoFTR's 390 inlier matches and chosen by 4 × 4 spatial-block cross-validation, and to
+the 7 manual points and chosen by leave-one-out. Both rules picked **affine** (held-out RMSE 78.5 m from LoFTR's
+matches, 105.5 m from the manual points). A cubic polynomial reached 170.6 m and an unsmoothed spline 160.8 m. On this
+sheet the limit is the content and a century of change, not the transform family.
+
+## Re-picking the control points
+
+The control points were proposed with AI assistance and reviewed, unchanged, by the author. An independent, blind,
+timed human re-pick is the most useful open item. Everything needed is in the repository:
+
+| Kit | Points | Purpose |
+|---|---|---|
+| `gcp/repick_kit_fitting/` | 9 | re-pick Method C's fitting points; Method C is refitted with the frozen QC rule |
+| `gcp/repick_kit_evaluation/` | 12 | re-pick the historical pixel of every evaluation point (truth stays OSM) |
+| `gcp/repick_kit_extra/` | 57 candidates | new evaluation points in the 15 grid cells that have none, including the south and Mysore city; skip any feature that is not on the 1926 sheet |
+
+Kits are centred with the printed-corner prior only and contain no existing pick. The timed picking tool shows the
+1926 scan next to the OSM target, records the click in full-resolution pixels and the seconds spent, and saves after
+every point, so a session can be resumed:
+
+```powershell
+python -m mapalign.picktool gcp/repick_kit_fitting/repick_fitting_template.csv --picker "Your Name"
+python -m mapalign.picktool gcp/repick_kit_evaluation/repick_evaluation_template.csv --picker "Your Name"
+python -m mapalign.picktool gcp/repick_kit_extra/repick_extra_template.csv --picker "Your Name"
+
+python -m mapalign.robustness picker --fitting gcp/repick_kit_fitting/repick_fitting_template.csv `
+                                     --repick  gcp/repick_kit_evaluation/repick_evaluation_template.csv
+python -m mapalign.robustness extra_points --points gcp/repick_kit_extra/repick_extra_template.csv
+```
+
+`picker` reports the picker-to-picker distance per point, refits Method C on the human picks, scores everything on the
+original and on the re-picked evaluation pixels, and gives the human interaction time. `extra_points` scores the
+frozen transforms on the new points, alone and pooled with the original 12, and records the file's SHA-256. The
+original analysis and its lock are not touched; the AI-assisted run stays as a separate, comparable result.
+
+## Related work
+
+- **Vaienti, di Lenardo and Kaplan (2025)**, *Georeferencing historical maps using local feature matching and
+  Delaunay consistency*, Cartography and Geographic Information Science
+  ([doi:10.1080/15230406.2025.2566789](https://doi.org/10.1080/15230406.2025.2566789)). They transfer georeferencing
+  from georeferenced maps of Jerusalem to new ones with SuperPoint + SuperGlue, RANSAC and a Delaunay-consistency
+  filter, and find that about 100 matched keypoints separate reliable from unreliable results. LoFTR here keeps 389.
+- **Petitpierre, Jan and Guhennec (2026)**, *JADIS SuperMapRealigner: A Generic Method for the Automatic Alignment of
+  Historical Maps*, software ([doi:10.5281/zenodo.19821751](https://doi.org/10.5281/zenodo.19821751)). Road-network
+  segmentation followed by SuperPoint + SuperGlue matching, developed on maps of Paris.
+- **Wu et al. (2026)**, *Deep learning enables urban change profiling through alignment of historical maps*
+  ([arXiv:2602.02154](https://arxiv.org/abs/2602.02154)). Alignment as the first stage of measuring urban change in Paris, 1868–1937.
+- **Petitpierre (2026)**, *Generalizable Multiscale Segmentation of Heterogeneous Map Collections*
+  ([arXiv:2603.05037](https://arxiv.org/abs/2603.05037)), and **Petitpierre (2025)**, *Studying Maps at Scale*, PhD thesis
+  ([arXiv:2511.19538](https://arxiv.org/abs/2511.19538)): recognising map content across collections rather than one series.
+- **Lin et al. (2025)**, *ICDAR 2025 Competition on Historical Map Text Detection, Recognition, and Linking*
+  ([doi:10.1007/978-3-032-04630-7_33](https://doi.org/10.1007/978-3-032-04630-7_33)).
+
+MapAlign differs in its reference (a modern vector database rendered in a style unlike any historical map, so the pair
+is cross-era *and* cross-style), its subject (a rural Survey of India sheet rather than a city plan), and its
+evaluation (held-out control points in metres, a locked test set, one shared estimator for every method). It is a
+benchmark on one sheet, not a new method. Full references are in the paper.
+
+**Still open:** the human re-pick above, the same protocol on more sheets and on several editions of one sheet
+(edition-to-edition alignment should be far easier than alignment to OSM, and would separate map error from change),
+and a dedicated road-network registration method as a further classical baseline.
 
 ## Limitations
 
@@ -370,7 +459,9 @@ in `gcp/repick_kit_*`. Once a template is filled in, run `python -m mapalign.rob
 - **Review:** the author reviewed the points after the held-out results existed. The review was neither blind nor
   independent.
 - **Classical methods:** represented by SIFT, printed corners and ECC, not by a dedicated road-network matcher.
-- **Not tested:** non-linear (local) transforms, other learned matchers, and LoFTR input sizes above 1280 px (1536 px ran out of memory).
+- **Post-hoc extensions:** the LightGlue matchers and the non-projective models were added after the evaluation. They
+  followed the same selection rules but were not in the frozen plan.
+- **Not tested:** other detector-free matchers, and LoFTR input sizes above 1280 px (1536 px ran out of memory).
 
 ## Reproducibility
 
@@ -395,7 +486,8 @@ See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign
 - **Map scan:** Old Survey of India Maps collection (J. Brown, Zenodo, CC BY 4.0); the scan bears a University of
   Michigan Library stamp.
 - **Modern data:** © OpenStreetMap contributors (ODbL).
-- **Software:** Kornia LoFTR (Sun et al., CVPR 2021) and OpenCV SIFT (Lowe, IJCV 2004).
+- **Software:** Kornia LoFTR (Sun et al., CVPR 2021), DISK, ALIKED and LightGlue (Kornia implementations), and OpenCV
+  SIFT (Lowe, IJCV 2004).
 - **Assistance:** much of the code and all GCP picks were produced with an AI assistant (Claude, Anthropic); the GCPs
   were reviewed by Saksham Sharma.
 

@@ -231,7 +231,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
       </div>
       <div>
         <p class="lede">Can a computer find where a century-old Survey of India sheet sits on today's ground? We pitted a learned matcher, a classical one and hand-placed control points against each other. Each was scored in metres at points it never saw.</p>
-        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 11 pages)</a></p>
+        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 13 pages)</a></p>
         <p class="disclose">The glowing points above are the 61 real anchors LoFTR found in this part of the sheet. Control points were picked by an AI assistant and reviewed unchanged by the author.</p>
       </div>
     </div>
@@ -331,9 +331,11 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
             <tr><td>SIFT + RANSAC</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>≈15 s</td></tr>
             <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners + ECC*</td><td>12</td><td>99.5</td><td>102.4</td><td>119.7</td><td>263.1</td><td>–</td><td>≈60 s</td></tr>
             <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners only*</td><td>12</td><td>169.8</td><td>169.0</td><td>173.3</td><td>258.2</td><td>–</td><td>instant</td></tr>
+            <tr class="sec"><td><span class="legend-dot" style="background:var(--ink-3)"></span>ALIKED + LightGlue*</td><td>12</td><td>54.6</td><td>85.8</td><td>104.9</td><td>201.4</td><td>183.4</td><td>9 s match</td></tr>
+            <tr class="sec"><td>DISK + LightGlue*</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>12 s match</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, and no secondary LoFTR-vs-manual test survives a correction for the 14 secondary tests, so this is suggestive, not settled. *Classical baselines added after the evaluation (Sheet 6).</p>
+        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, and no secondary LoFTR-vs-manual test survives a correction for the 18 secondary tests, so this is suggestive, not settled. *Added after the evaluation (Sheets 6 and 7).</p>
       </div>
       <div class="two">
         <div class="card">
@@ -382,8 +384,33 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
         <div class="fact"><div class="v">0.46 m</div><div class="k">largest polyconic-to-UTM mismatch a single homography leaves on this sheet</div></div>
         <div class="fact"><div class="v">≈ 9 m</div><div class="k">colour-plate misregistration of the background tint, measured at the border</div></div>
         <div class="fact"><div class="v">12–25 m</div><div class="k">displacement forced where a 35 m road symbol runs beside a railway</div></div>
-        <div class="fact"><div class="v">p = 0.007</div><div class="k">LoFTR beats georeferencing from the printed corners, after Holm correction</div></div>
+        <div class="fact"><div class="v">p = 0.009</div><div class="k">LoFTR beats georeferencing from the printed corners, after Holm correction</div></div>
         <div class="fact"><div class="v">0.01 m</div><div class="k">agreement of every per-point error when the whole experiment is re-run on Linux</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="more">
+    <div class="sheet-head">
+      <div class="no">SHEET 7 · OTHER MATCHERS, OTHER MODELS</div>
+      <h2>Is LoFTR special? Is the homography the limit?</h2>
+      <p>Two more matchers and eleven more transform models, chosen by the same rules as before and scored once on the same 12 points. A sparse learned matcher can also cross the style gap, but less reliably. Bending the transform does not help: the limit is the map and a century of change.</p>
+      <p class="note" style="margin-top:12px">Details: Section 7 of the paper and <span class="mono">results/extensions/</span>.</p>
+    </div>
+    <div class="sheet-body">
+      <div class="facts">
+        <div class="fact"><div class="v">54.6 m</div><div class="k">ALIKED + LightGlue held-out median, almost LoFTR's; but RMSE 104.9 m</div></div>
+        <div class="fact"><div class="v">8 of 12</div><div class="k">points where LoFTR was still closer than ALIKED + LightGlue (p = 0.15)</div></div>
+        <div class="fact"><div class="v">0–2</div><div class="k">DISK + LightGlue matches on the full sheet at every size from 768 to 2048 px</div></div>
+        <div class="fact"><div class="v">53%</div><div class="k">DISK's correct matches on tiles already aligned, against 4.3% by chance: it fails globally, not locally</div></div>
+        <div class="fact"><div class="v">affine</div><div class="k">the model spatial cross-validation picks over polynomials and thin-plate splines</div></div>
+        <div class="fact"><div class="v">78.5 m</div><div class="k">held-out RMSE of that affine model on LoFTR's 390 inliers (homography: 79.4)</div></div>
+        <div class="fact"><div class="v">170.6 m</div><div class="k">held-out RMSE of a cubic polynomial on the same matches: flexibility overfits</div></div>
+        <div class="fact"><div class="v">57</div><div class="k">new candidate points in the 15 empty grid cells, ready for a blind, timed human re-pick</div></div>
+      </div>
+      <div class="card">
+        <div class="controls" style="margin-bottom:6px"><b class="sc">Related work</b></div>
+        <p class="note" style="margin:0">Closest to this benchmark: georeferencing by local feature matching with Delaunay consistency (Vaienti, di Lenardo &amp; Kaplan, <i>CaGIS</i> 2025); road-network segmentation plus SuperPoint–SuperGlue alignment, JADIS SuperMapRealigner (Petitpierre, Jan &amp; Guhennec, 2026); alignment for urban change in Paris (Wu et al., 2026); and segmentation across heterogeneous map collections (Petitpierre, 2026). MapAlign differs in aligning to a modern vector render rather than another historical map, in working on a rural Survey of India sheet, and in scoring every method on locked held-out points in metres.</p>
       </div>
     </div>
   </section>

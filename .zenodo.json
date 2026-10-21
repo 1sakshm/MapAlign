@@ -1,0 +1,12 @@
+{
+  "title": "MapAlign: Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison",
+  "upload_type": "software",
+  "description": "A reproducible benchmark that georeferences a 1926 Survey of India sheet (57 D/11, Mysore) to OpenStreetMap with LoFTR, SIFT, sparse learned matchers (DISK/ALIKED + LightGlue) and manual control points, all scored in metres on locked held-out control points. Includes the exact inputs, the frozen configuration, every result, a research paper and the scripts that regenerate it.",
+  "creators": [{"name": "Sharma, Saksham"}],
+  "license": "MIT",
+  "keywords": ["historical maps", "georeferencing", "digital humanities", "Survey of India", "feature matching", "LoFTR", "OpenStreetMap"],
+  "related_identifiers": [
+    {"identifier": "10.5281/zenodo.8388121", "relation": "isDerivedFrom", "resource_type": "dataset"},
+    {"identifier": "https://mysore-1926.pages.dev", "relation": "isDocumentedBy", "resource_type": "other"}
+  ]
+}

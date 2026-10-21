@@ -1,0 +1,185 @@
+{
+  "purpose": "fourth method (post hoc, secondary): ALIKED + LightGlue matches into the frozen MAGSAC++ pipeline",
+  "selection_rule": "input size with the most matches within 1 km of the graticule prior (the Phase 4 LoFTR rule)",
+  "sweep": [
+    {
+      "max_side_px": 768,
+      "matches": 404,
+      "within_1km_of_prior": 396,
+      "effective_resolution_m": 44.9,
+      "inference_s": 4.12
+    },
+    {
+      "max_side_px": 1024,
+      "matches": 604,
+      "within_1km_of_prior": 600,
+      "effective_resolution_m": 33.7,
+      "inference_s": 8.99
+    },
+    {
+      "max_side_px": 1536,
+      "matches": 53,
+      "within_1km_of_prior": 2,
+      "effective_resolution_m": 22.5,
+      "inference_s": 12.89
+    },
+    {
+      "max_side_px": 2048,
+      "matches": 26,
+      "within_1km_of_prior": 0,
+      "effective_resolution_m": 16.8,
+      "inference_s": 18.86
+    }
+  ],
+  "selected_max_side_px": 1024,
+  "matching": {
+    "device": "cpu",
+    "common_scale": 0.296812,
+    "features": "aliked",
+    "max_side_px": 1024,
+    "n_keypoints": 4096,
+    "filter_threshold": 0.1,
+    "input_px": [
+      [
+        800,
+        816
+      ],
+      [
+        1000,
+        1024
+      ]
+    ],
+    "matches": 604,
+    "model_load_s": 0.0,
+    "inference_s": 8.99,
+    "weights_sha256": {
+      "aliked-n16.pth": "5be8704840ed662d9d8c561bf7279c222092674e7eb05fd0feab94899e9d82f2",
+      "aliked_lightglue_v0-1_arxiv-pth": "d975e965b105311a6143194852297dff4f02aea5cc2e10cecfed966ca0e22503",
+      "depth-save.pth": "9c2ee4ded238892dfa51569941372601e35e4a74aa6f84ea80053d2ab1c07abe",
+      "disk_lightglue_v0-1_arxiv-pth": "b5b21d47ea24f2c5e501aec9c91b9716e4c8c3429a4dc1e615c133c4c9378335"
+    }
+  },
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 604,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 10.107408056278047,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 0.296812,
+    "effective_rng": "OpenCV internal fixed state (cv2.setRNGSeed has no effect on this call)",
+    "inliers": 216,
+    "inlier_ratio": 0.3576,
+    "inlier_reproj_rmse_px": 6.353724914771455,
+    "inlier_reproj_median_px": 5.977757185328432,
+    "valid": true,
+    "problems": [],
+    "condition_number": 232269.25919392842,
+    "det_linear_part": 0.9650139682814397,
+    "singular_values_linear_part": [
+      0.9905931712533466,
+      0.9741778928886186
+    ],
+    "mapped_corners_image1_px": [
+      [
+        334.7120580427361,
+        339.3692349653129
+      ],
+      [
+        3040.1243747450817,
+        318.44437796549363
+      ],
+      [
+        3076.98723982922,
+        3136.5500535023853
+      ],
+      [
+        321.3643498724347,
+        3116.444648260855
+      ]
+    ]
+  },
+  "estimation_s": 0.029,
+  "prior_consistency": {
+    "radius_m": 1000.0,
+    "matches": 604,
+    "matches_within": 600,
+    "inliers": 216,
+    "inliers_within": 216,
+    "median_distance_m": 194.6
+  },
+  "aligned_tile_upper_bound": {
+    "tiles": 25,
+    "tile_px": 512,
+    "radius_px": 60.0,
+    "matches": 393,
+    "correct": 105,
+    "correct_fraction": 0.2672,
+    "chance_fraction": 0.0431
+  },
+  "status": "valid",
+  "H_full": [
+    [
+      1.0518351986341719,
+      -0.00738777673725599,
+      238.12746981083572
+    ],
+    [
+      -0.010085519612331673,
+      1.049752191982852,
+      120.31553416735258
+    ],
+    [
+      -2.8511140756355204e-06,
+      -3.4777300870586877e-06,
+      1.0
+    ]
+  ],
+  "heldout": {
+    "n_valid": 12,
+    "median_m": 54.57,
+    "mean_m": 85.82,
+    "rmse_m": 104.91,
+    "max_m": 201.37
+  },
+  "per_point_m": {
+    "E01": 139.1,
+    "E02": 42.7,
+    "E03": 130.6,
+    "E04": 62.1,
+    "E05": 45.9,
+    "E06": 47.0,
+    "E07": 19.3,
+    "E08": 81.2,
+    "E09": 42.6,
+    "E10": 29.6,
+    "E11": 201.4,
+    "E12": 188.3
+  },
+  "paired_vs_loftr": {
+    "n_pairs": 12,
+    "median_diff_m": -11.95,
+    "a_better_count": 8,
+    "b_better_count": 4,
+    "wilcoxon_statistic": 20.0,
+    "wilcoxon_p_two_sided": 0.1514,
+    "bootstrap_ci95_median_diff_m": [
+      -45.01,
+      6.53
+    ]
+  },
+  "paired_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": 17.35,
+    "a_better_count": 3,
+    "b_better_count": 9,
+    "wilcoxon_statistic": 30.0,
+    "wilcoxon_p_two_sided": 0.5186,
+    "bootstrap_ci95_median_diff_m": [
+      -8.6,
+      24.1
+    ]
+  }
+}
