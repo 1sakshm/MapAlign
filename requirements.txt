@@ -30,7 +30,6 @@ jupyter-core==5.9.1
 kiwisolver==1.5.1
 kornia==0.8.3
 kornia-rs==0.2.0
--e file:///D:/EPFL/MapAlign
 markupsafe==3.0.3
 matplotlib==3.11.2
 matplotlib-inline==0.2.2
