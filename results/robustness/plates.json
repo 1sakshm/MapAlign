@@ -1,0 +1,64 @@
+{
+  "purpose": "tint-plate registration against the black neatline (see docstring)",
+  "gap_px_inward_from_neatline_centre": {
+    "west": {
+      "median": 2.0,
+      "ci95": [
+        2.0,
+        2.0
+      ]
+    },
+    "east": {
+      "median": 2.0,
+      "ci95": [
+        1.0,
+        2.0
+      ]
+    },
+    "north": {
+      "median": 2.2,
+      "ci95": [
+        2.0,
+        3.32
+      ]
+    },
+    "south": {
+      "median": 5.65,
+      "ci95": [
+        5.29,
+        6.13
+      ]
+    }
+  },
+  "n_profiles": {
+    "west": 96,
+    "east": 86,
+    "north": 103,
+    "south": 98
+  },
+  "neatline_inner_half_width_px": {
+    "west": 2.0,
+    "east": 2.0,
+    "north": 2.0,
+    "south": 1.0
+  },
+  "resolution_note": "a gap equal to the neatline half-width means the tint reaches the line itself",
+  "tint_plate_shift_px": {
+    "dx": 0.0,
+    "dy": -1.72,
+    "ci95_dx": [
+      0.0,
+      0.5
+    ],
+    "ci95_dy": [
+      -2.03,
+      -1.1
+    ],
+    "magnitude_m": 9.2
+  },
+  "designed_overlap_px": {
+    "east_west": 2.0,
+    "north_south": 3.93
+  },
+  "not_measurable": "line plates (red roads, blue water, brown contours) share no edge with the black plate"
+}

@@ -1,0 +1,144 @@
+{
+  "purpose": "do the hand-chosen development radii (1 km prior radius, 600 m tile radius) drive any conclusion?",
+  "size_selection": {
+    "table": [
+      {
+        "side": 1024,
+        "matches": 312,
+        "near_500m": 108,
+        "near_750m": 108,
+        "near_1000m": 108,
+        "near_1500m": 110,
+        "near_2000m": 110
+      },
+      {
+        "side": 896,
+        "matches": 348,
+        "near_500m": 151,
+        "near_750m": 151,
+        "near_1000m": 151,
+        "near_1500m": 153,
+        "near_2000m": 154
+      },
+      {
+        "side": 768,
+        "matches": 601,
+        "near_500m": 426,
+        "near_750m": 429,
+        "near_1000m": 429,
+        "near_1500m": 436,
+        "near_2000m": 441
+      },
+      {
+        "side": 640,
+        "matches": 342,
+        "near_500m": 201,
+        "near_750m": 206,
+        "near_1000m": 210,
+        "near_1500m": 213,
+        "near_2000m": 214
+      },
+      {
+        "side": 512,
+        "matches": 405,
+        "near_500m": 314,
+        "near_750m": 317,
+        "near_1000m": 319,
+        "near_1500m": 320,
+        "near_2000m": 320
+      },
+      {
+        "side": 384,
+        "matches": 145,
+        "near_500m": 71,
+        "near_750m": 82,
+        "near_1000m": 86,
+        "near_1500m": 89,
+        "near_2000m": 91
+      }
+    ],
+    "selected_by_count_at_radius": {
+      "500m": 768,
+      "750m": 768,
+      "1000m": 768,
+      "1500m": 768,
+      "2000m": 768
+    },
+    "selected_by_fraction_at_radius": {
+      "500m": 512,
+      "750m": 512,
+      "1000m": 512,
+      "1500m": 512,
+      "2000m": 512
+    },
+    "note": "the frozen rule is 'most matches near the prior' at 1000 m"
+  },
+  "tile_test": {
+    "rows": [
+      {
+        "radius_m": 200,
+        "chance_pct": 0.48,
+        "sift_pct": 0.73,
+        "sift_ratio_to_chance": 1.53,
+        "sift_p_above_chance": 0.0722,
+        "loftr_pct": 6.8,
+        "loftr_ratio_to_chance": 14.19,
+        "loftr_p_above_chance": 7.42e-131
+      },
+      {
+        "radius_m": 300,
+        "chance_pct": 1.08,
+        "sift_pct": 1.52,
+        "sift_ratio_to_chance": 1.41,
+        "sift_p_above_chance": 0.0399,
+        "loftr_pct": 8.85,
+        "loftr_ratio_to_chance": 8.21,
+        "loftr_p_above_chance": 7.67e-123
+      },
+      {
+        "radius_m": 400,
+        "chance_pct": 1.92,
+        "sift_pct": 2.2,
+        "sift_ratio_to_chance": 1.15,
+        "sift_p_above_chance": 0.191,
+        "loftr_pct": 10.5,
+        "loftr_ratio_to_chance": 5.48,
+        "loftr_p_above_chance": 1.59e-106
+      },
+      {
+        "radius_m": 600,
+        "chance_pct": 4.31,
+        "sift_pct": 4.75,
+        "sift_ratio_to_chance": 1.1,
+        "sift_p_above_chance": 0.178,
+        "loftr_pct": 12.92,
+        "loftr_ratio_to_chance": 2.99,
+        "loftr_p_above_chance": 1.57e-66
+      },
+      {
+        "radius_m": 800,
+        "chance_pct": 7.67,
+        "sift_pct": 7.94,
+        "sift_ratio_to_chance": 1.03,
+        "sift_p_above_chance": 0.336,
+        "loftr_pct": 16.82,
+        "loftr_ratio_to_chance": 2.19,
+        "loftr_p_above_chance": 4.91e-51
+      },
+      {
+        "radius_m": 1000,
+        "chance_pct": 11.98,
+        "sift_pct": 12.69,
+        "sift_ratio_to_chance": 1.06,
+        "sift_p_above_chance": 0.171,
+        "loftr_pct": 20.68,
+        "loftr_ratio_to_chance": 1.73,
+        "loftr_p_above_chance": 7.45e-35
+      }
+    ],
+    "n_matches": {
+      "sift": 2041,
+      "loftr": 2485
+    }
+  }
+}

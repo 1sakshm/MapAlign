@@ -1,0 +1,75 @@
+{
+  "purpose": "classical baselines (secondary, post hoc): printed corners only; printed corners + ECC refinement",
+  "printed_corners": {
+    "n_valid": 12,
+    "median_m": 169.84,
+    "mean_m": 168.98,
+    "rmse_m": 173.27,
+    "max_m": 258.15
+  },
+  "printed_corners_plus_ecc": {
+    "n_valid": 12,
+    "median_m": 99.49,
+    "mean_m": 102.4,
+    "rmse_m": 119.66,
+    "max_m": 263.07,
+    "ecc_correlation": 0.06934119397383813,
+    "converged": true
+  },
+  "paired_vs_loftr": {
+    "printed_corners": {
+      "n_pairs": 12,
+      "median_diff_m": -109.44,
+      "a_better_count": 12,
+      "b_better_count": 0,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_two_sided": 0.0005,
+      "bootstrap_ci95_median_diff_m": [
+        -137.81,
+        -70.15
+      ]
+    },
+    "printed_corners_plus_ecc": {
+      "n_pairs": 12,
+      "median_diff_m": -55.29,
+      "a_better_count": 9,
+      "b_better_count": 3,
+      "wilcoxon_statistic": 10.0,
+      "wilcoxon_p_two_sided": 0.021,
+      "bootstrap_ci95_median_diff_m": [
+        -70.37,
+        1.07
+      ]
+    }
+  },
+  "per_point_m": {
+    "printed_corners": {
+      "E01": 189.0,
+      "E02": 194.1,
+      "E03": 157.4,
+      "E04": 185.1,
+      "E05": 166.4,
+      "E06": 198.7,
+      "E07": 133.1,
+      "E08": 173.3,
+      "E09": 119.7,
+      "E10": 128.1,
+      "E11": 258.2,
+      "E12": 124.8
+    },
+    "printed_corners_plus_ecc": {
+      "E01": 145.9,
+      "E02": 47.8,
+      "E03": 149.6,
+      "E04": 34.7,
+      "E05": 89.9,
+      "E06": 36.3,
+      "E07": 109.8,
+      "E08": 109.1,
+      "E09": 114.3,
+      "E10": 84.1,
+      "E11": 263.1,
+      "E12": 44.2
+    }
+  }
+}

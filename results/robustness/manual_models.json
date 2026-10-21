@@ -1,0 +1,45 @@
+{
+  "purpose": "Method C model chosen by leave-one-out RMSE on its 7 fitting points (no evaluation data used for the choice); held-out errors reported for all models",
+  "rows": [
+    {
+      "model": "similarity",
+      "loo_rmse_m": 110.01,
+      "n_valid": 12,
+      "median_m": 90.21,
+      "mean_m": 91.71,
+      "rmse_m": 106.16,
+      "max_m": 239.72
+    },
+    {
+      "model": "affine",
+      "loo_rmse_m": 111.29,
+      "n_valid": 12,
+      "median_m": 87.75,
+      "mean_m": 92.84,
+      "rmse_m": 105.49,
+      "max_m": 203.75
+    },
+    {
+      "model": "homography",
+      "loo_rmse_m": 146.88,
+      "n_valid": 12,
+      "median_m": 73.94,
+      "mean_m": 89.61,
+      "rmse_m": 102.37,
+      "max_m": 223.92
+    }
+  ],
+  "selected_model": "similarity",
+  "selected_vs_loftr": {
+    "n_pairs": 12,
+    "median_diff_m": -46.74,
+    "a_better_count": 8,
+    "b_better_count": 4,
+    "wilcoxon_statistic": 14.0,
+    "wilcoxon_p_two_sided": 0.0522,
+    "bootstrap_ci95_median_diff_m": [
+      -57.92,
+      9.9
+    ]
+  }
+}

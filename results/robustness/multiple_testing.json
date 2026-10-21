@@ -1,0 +1,111 @@
+{
+  "purpose": "family-wise (Holm) and false-discovery-rate (Benjamini-Hochberg) adjustment over all secondary tests; the single pre-specified primary test is reported unadjusted",
+  "primary": [
+    {
+      "test": "primary: LoFTR vs manual, homography (Wilcoxon)",
+      "p": 0.0425,
+      "family": "primary"
+    }
+  ],
+  "secondary": [
+    {
+      "test": "LoFTR vs manual, affine (Wilcoxon)",
+      "p": 0.0161,
+      "family": "secondary",
+      "p_holm": 0.1932,
+      "q_bh": 0.0735
+    },
+    {
+      "test": "landmarks excluded, homography",
+      "p": 0.0488,
+      "family": "secondary",
+      "p_holm": 0.488,
+      "q_bh": 0.1366
+    },
+    {
+      "test": "landmarks excluded, affine",
+      "p": 0.0137,
+      "family": "secondary",
+      "p_holm": 0.1781,
+      "q_bh": 0.0735
+    },
+    {
+      "test": "cluster sign-flip, homography",
+      "p": 0.0703,
+      "family": "secondary",
+      "p_holm": 0.6327,
+      "q_bh": 0.164
+    },
+    {
+      "test": "Moran's I loftr error_m",
+      "p": 0.8111,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.9109
+    },
+    {
+      "test": "Moran's I loftr dE_m",
+      "p": 0.915,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.915
+    },
+    {
+      "test": "Moran's I loftr dN_m",
+      "p": 0.8458,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.9109
+    },
+    {
+      "test": "Moran's I manual error_m",
+      "p": 0.6805,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.9109
+    },
+    {
+      "test": "Moran's I manual dE_m",
+      "p": 0.2216,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.3447
+    },
+    {
+      "test": "Moran's I manual dN_m",
+      "p": 0.2044,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.3447
+    },
+    {
+      "test": "Spearman loftr_vs_nearest_inlier",
+      "p": 0.208,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.3447
+    },
+    {
+      "test": "Spearman manual_vs_nearest_fitting_point",
+      "p": 0.746,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.9109
+    },
+    {
+      "test": "LoFTR vs printed_corners (Wilcoxon)",
+      "p": 0.0005,
+      "family": "secondary",
+      "p_holm": 0.007,
+      "q_bh": 0.007
+    },
+    {
+      "test": "LoFTR vs printed_corners_plus_ecc (Wilcoxon)",
+      "p": 0.021,
+      "family": "secondary",
+      "p_holm": 0.231,
+      "q_bh": 0.0735
+    }
+  ],
+  "n_secondary": 14
+}

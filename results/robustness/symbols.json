@@ -1,0 +1,31 @@
+{
+  "purpose": "printed symbol widths in ground metres (1 m profile spacing on the 5 m GeoTIFF; resolution-limited)",
+  "road_symbol_width_m": {
+    "n_profiles": 5021,
+    "median": 35.0,
+    "iqr": [
+      20.0,
+      51.0
+    ],
+    "map_mm": 0.55
+  },
+  "rail_symbol_width_m": {
+    "n_profiles": 2079,
+    "median": 10.0,
+    "iqr": [
+      7.0,
+      15.0
+    ],
+    "map_mm": 0.16
+  },
+  "road_rail_adjacency": {
+    "samples_with_rail_within_80m": 550,
+    "required_centre_separation_m": 27.5,
+    "samples_closer_than_required": 28,
+    "forced_displacement_m": {
+      "median": 12.2,
+      "max": 24.6
+    },
+    "note": "where true separation is less than the symbols need, one feature must be displaced by at least this"
+  }
+}

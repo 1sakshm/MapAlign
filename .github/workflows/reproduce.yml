@@ -1,0 +1,56 @@
+name: reproduce
+
+# Re-runs the complete experiment from the committed raw inputs on Linux and compares every transform and
+# per-point error with the committed (Windows) results. Cross-platform floating-point differences are
+# reported; the job fails only if a method's status changes or a per-point error moves by more than 5 m.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install (CPU torch, pinned requirements)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+          pip install -e . --no-deps
+
+      - name: Keep the committed results as the reference
+        run: cp -r results /tmp/reference_results
+
+      - name: Unit tests
+        run: python -m pytest -q
+
+      - name: Verify the committed inputs
+        run: python -m mapalign.fetch all
+
+      - name: Re-run the full experiment
+        run: python -m mapalign.run_all
+
+      - name: Compare with the committed results
+        run: |
+          python tools/compare_results.py /tmp/reference_results results --tol-m 5 --out comparison.json
+          python -c "import json,platform,cv2,torch;print(platform.platform(), 'opencv', cv2.__version__, 'torch', torch.__version__)"
+
+      - name: Upload comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-reproduction
+          path: |
+            comparison.json
+            results/metrics.json
+            results/evaluation_errors.csv
+            results/*_run.json

@@ -1,0 +1,78 @@
+{
+  "purpose": "matcher + MAGSAC precision on pairs with a known transform (no map/truth/picking error)",
+  "metric": "distance between estimated and true mapping on a 21x21 grid inside the overlap, in metres (working resolution 10 m/px)",
+  "cases": {
+    "osm_render_vs_itself/clean/loftr": {
+      "matches": 6389,
+      "inliers": 6369,
+      "valid": true,
+      "seconds": 13.7,
+      "rmse_m": 3.31,
+      "max_m": 8.49,
+      "median_m": 2.5
+    },
+    "osm_render_vs_itself/clean/sift": {
+      "matches": 7791,
+      "inliers": 7447,
+      "valid": true,
+      "seconds": 4.5,
+      "rmse_m": 0.22,
+      "max_m": 0.42,
+      "median_m": 0.19
+    },
+    "osm_render_vs_itself/blur_noise_jpeg/loftr": {
+      "matches": 6339,
+      "inliers": 6324,
+      "valid": true,
+      "seconds": 12.5,
+      "rmse_m": 3.71,
+      "max_m": 6.22,
+      "median_m": 3.61
+    },
+    "osm_render_vs_itself/blur_noise_jpeg/sift": {
+      "matches": 1652,
+      "inliers": 1238,
+      "valid": true,
+      "seconds": 3.5,
+      "rmse_m": 0.47,
+      "max_m": 1.16,
+      "median_m": 0.32
+    },
+    "scan_1926_vs_itself/clean/loftr": {
+      "matches": 6012,
+      "inliers": 6012,
+      "valid": true,
+      "seconds": 11.9,
+      "rmse_m": 2.05,
+      "max_m": 3.26,
+      "median_m": 2.08
+    },
+    "scan_1926_vs_itself/clean/sift": {
+      "matches": 40962,
+      "inliers": 40538,
+      "valid": true,
+      "seconds": 55.8,
+      "rmse_m": 0.18,
+      "max_m": 0.21,
+      "median_m": 0.19
+    },
+    "scan_1926_vs_itself/blur_noise_jpeg/loftr": {
+      "matches": 6004,
+      "inliers": 6004,
+      "valid": true,
+      "seconds": 10.9,
+      "rmse_m": 2.36,
+      "max_m": 3.55,
+      "median_m": 2.34
+    },
+    "scan_1926_vs_itself/blur_noise_jpeg/sift": {
+      "matches": 10565,
+      "inliers": 10297,
+      "valid": true,
+      "seconds": 40.2,
+      "rmse_m": 0.2,
+      "max_m": 0.43,
+      "median_m": 0.18
+    }
+  }
+}
