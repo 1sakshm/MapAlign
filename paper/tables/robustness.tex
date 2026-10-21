@@ -1,0 +1,11 @@
+Bootstrap 95\% CI, LoFTR & median 53.9 [37.8, 70.6]; RMSE 77.4 [46.8, 109.9] \\
+Bootstrap 95\% CI, manual & median 73.9 [51.7, 102.3]; RMSE 102.4 [68.8, 137.6] \\
+MAGSAC++ seeds (200) & LoFTR always valid; RMSE 76.2--77.4 (5--95\%), max 95.3; SIFT never valid \\
+LoFTR confidence $\geq$0.3 / 0.5 / 0.8 & RMSE 74.2 / 81.9 / 98.0 (frozen: keep all) \\
+OSM rendering style (6 variants) & RMSE 75.2--91.9; never fails \\
+Matches within 1/2/3 km of each test point removed & 77.4 / 78.4 / 80.6 (RMSE) \\
+Landmark points removed ($n$=10) & LoFTR 49.2, manual 65.4 (median); $p$=0.049 \\
+Cluster bootstrap (8 clusters) & median difference -31.7 [-44.0, -2.0]; sign-flip $p$=0.070 \\
+Manual model chosen by LOO & similarity: median 90.2, RMSE 106.2 \\
+Printed corners only & median 169.8, RMSE 173.3; vs LoFTR $p$=0.0005 \\
+Printed corners + ECC & median 99.5, RMSE 119.7; vs LoFTR $p$=0.021 \\

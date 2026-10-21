@@ -366,6 +366,79 @@ if _q.is_file():
     shutil.copyfile(_q, FIG / "fig12_qgis_points.png")
     NUM["qgis"] = read_json(R / "qgis" / "qgis_check.json")
 
+# ------------------------------------------------------------------ Fig 13 + Table: robustness (results/robustness, post hoc)
+RB = R / "robustness"
+if (RB / "synthetic.json").is_file():
+    syn = read_json(RB / "synthetic.json")["cases"]
+    cls = read_json(RB / "classical.json")
+    seeds_df = pd.read_csv(RB / "seeds_loftr.csv")
+    style = read_json(RB / "style.json")["rows"]
+    fig, axes = plt.subplots(1, 3, figsize=(COL2, 2.15), gridspec_kw={"width_ratios": [1.45, 1, 1.15], "wspace": 0.55})
+    ax = axes[0]
+    bars = [("SIFT, scan vs itself", syn["scan_1926_vs_itself/clean/sift"]["rmse_m"], GREY),
+            ("LoFTR, scan vs itself", syn["scan_1926_vs_itself/clean/loftr"]["rmse_m"], BLUE),
+            ("LoFTR, OSM vs itself", syn["osm_render_vs_itself/clean/loftr"]["rmse_m"], BLUE),
+            ("LoFTR, 1926 vs OSM", M["homography/loftr"]["rmse_m"] if "M" in dir() else met["metrics"]["homography/loftr"]["rmse_m"], BLUE),
+            ("Manual GCPs (7)", met["metrics"]["homography/manual"]["rmse_m"], RED),
+            ("Corners + ECC", cls["printed_corners_plus_ecc"]["rmse_m"], BROWN),
+            ("Printed corners", cls["printed_corners"]["rmse_m"], BROWN)]
+    y = np.arange(len(bars))[::-1]
+    ax.barh(y, [b[1] for b in bars], color=[b[2] for b in bars], height=0.62,
+            alpha=1.0, hatch=None)
+    for i, b in enumerate(bars[:3]):
+        ax.barh(y[i], b[1], color="white", edgecolor=b[2], hatch="////", height=0.62, lw=0.6)
+    for yy, b in zip(y, bars):
+        ax.text(b[1] * 1.15, yy, f"{b[1]:.1f}", va="center", fontsize=6.5)
+    ax.set_yticks(y, [b[0] for b in bars], fontsize=6.5)
+    ax.set_xscale("log")
+    ax.set_xlim(0.1, 600)
+    ax.set_xlabel("RMSE (m, log scale)")
+    ax.set_title("(a) known-transform floor vs real pair", loc="left")
+    ax = axes[1]
+    v = seeds_df[seeds_df.valid].rmse_m
+    ax.hist(v, bins=np.arange(74, 96.5, 0.5), color=BLUE)
+    ax.axvline(met["metrics"]["homography/loftr"]["rmse_m"], color=RED, lw=1, ls="--")
+    ax.text(met["metrics"]["homography/loftr"]["rmse_m"] + 0.6, ax.get_ylim()[1] * 0.85, "reported", color=RED, fontsize=6.5)
+    ax.set_xlabel("LoFTR held-out RMSE (m)")
+    ax.set_ylabel("seeds")
+    ax.set_title(f"(b) {len(seeds_df)} MAGSAC++ seeds", loc="left")
+    ax = axes[2]
+    names = {"frozen": "as frozen", "thin_lines_x0.5": "lines ×0.5", "thick_lines_x2": "lines ×2", "monochrome": "monochrome",
+             "no_water_fill": "no water fill", "no_minor_roads": "no minor roads", "white_background": "white ground"}
+    yy = np.arange(len(style))[::-1]
+    ax.barh(yy, [r["rmse_m"] for r in style], color=[RED if r["variant"] == "frozen" else BLUE for r in style], height=0.62)
+    for a_, r in zip(yy, style):
+        ax.text(r["rmse_m"] + 1.5, a_, f"{r['rmse_m']:.1f}", va="center", fontsize=6.5)
+    ax.set_yticks(yy, [names.get(r["variant"], r["variant"]) for r in style], fontsize=6.5)
+    ax.set_xlim(0, 110)
+    ax.set_xlabel("LoFTR held-out RMSE (m)")
+    ax.set_title("(c) OSM rendering style", loc="left")
+    save(fig, "fig13_robustness")
+
+    ci = read_json(RB / "intervals.json")
+    sp = read_json(RB / "spatial.json")
+    lm = read_json(RB / "landmarks.json")
+    ss = read_json(RB / "shared_source.json")
+    mm = read_json(RB / "manual_models.json")
+    sd = read_json(RB / "seeds.json")
+    cf = {r["threshold"]: r for r in read_json(RB / "loftr_confidence.json")["rows"]}
+    mt = {r["test"]: r for r in read_json(RB / "multiple_testing.json")["secondary"]}
+    sel = next(r for r in mm["rows"] if r["model"] == mm["selected_model"])
+    rows = [
+        (r"Bootstrap 95\% CI, LoFTR", f"median {ci['homography/loftr']['median_m']['estimate']:.1f} [{ci['homography/loftr']['median_m']['ci95'][0]:.1f}, {ci['homography/loftr']['median_m']['ci95'][1]:.1f}]; RMSE {ci['homography/loftr']['rmse_m']['estimate']:.1f} [{ci['homography/loftr']['rmse_m']['ci95'][0]:.1f}, {ci['homography/loftr']['rmse_m']['ci95'][1]:.1f}]"),
+        (r"Bootstrap 95\% CI, manual", f"median {ci['homography/manual']['median_m']['estimate']:.1f} [{ci['homography/manual']['median_m']['ci95'][0]:.1f}, {ci['homography/manual']['median_m']['ci95'][1]:.1f}]; RMSE {ci['homography/manual']['rmse_m']['estimate']:.1f} [{ci['homography/manual']['rmse_m']['ci95'][0]:.1f}, {ci['homography/manual']['rmse_m']['ci95'][1]:.1f}]"),
+        ("MAGSAC++ seeds (200)", f"LoFTR always valid; RMSE {sd['loftr']['rmse_m']['p5']:.1f}--{sd['loftr']['rmse_m']['p95']:.1f} (5--95\\%), max {sd['loftr']['rmse_m']['max']:.1f}; SIFT never valid"),
+        (r"LoFTR confidence $\geq$0.3 / 0.5 / 0.8", f"RMSE {cf[0.3]['rmse_m']:.1f} / {cf[0.5]['rmse_m']:.1f} / {cf[0.8]['rmse_m']:.1f} (frozen: keep all)"),
+        ("OSM rendering style (6 variants)", f"RMSE {min(r['rmse_m'] for r in style if r['variant']!='frozen'):.1f}--{max(r['rmse_m'] for r in style if r['variant']!='frozen'):.1f}; never fails"),
+        ("Matches within 1/2/3 km of each test point removed", " / ".join(f"{r['rmse_m']:.1f}" for r in ss["rows"]) + " (RMSE)"),
+        ("Landmark points removed ($n$=10)", f"LoFTR {lm['homography']['loftr']['median_m']:.1f}, manual {lm['homography']['manual']['median_m']:.1f} (median); $p$={lm['homography']['paired']['wilcoxon_p_two_sided']:.3f}"),
+        ("Cluster bootstrap (8 clusters)", f"median difference {sp['cluster_bootstrap_loftr_minus_manual']['median_diff_m']:.1f} [{sp['cluster_bootstrap_loftr_minus_manual']['ci95_median_diff_m'][0]:.1f}, {sp['cluster_bootstrap_loftr_minus_manual']['ci95_median_diff_m'][1]:.1f}]; sign-flip $p$={sp['cluster_sign_flip_test']['p_two_sided']:.3f}"),
+        ("Manual model chosen by LOO", f"{sel['model']}: median {sel['median_m']:.1f}, RMSE {sel['rmse_m']:.1f}"),
+        ("Printed corners only", f"median {cls['printed_corners']['median_m']:.1f}, RMSE {cls['printed_corners']['rmse_m']:.1f}; vs LoFTR $p$={cls['paired_vs_loftr']['printed_corners']['wilcoxon_p_two_sided']:.4f}"),
+        ("Printed corners + ECC", f"median {cls['printed_corners_plus_ecc']['median_m']:.1f}, RMSE {cls['printed_corners_plus_ecc']['rmse_m']:.1f}; vs LoFTR $p$={cls['paired_vs_loftr']['printed_corners_plus_ecc']['wilcoxon_p_two_sided']:.3f}"),
+    ]
+    (TAB / "robustness.tex").write_text(chr(10).join(f"{a} & {b} " + chr(92) * 2 for a, b in rows) + chr(10), encoding="utf-8")
+
 # ------------------------------------------------------------------ numbers
 nmas_m = 63360 * 0.0254 / 50
 for m in ("loftr", "manual"):

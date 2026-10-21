@@ -178,6 +178,13 @@ table.cmp th,table.cmp td{white-space:normal;overflow-wrap:anywhere;vertical-ali
 table.cmp th:first-child,table.cmp td:first-child{padding-left:0}
 table.cmp th:last-child,table.cmp td:last-child{padding-right:0}
 table.cmp .sub{display:block;font-family:var(--body);font-size:11px;letter-spacing:0;color:var(--ink-3)}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1.5px solid var(--ink)}
+.fact{padding:12px 12px 10px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.fact:nth-child(4n){border-right:0}
+.fact .v{font-family:var(--display);font-size:var(--s2);line-height:1}
+.fact .k{font-size:var(--s-1);color:var(--ink-2);margin-top:6px}
+tr.sec td{color:var(--ink-2);font-style:italic}
+@media (max-width:860px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fact:nth-child(4n){border-right:1px solid var(--rule)}.fact:nth-child(2n){border-right:0}}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
 .list li{padding-left:18px;position:relative;max-width:70ch}
@@ -224,7 +231,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
       </div>
       <div>
         <p class="lede">Can a computer find where a century-old Survey of India sheet sits on today's ground? We pitted a learned matcher, a classical one and hand-placed control points against each other. Each was scored in metres at points it never saw.</p>
-        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 9 pages)</a></p>
+        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 11 pages)</a></p>
         <p class="disclose">The glowing points above are the 61 real anchors LoFTR found in this part of the sheet. Control points were picked by an AI assistant and reviewed unchanged by the author.</p>
       </div>
     </div>
@@ -295,7 +302,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
     <div class="sheet-head">
       <div class="no">SHEET 3 · WHY SIFT FAILS</div>
       <h2>Chance level, even with a head start</h2>
-      <p>We pre-aligned 25 tiles using only the sheet's printed corners, then asked each matcher to find correspondences. A match counts as correct if it lands within 600 m of the right place. Random guessing would score 4.31%. SIFT scored 4.75%.</p>
+      <p>We pre-aligned 25 tiles using only the sheet's printed corners, then asked each matcher to find correspondences. A match counts as correct if it lands within 600 m of the right place. Random guessing would score 4.31%. SIFT scored 4.75%. At every radius from 200 m to 1 km, SIFT stays within 1.0–1.5 times chance while LoFTR reaches 1.7–14 times.</p>
     </div>
     <div class="sheet-body">
       <div class="card"><svg class="chart" id="chanceChart" viewBox="0 0 640 190" role="img" aria-label="Share of correct matches on pre-aligned tiles: SIFT 4.75 percent, chance 4.31 percent, LoFTR 12.9 percent"></svg></div>
@@ -322,9 +329,11 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
             <tr class="best"><td><span class="legend-dot" style="background:var(--blue)"></span>LoFTR + RANSAC</td><td>12</td><td>53.9</td><td>64.2</td><td>77.4</td><td>191.7</td><td>95.9</td><td>≈20 s</td></tr>
             <tr><td><span class="legend-dot" style="background:var(--red)"></span>Manual control points (7)</td><td>12</td><td>73.9</td><td>89.6</td><td>102.4</td><td>223.9</td><td>140.6</td><td>0.15 s</td></tr>
             <tr><td>SIFT + RANSAC</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>≈15 s</td></tr>
+            <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners + ECC*</td><td>12</td><td>99.5</td><td>102.4</td><td>119.7</td><td>263.1</td><td>–</td><td>≈60 s</td></tr>
+            <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners only*</td><td>12</td><td>169.8</td><td>169.0</td><td>173.3</td><td>258.2</td><td>–</td><td>instant</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, so this is suggestive, not settled.</p>
+        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, and no secondary LoFTR-vs-manual test survives a correction for the 14 secondary tests, so this is suggestive, not settled. *Classical baselines added after the evaluation (Sheet 6).</p>
       </div>
       <div class="two">
         <div class="card">
@@ -350,6 +359,32 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
     </div>
     <div class="sheet-body">
       <div class="card"><svg class="chart" id="datumChart" viewBox="0 0 640 340" role="img" aria-label="Datum offset vectors from three sources"></svg></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="stress">
+    <div class="sheet-head">
+      <div class="no">SHEET 6 · STRESS TESTS</div>
+      <h2>Where the 77 metres come from</h2>
+      <p>After the evaluation we tried to break the result. On an image warped by a known transform and matched against itself, LoFTR's own error is 2–3 m and SIFT's 0.2 m. Almost all of the real error comes from the map, a century of change, OSM and our picking, not from the matcher.</p>
+      <p class="note" style="margin-top:12px">None of these checks changed a parameter or a reported number. Details: Section 5 of the paper and <span class="mono">results/robustness/</span>.</p>
+    </div>
+    <div class="sheet-body">
+      <div class="card">
+        <div class="controls" style="margin-bottom:6px"><b class="sc">Error budget, log scale</b></div>
+        <svg class="chart" id="budgetChart" viewBox="0 0 640 300" role="img" aria-label="RMSE in metres on a log scale: SIFT on the scan against itself 0.2, LoFTR on the scan against itself 2.0, LoFTR on OSM against itself 3.3, LoFTR on the real pair 77.4, manual control points 102.4, printed corners plus ECC 119.7, printed corners only 173.3"></svg>
+        <p class="note">Hatched bars: the same image warped and matched against itself, so only the matcher can err. Solid bars: the real 1926-to-OSM problem, scored on the 12 held-out points.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><div class="v">389–390</div><div class="k">LoFTR inliers over 200 RANSAC seeds; RMSE 76.2–77.4 m in 90% of them</div></div>
+        <div class="fact"><div class="v">75–92 m</div><div class="k">LoFTR RMSE across six other OSM rendering styles; it never failed</div></div>
+        <div class="fact"><div class="v">80.6 m</div><div class="k">RMSE after deleting every LoFTR match within 3 km of each test point (from 77.4)</div></div>
+        <div class="fact"><div class="v">0.46 m</div><div class="k">largest polyconic-to-UTM mismatch a single homography leaves on this sheet</div></div>
+        <div class="fact"><div class="v">≈ 9 m</div><div class="k">colour-plate misregistration of the background tint, measured at the border</div></div>
+        <div class="fact"><div class="v">12–25 m</div><div class="k">displacement forced where a 35 m road symbol runs beside a railway</div></div>
+        <div class="fact"><div class="v">p = 0.007</div><div class="k">LoFTR beats georeferencing from the printed corners, after Holm correction</div></div>
+        <div class="fact"><div class="v">0.01 m</div><div class="k">agreement of every per-point error when the whole experiment is re-run on Linux</div></div>
+      </div>
     </div>
   </section>
 
@@ -386,7 +421,7 @@ if (!reduce) document.querySelectorAll("[data-count]").forEach(n => { const end 
   const step = t => { const k = Math.min(1, (t - t0) / 1400), e = 1 - Math.pow(1 - k, 4); n.textContent = (end * e).toFixed(1); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step); });
 
-fetch("assets/data.json").then(r => r.json()).then(D => { hero(D); map(D); matches(D); charts(D); gpu(D); }).catch(err => console.error("data.json", err));
+fetch("assets/data.json").then(r => r.json()).then(D => { hero(D); map(D); matches(D); charts(D); gpu(D); budget(); }).catch(err => console.error("data.json", err));
 
 /* ---------- hero: LoFTR anchors constellation + scanning beam ---------- */
 function hero(D){
@@ -566,6 +601,30 @@ function charts(D){
   el("text", {x:410, y:306}, q).textContent = "position implied by the printed grid.";
 }
 
+
+/* ---------- error budget (log scale), numbers from results/robustness ---------- */
+function budget(){
+  const c = document.getElementById("budgetChart"); if (!c) return;
+  const rows = [["SIFT · scan vs itself", 0.18, "--ink-3", true], ["LoFTR · scan vs itself", 2.05, "--blue", true],
+    ["LoFTR · OSM vs itself", 3.31, "--blue", true], ["LoFTR · 1926 vs OSM", 77.43, "--blue", false],
+    ["Manual control points", 102.37, "--red", false], ["Printed corners + ECC", 119.66, "--brown", false],
+    ["Printed corners only", 173.27, "--brown", false]];
+  const L = 170, R = 600, top = 14, rh = 36, lo = Math.log10(0.1), hi = Math.log10(500);
+  const sx = v => L + (R - L) * (Math.log10(v) - lo) / (hi - lo);
+  const defs = el("defs", {}, c);
+  const pat = el("pattern", {id: "hatch", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)"}, defs);
+  el("line", {x1: 0, y1: 0, x2: 0, y2: 6, stroke: css("--ink-2"), "stroke-width": 2}, pat);
+  [0.1, 1, 10, 100].forEach(v => { el("line", {x1: sx(v), x2: sx(v), y1: top - 6, y2: top + rh * rows.length - 6, class: "grid"}, c);
+    el("text", {x: sx(v), y: top + rh * rows.length + 12, "text-anchor": "middle"}, c).textContent = v >= 1 ? v + " m" : v + " m"; });
+  rows.forEach(([n, v, col, hatch], i) => { const y = top + i * rh, g = el("g", {}, c);
+    el("text", {x: L - 10, y: y + 17, "text-anchor": "end", class: "lbl"}, g).textContent = n;
+    el("rect", {x: L, y, width: sx(v) - L, height: 24, rx: 3, class: "bar", fill: hatch ? "url(#hatch)" : css(col),
+      stroke: css(col), "stroke-width": hatch ? 1.5 : 0, style: `animation-delay:${i * 120}ms`}, g);
+    el("text", {x: sx(v) + 8, y: y + 17, class: "lbl"}, g).textContent = (v < 1 ? v.toFixed(1) : v.toFixed(1)) + " m";
+    const html = `<b>${n}</b><br>held-out RMSE ${v.toFixed(2)} m` + (hatch ? "<br>known transform: matcher error only" : "");
+    g.addEventListener("pointerenter", e => showTip(html, e.clientX, e.clientY)); g.addEventListener("pointermove", e => showTip(html, e.clientX, e.clientY)); g.addEventListener("pointerleave", hideTip); });
+  onView(c, () => c.classList.add("grow"));
+}
 /* ---------- GPU card ---------- */
 function gpu(D){ if (!D.gpu) return; const g = D.gpu, b = document.getElementById("gpuBody");
   b.innerHTML = `<table class="cmp" style="margin-top:8px"><colgroup><col><col><col></colgroup>

@@ -12,7 +12,7 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
-**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 9 pages; LaTeX source in `paper/`)  
+**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 11 pages; LaTeX source in `paper/`)  
 **Interactive report:** https://mysore-1926.pages.dev
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
@@ -25,7 +25,7 @@ This is an engineering benchmark on **one** map sheet, not a claim of methodolog
 [Architecture](#system-architecture) · [Methods](#methods-compared) · [Installation](#installation) ·
 [Data preparation](#data-preparation) · [Running](#running-the-experiment) · [GCP collection](#gcp-collection) ·
 [Coordinate conventions](#coordinate-conventions) · [Metrics](#evaluation-metrics) · [Figures](#example-visualizations) ·
-[Results](#results) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
+[Results](#results) · [Robustness](#robustness-and-sensitivity) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
 
 ## Research question
 
@@ -48,8 +48,10 @@ real sheet.
 | Historical map | Survey of India 1-inch sheet **57 D/11 "Mysore"**, surveyed 1924–25, published 1926, 1:63,360, neatline 76°30′–76°45′E, 12°15′–12°30′N; 5898 × 6828 px, 300 dpi JPEG. [Zenodo record 8388121](https://zenodo.org/records/8388121), compiled by John Brown | CC BY 4.0 (deposit). The underlying 1926 Government of India work is believed to be out of copyright (not legal advice) |
 | Modern reference | OpenStreetMap roads, railways, waterways, water bodies and landmarks; one Overpass API query for the sheet bbox plus a 0.03° margin; rendered locally to a GeoTIFF in EPSG:32643 at 5 m | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/) |
 
-- **Not committed:** raw data. `python -m mapalign.fetch all` re-downloads it, checks the MD5 published by Zenodo, and
-  records SHA-256 checksums and the OSM snapshot timestamp in `data/raw/manifest.json`.
+- **Exact inputs are versioned:** the scan and both OSM extracts are in `data/raw/`, byte-identical to the SHA-256
+  checksums in `data/raw/manifest.json`, with licences in [`data/raw/ATTRIBUTION.md`](data/raw/ATTRIBUTION.md).
+  `python -m mapalign.fetch all` verifies them and does not overwrite them. Re-downloading OSM would give a newer
+  snapshot and different truth coordinates.
 - **Source verification:** [`data/SOURCES.md`](data/SOURCES.md) records how the sheet was chosen and its metadata.
 - **Excluded data:** the Survey of India Open Series (2011+) sheets are © Government of India ("reproduction
   prohibited"). They are **not used and must not be added** to this repository.
@@ -72,7 +74,7 @@ gcp/                      fitting_points.csv, evaluation_points.csv, candidates.
 src/mapalign/             config, io, fetch, reference (OSM render), preprocess, match_sift, match_loftr,
                           estimate_transform, diagnostics, pipeline, gcp, georeference, evaluate, visualize,
                           envcheck, run_all
-tests/                    pytest suite (53 tests)
+tests/                    pytest suite (59 tests)
 notebooks/                01_matching_baselines.ipynb (exploration only; it reads saved results)
 results/                  metrics, per-point errors, run records, figures (GeoTIFFs are git-ignored)
 paper/                    research paper: mapalign.tex, mapalign.pdf, refs.bib, figures/, tables/,
@@ -88,8 +90,12 @@ reference's exact affine geotransform then gives EPSG:32643 metres.
 | | Method A: LoFTR + RANSAC | Method B: SIFT + RANSAC | Method C: manual GCPs |
 |---|---|---|---|
 | Correspondences | Kornia `LoFTR(pretrained="outdoor")`. Both images scaled by one common factor to ≤ 768 px (≈ 45 m/px), eval mode, no grad | OpenCV SIFT on 10 m/px grayscale; brute-force L2 2-NN matching; Lowe ratio 0.75 | 9 picked GCPs, of which 2 were removed by a pre-fit QC rule, leaving 7 |
-| Estimator | MAGSAC (OpenCV USAC), 3 px at the matcher's resolution, 1.2 M iterations, seed 42 | same | least squares, no RANSAC |
+| Estimator | MAGSAC++ (OpenCV USAC), 3 px at the matcher's resolution, 1.2 M iterations, deterministic* | same | least squares, no RANSAC |
 | Automatic? | yes | yes | human-assisted (here: AI-assisted) |
+
+\* The configuration sets seed 42, but OpenCV's flag-based USAC call ignores `cv2.setRNGSeed` and always uses its
+internal random state (0). Results are deterministic. A 200-seed analysis (see [Robustness](#robustness-and-sensitivity))
+shows how much they would vary.
 
 Transform validity checks shared by all methods: finite entries, conditioning, orientation, anisotropy, the horizon
 line, a convex mapped outline, and plausible bounds.
@@ -127,7 +133,7 @@ it needs about 5 GB of disk. All reported results were produced on CPU.
 
 ```powershell
 python -m mapalign.envcheck    # expect 4 PASS lines (SIFT+RANSAC, LoFTR, pyproj, rasterio) and "0 failed"
-python -m pytest -q            # expect "53 passed"
+python -m pytest -q            # expect "59 passed"
 ```
 
 ## Data preparation
@@ -276,7 +282,8 @@ Exact runtimes per run are in `results/*_run.json`.
 - Exact Wilcoxon p = 0.043.
 - Bootstrap 95 % CI of the median difference: [−44.0, +2.5] m.
 
-This is weak evidence, from 12 points on one sheet.
+This is suggestive, not established: the interval includes zero, and none of the secondary LoFTR-vs-manual tests
+survives a multiple-testing correction (see [Robustness](#robustness-and-sensitivity)).
 
 **Affine vs homography** (secondary; not used to choose any setting):
 - LoFTR affine: median 42.4 m, RMSE 76.3 m.
@@ -307,6 +314,42 @@ CPU. Floating-point differences between the devices shift the transform by 1.9 m
 sheet. The held-out RMSE is 77.2 m on the GPU vs 77.4 m on the CPU. The reported results are the CPU run. Each device is
 deterministic on its own.
 
+## Robustness and sensitivity
+
+These checks were added after the held-out evaluation. None of them changed a parameter or a reported number.
+Outputs are in `results/robustness/`, and they are reproduced with:
+
+```powershell
+python -m mapalign.robustness all          # seeds, confidence, intervals, spatial, landmarks, shared source, style, projection, scan, datum, timing
+python -m mapalign.robustness_extra all    # synthetic benchmark, plates, symbols, thresholds, classical baselines, manual models, multiple testing
+```
+
+| Question | Result |
+|---|---|
+| How much error do the matchers themselves add? | On an image warped by a known transform and matched against itself: LoFTR 2.0–3.3 m RMSE, SIFT 0.2 m. The 77 m real-pair error therefore comes mostly from the map, a century of change, OSM and picking. |
+| Is SIFT just a bad matcher? | No. It is the more precise matcher on same-style pairs; it fails only across the 1926-lithograph-vs-vector-render gap. |
+| Confidence intervals (bootstrap) | LoFTR median 53.9 m [37.8, 70.6], RMSE 77.4 [46.8, 109.9]. Manual median 73.9 [51.7, 102.3], RMSE 102.4 [68.8, 137.6]. |
+| RANSAC seed (200 seeds) | LoFTR always valid, 389–390 inliers; RMSE 76.2–77.4 m in 90 % of seeds, one outlier at 95.3 m. SIFT never valid. |
+| OSM rendering style (6 variants) | LoFTR RMSE 75.2–91.9 m, never fails; removing minor roads hurts most. |
+| LoFTR confidence threshold | Keeping matches ≥ 0.3 gives median 37.5 m; ≥ 0.8 gives RMSE 98.0 m. The frozen choice (keep all) was not changed. |
+| Does LoFTR win by matching the truth features? | No. Removing all its matches within 1 / 2 / 3 km of each test point: RMSE 77.4 / 78.4 / 80.6 m. |
+| Spatial correlation | Moran's I: none (p = 0.20–0.92). A cluster bootstrap (8 clusters) gives a median difference of −31.7 m [−44.0, −2.0]; a cluster sign-flip test gives p = 0.070. |
+| Landmark definitions | Without the two landmark-centroid points: LoFTR 49.2 m vs manual 65.4 m median, p = 0.049. |
+| Multiple testing (14 secondary tests) | Holm / Benjamini–Hochberg: only LoFTR vs printed corners survives (Holm p = 0.007). No secondary LoFTR-vs-manual test does (q = 0.07–0.14). |
+| Classical baselines | Printed sheet corners alone: median 169.8 m, RMSE 173.3. Corners + ECC image alignment: median 99.5 m, RMSE 119.7 (LoFTR closer at 9 of 12, p = 0.021, Holm 0.23). |
+| Fairer tuning for the manual fit | Choosing its model by leave-one-out on its own points picks a similarity transform: median 90.2 m, RMSE 106.2 m. |
+| Hand-picked development thresholds | Size rule picks 768 px at every radius from 0.5 to 2 km. LoFTR beats chance on aligned tiles at every radius (1.7–14×); SIFT stays at 1.0–1.5×. |
+| Projection (polyconic vs UTM) | One homography absorbs it to within 0.46 m. |
+| Scan geometry | Neatline straight to 0.4–1.4 px RMS; 0.4 % scale difference between directions (absorbed by the fit); JPEG quality ≈ 79. |
+| Colour-plate registration | Tint plate within 1 px east–west and about 1.7 px (≈ 9 m) north–south of the black plate. Line plates can't be measured. |
+| Cartographic displacement | Road bands 35 m wide (0.55 mm), railways 10 m. Where they run closer than 27.5 m, one is displaced 12–25 m (28 of 550 samples). |
+| Datum | Graticule offset (−84, +53) m from fitting points; (−105, +105) m from the 12 evaluation points. |
+| Repeated timing (5 warm runs) | LoFTR 6.5 s, SIFT 7.2 s, manual fit 0.002 s. Human picking time was not recorded. |
+
+**Still open** (these need people, not code): an independent, blind re-pick of the control points, a stronger
+manual baseline with 20+ points, and a dedicated road-network registration method. Blind kits for the first two are
+in `gcp/repick_kit_*`. Once a template is filled in, run `python -m mapalign.robustness picker --repick <file>`.
+
 ## Limitations
 
 - **One sheet, one OSM rendering style.** Nothing here generalises to "LoFTR is better for historical maps".
@@ -320,14 +363,27 @@ deterministic on its own.
   iterations, and the threshold rule. All were justified on development data only and frozen before the evaluation
   points existed. They are still choices made after seeing the first failures.
 - **Datum:** the 1926 datum is not identified. PROJ has no real Kalianpur 1880 → WGS84 transformation.
+- **Easy points:** the quality-control rule kept only points consistent with a smooth offset from the printed grid, so
+  locally distorted areas are under-represented. Absolute errors are probably optimistic for every method.
+- **Feature type:** all candidate points are OSM road, rail or water crossings or landmarks, the same linework LoFTR
+  matches.
+- **Review:** the author reviewed the points after the held-out results existed. The review was neither blind nor
+  independent.
+- **Classical methods:** represented by SIFT, printed corners and ECC, not by a dedicated road-network matcher.
 - **Not tested:** non-linear (local) transforms, other learned matchers, and LoFTR input sizes above 1280 px (1536 px ran out of memory).
 
 ## Reproducibility
 
-- **Determinism:** the complete pipeline was re-run from the raw data, and every transform matrix, per-point error and
-  metric was reproduced exactly (timings differ).
+- **Determinism:** with the versioned inputs, a full re-run reproduces every transform matrix, per-point error and
+  metric bit for bit on the original machine (timings differ). MAGSAC++ uses OpenCV's fixed internal random state; the
+  configured seed 42 does not reach it.
+- **Cross-platform:** [`.github/workflows/reproduce.yml`](.github/workflows/reproduce.yml) re-runs the whole experiment on
+  Linux on every push and compares it with the committed results (`tools/compare_results.py`). Every per-point error and
+  metric agrees to 0.01 m; the transform matrices differ only in the last floating-point digits.
+- **LoFTR weights:** verified by SHA-256 (`21f5bec5…`). If the original download URL disappears, they are fetched from
+  the mirror in this repository's release [`loftr-weights-v1`](https://github.com/1sakshm/MapAlign/releases/tag/loftr-weights-v1).
 - **Environment:** pinned versions in `requirements.txt`; hardware/software in `results/environment.json` and
-  `results/experiment_metadata.json`; seed 42.
+  `results/experiment_metadata.json`.
 - **Input checksums:** in `configs/experiment.yaml` and `data/raw/manifest.json`.
 - **Frozen configuration:** frozen 2026-10-19. `mapalign.evaluate` refuses to run if the configuration is unfrozen or
   `evaluation_points.csv` has changed.

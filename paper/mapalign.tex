@@ -34,9 +34,9 @@
 \noindent
 Large archives of colonial Survey of India topographic sheets are now openly available as scans, but almost none of them are georeferenced. We measure how well three standard approaches place one such sheet, 57\,D/11 \emph{Mysore} (1:63,360, published 1926), on modern ground. The three are a pretrained LoFTR matcher with MAGSAC++, SIFT with MAGSAC++, and a least-squares homography fitted to manually selected control points. The modern reference is OpenStreetMap (OSM), rendered by us to a 5\,m grid in WGS\,84/UTM~43N. All methods share one coordinate chain and one evaluation, scored in metres at 12 held-out points whose truth comes from OSM vector geometry.
 
-SIFT produced no valid transform. Even on tiles that had already been aligned, only 4.75\% of its matches were correct, against a chance rate of 4.31\%. LoFTR gave 389 RANSAC inliers out of 601 matches and reached a held-out median error of 53.9\metre{} (RMSE 77.4\metre). The 7-point manual fit reached 73.9\metre{} (RMSE 102.4\metre). LoFTR was closer at 9 of 12 points (exact Wilcoxon $p=0.043$), but the bootstrap interval for the median paired difference, $[-44.0, +2.5]$\metre, still includes zero.
+SIFT produced no valid transform. Even on tiles that had already been aligned, only 4.75\% of its matches were correct, against a chance rate of 4.31\%. LoFTR gave 389 RANSAC inliers out of 601 matches and reached a held-out median error of 53.9\metre{} (RMSE 77.4\metre). The 7-point manual fit reached 73.9\metre{} (RMSE 102.4\metre). LoFTR was closer at 9 of 12 points (exact Wilcoxon $p=0.043$), but the bootstrap interval for the median paired difference, $[-44.0, +2.5]$\metre, includes zero, and none of the secondary LoFTR-versus-manual tests survives a multiple-testing correction. LoFTR does clearly beat georeferencing from the four printed sheet corners alone (median 169.8\metre, Holm-adjusted $p=0.007$). A known-transform benchmark puts LoFTR's own error at 2--4\metre, so nearly all of the remaining error comes from the map, a century of change and the reference, not from the matcher.
 
-An affine model did as well as the homography. Both methods carry a measurable mean bias of 33--56\metre. The sheet's printed graticule is offset from WGS\,84 by roughly 100\metre, consistent with a Kalianpur datum. We release the pipeline, which reproduces every number in this paper bit for bit.
+An affine model did as well as the homography. Both methods carry a measurable mean bias of 33--56\metre. The sheet's printed graticule is offset from WGS\,84 by roughly 100\metre, consistent with a Kalianpur datum. We release the pipeline and the exact inputs. A re-run reproduces every number in this paper bit for bit on the original machine, and to 0.01\metre{} on Linux.
 \end{abstract}
 
 \section{Introduction}
@@ -124,7 +124,7 @@ We use Kornia's~\citep{riba2020kornia} implementation of LoFTR with the \emph{ou
 We run OpenCV SIFT~\citep{lowe2004sift} with default parameters on the 10\metre{} images. Descriptors are matched by brute-force $L_2$ two-nearest-neighbour search, and the ratio test is applied at 0.75.
 
 \subsection{Shared robust estimation}
-Both automatic methods use OpenCV's USAC implementation of MAGSAC++~\citep{barath2020magsacpp}, a descendant of RANSAC~\citep{fischler1981ransac}, with seed 42. The inlier threshold is 3 pixels at the resolution where the matcher located its points. That is 30\metre{} for SIFT and 13.5 working pixels, about 135\metre, for LoFTR. We allow $1.2\times10^6$ iterations, the standard sample count $N=\log(1-p)/\log(1-w^4)$ for confidence $p=0.999$ at an inlier ratio as low as $w=0.05$.
+Both automatic methods use OpenCV's USAC implementation of MAGSAC++~\citep{barath2020magsacpp}, a descendant of RANSAC~\citep{fischler1981ransac}. Our configuration sets a random seed of 42, but OpenCV's flag-based USAC call ignores it and uses a fixed internal random state (0). The results are therefore deterministic, and Section~\ref{sec:robust} reports how much they vary over 200 explicit seeds. The inlier threshold is 3 pixels at the resolution where the matcher located its points. That is 30\metre{} for SIFT and 13.5 working pixels, about 135\metre, for LoFTR. We allow $1.2\times10^6$ iterations, the standard sample count $N=\log(1-p)/\log(1-w^4)$ for confidence $p=0.999$ at an inlier ratio as low as $w=0.05$.
 
 A model is rejected if it fails any of these checks: finite entries; condition number $<10^7$; positive determinant; ratio of singular values $<10$; image corners on the same side of the horizon line; a convex mapped outline; mapped corners within half an image of the reference. A rejected model is recorded as a failure, and it is never repaired.
 
@@ -258,7 +258,7 @@ Table~\ref{tab:results} gives the main result. LoFTR's median held-out error is 
 
 The 1947 US National Map Accuracy Standard~\citep{nmas1947} asks for 90\% of well-defined points within 1/50 inch at this scale, which is 32.2\metre. LoFTR meets it at 2 points and the manual fit at none. Neither result should be read as a statement about the original survey, because both include picking error, OSM error and a century of change.
 
-Table~\ref{tab:points} and Fig.~\ref{fig:errors}a give the per-point errors. LoFTR is closer at 9 of 12 points. The median paired difference is $-31.7$\metre{} (Wilcoxon $W=13$, exact $p=0.043$), with a bootstrap 95\% interval of $[-44.0, +2.5]$\metre. Because the interval includes zero, we treat the advantage as likely but not established.
+Table~\ref{tab:points} and Fig.~\ref{fig:errors}a give the per-point errors. LoFTR is closer at 9 of 12 points. The median paired difference is $-31.7$\metre{} (Wilcoxon $W=13$, exact $p=0.043$), with a bootstrap 95\% interval of $[-44.0, +2.5]$\metre. Because the interval includes zero, we treat the advantage as suggestive but not established. Section~\ref{sec:robust} shows that this reading holds after accounting for spatial clustering and for the number of secondary tests.
 
 The largest error belongs to E11, a low-confidence road junction in the north-west: 191.7\metre{} for LoFTR and 223.9\metre{} for the manual fit, in nearly the same direction. That pattern points to the point, not the methods: either a mis-identified junction or a realigned road. We kept E11 in all reported numbers. Without the three low-confidence points (E03, E11, E12), LoFTR's median and RMSE fall to 44.9\metre{} and 46.0\metre, and the manual fit's to 66.7\metre{} and 86.1\metre. This is a sensitivity check, not a replacement result.
 
@@ -337,29 +337,88 @@ We measured the offset between true WGS\,84 positions and the positions implied 
 \end{figure}
 
 \subsection{Compute and reproducibility}
-On the CPU, LoFTR took 18.3\,s end to end, 8.0\,s of it inference. SIFT took 14.6\,s and the manual fit 0.15\,s. Re-running LoFTR on an RTX~3050 Laptop GPU (4\,GB, CUDA~12.6, peak 1.06\,GB) with the frozen settings gave the same 601 matches and 389 inliers in 1.8\,s of inference. Floating-point differences between the devices move the transform by 1.9\metre{} on average and 8.5\metre{} at most across the sheet. The held-out RMSE becomes 77.2\metre{} against 77.4\metre. All reported numbers come from the CPU run. A complete re-run from the raw downloads reproduces every transform matrix, per-point error and summary statistic exactly. It takes about five minutes on the CPU.
+On the CPU, LoFTR took 18.3\,s end to end, 8.0\,s of it inference. SIFT took 14.6\,s and the manual fit 0.15\,s. Re-running LoFTR on an RTX~3050 Laptop GPU (4\,GB, CUDA~12.6, peak 1.06\,GB) with the frozen settings gave the same 601 matches and 389 inliers in 1.8\,s of inference. Floating-point differences between the devices move the transform by 1.9\metre{} on average and 8.5\metre{} at most across the sheet. The held-out RMSE becomes 77.2\metre{} against 77.4\metre. All reported numbers come from the CPU run. With warm caches, five repeated CPU runs took a median 6.5\,s for LoFTR (4.8\,s matching) and 7.2\,s for SIFT. The exact inputs are versioned in the repository, so a complete re-run reproduces every transform matrix, per-point error and summary statistic bit for bit on the original machine, in about five minutes. A continuous-integration job repeats the whole experiment on Linux (Ubuntu~24.04, the same pinned packages). There, every per-point error and summary statistic agrees to 0.01\metre; the transform matrices differ only in the last floating-point digits.
+
+\section{Robustness and sensitivity}
+\label{sec:robust}
+All analyses in this section were added after the held-out evaluation. They test how far the conclusions depend on choices we made. None of them was used to change a parameter or a reported result. Table~\ref{tab:robust} summarises them and Fig.~\ref{fig:robust} shows three of them.
+
+\begin{table}[t]
+\centering
+\caption{Post-hoc robustness checks. Distances in metres on the same 12 held-out points unless stated.}
+\label{tab:robust}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{0.36\columnwidth}>{\raggedright\arraybackslash}X}
+\toprule
+Check & Result \\
+\midrule
+\tabinput{tables/robustness.tex}
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig13_robustness}
+\caption{(a)~RMSE on pairs with a known transform (hatched: the same image warped and matched against itself) compared with the real 1926--OSM pair and the classical baselines. (b)~LoFTR held-out RMSE over 200 explicitly seeded MAGSAC++ runs. (c)~LoFTR held-out RMSE for six alternative OSM renderings.}
+\label{fig:robust}
+\end{figure*}
+
+\paragraph{Where the error comes from.}
+To separate the matchers' own error from everything else, we warped each image by a known homography and matched it against itself. On the 1926 scan, LoFTR recovered the transform to 2.0\metre{} RMSE and SIFT to 0.2\metre; on the OSM render, the figures were 3.3\metre{} and 0.2\metre. Blur, noise and JPEG compression changed this by at most 0.4\metre. SIFT is therefore the more precise matcher whenever both images share a style. It fails on the real pair only because its descriptors do not carry across the gap between a 1926 lithograph and a vector rendering.
+
+The other error sources are also small or measured:
+\begin{itemize}
+\item \emph{Projection.} Mapping a polyconic sheet (Everest spheroid, centred on the sheet) onto UTM~43N with one homography leaves at most 0.46\metre.
+\item \emph{Scan geometry.} The printed neatline is straight to 0.4--1.4 pixels RMS (2--8\metre). Ground scale differs by 0.4\% between the two directions, which any affine or projective fit absorbs. The JPEG quality is about 79.
+\item \emph{Colour plates.} The background tint meets the black neatline within one pixel on the west and east sides. Comparing north and south implies a tint-plate offset of 1.7 pixels (about 9\metre); the red, blue and brown line plates share no edge with the black plate and could not be measured.
+\item \emph{Cartographic displacement.} Printed road bands are a median 35\metre{} wide on the ground (0.55\,mm on paper) and railways 10\metre. Where a road runs within 27.5\metre{} of a railway, one of them must be displaced by 12--25\metre; this happened at 28 of 550 sampled places.
+\end{itemize}
+With the matcher contributing only a few metres, the 50--100\metre{} held-out errors come mostly from the map itself, a century of change, OSM and our picking.
+
+\paragraph{Stability of LoFTR.}
+Over 200 explicitly seeded MAGSAC++ runs, LoFTR was always valid with 389--390 inliers. Its RMSE stayed between 76.2 and 77.4\metre{} in 90\% of runs, with a single outlier at 95.3\metre; SIFT was never valid. Six alternative OSM renderings, with thinner or thicker lines, no colour, no water fill, no minor roads or a white background, gave RMSEs of 75.2--91.9\metre{} and never failed. Removing minor roads was the most damaging change. Raising the match-confidence threshold to 0.3 would have lowered the median error to 37.5\metre, but higher thresholds raised it again, to 98.0\metre{} RMSE at 0.8; we kept the frozen choice of using every match.
+
+\paragraph{Does LoFTR succeed by matching the truth features?}
+The evaluation truth and LoFTR's reference both come from OSM. If LoFTR's accuracy came from matching the very features we score it on, removing those matches should hurt. For each test point we deleted every LoFTR match whose OSM location lay within 1, 2 or 3\,km, refitted and re-predicted that point. RMSE moved from 77.4 to 77.4, 78.4 and 80.6\metre, so the accuracy does not depend on local matches at the test points.
+
+\paragraph{Statistics.}
+Bootstrap intervals for the summary statistics are wide: LoFTR median 53.9\metre{} $[37.8, 70.6]$, manual 73.9\metre{} $[51.7, 102.3]$. Moran's $I$ found no spatial autocorrelation in the errors ($p=0.20$--$0.92$)~\citep{moran1950}. Grouping points into eight clusters joined within 3\,km and resampling clusters instead of points gave a median paired difference of $-31.7$\metre{} $[-44.0, -2.0]$; an exact sign-flip test over clusters gave $p=0.070$. Dropping the two landmark points, whose truth is a building or garden centroid rather than a crossing, gave $p=0.049$ with the same direction. We adjusted all 14 secondary tests together with Holm's method~\citep{holm1979} and the Benjamini--Hochberg false-discovery rate~\citep{benjamini1995}. Only LoFTR versus georeferencing from the printed corners survives (Holm $p=0.007$). No secondary LoFTR-versus-manual comparison does: the affine and landmark variants reach $q=0.07$--$0.14$. The primary comparison was the single test specified in advance; it stays at $p=0.043$, which we read as suggestive.
+
+\paragraph{Classical baselines and the manual model.}
+SIFT is a weak stand-in for classical map registration, so we added two standard classical baselines on the same points. Georeferencing from the four printed sheet corners alone reaches a median of 169.8\metre{} (RMSE 173.3\metre); most of that is the datum offset. Refining it by enhanced-correlation-coefficient (ECC) alignment~\citep{evangelidis2008} of the colour-separated linework brings it to 99.5\metre{} (RMSE 119.7\metre). LoFTR was closer than corners-plus-ECC at 9 of 12 points ($p=0.021$, Holm $p=0.23$). The manual baseline had received no tuning, so we let it choose its transform model by leave-one-out error on its own seven fitting points. It chose a similarity transform (median 90.2\metre, RMSE 106.2\metre), slightly worse on the held-out points than the frozen homography.
+
+\paragraph{Development thresholds.}
+The input-size rule picks 768 pixels at every prior radius from 0.5 to 2\,km; ranking by the fraction instead of the count of near matches would pick 512. LoFTR's share of correct matches on aligned tiles exceeds chance at every radius from 200 to 1000\metre{} (1.7--14 times chance). SIFT stays within 1.0--1.5 times chance and is marginally above it only at 300\metre{} (uncorrected $p=0.04$).
+
+\paragraph{Datum.}
+The seven fitting points place the printed graticule $(-84, +53)$\metre{} from WGS\,84, with bootstrap intervals of $[-101, -43]$ east and $[-9, +153]$ north. The 12 evaluation points, an independent sample used here without any method, give $(-105, +105)$\metre, with $[-145, -74]$ and $[+81, +138]$. Together they indicate an offset of roughly 100--150\metre{}, with the true position lying north-west of where the printed graticule places it.
 
 \section{Discussion}
-Three findings stand out on this sheet. First, a matcher pretrained on outdoor photographs transfers to a hand-drawn 1926 lithograph against a vector rendering well enough to produce a usable alignment, while SIFT does not transfer at all. The aligned-tile test (Fig.~\ref{fig:diag}a) shows that SIFT's failure is in the descriptors, not in the robust estimation. Second, LoFTR's success depends on the input scale, and not monotonically. The scale was chosen by a rule fixed in advance, but a different rule could have produced failure, and practitioners should expect to sweep it. Third, the manual baseline's weakness here is coverage, not precision. With seven usable points it extrapolates over much of the sheet, and its errors grow where support is thin.
+Three findings stand out on this sheet. First, a matcher pretrained on outdoor photographs transfers to a hand-drawn 1926 lithograph against a vector rendering well enough to produce a usable alignment, while SIFT does not transfer at all. The aligned-tile test (Fig.~\ref{fig:diag}a) shows that SIFT's failure is in the descriptors, not in the robust estimation. On pairs that share a style, SIFT is in fact the more precise matcher (Section~\ref{sec:robust}). Second, LoFTR's success depends on the input scale, and not monotonically. The scale was chosen by a rule fixed in advance, but a different rule could have produced failure, and practitioners should expect to sweep it. Third, the manual baseline's weakness here is coverage, not precision. With seven usable points it extrapolates over much of the sheet, and its errors grow where support is thin.
 
-The absolute numbers should be read against the sources of error that no method can remove. OSM geometry is plausibly accurate to 5--20\metre. Picking adds about $\pm27$\metre. Many features have also shifted since 1926. A median of 54\metre{} is about 0.85\,mm on the printed sheet: close to the drafting limit of a one-inch map, and well above the NMAS threshold.
+The absolute numbers should be read against the sources of error that no method can remove. The matchers themselves contribute only a few metres. OSM geometry is plausibly accurate to 5--20\metre, and picking adds about $\pm27$\metre. Cartographic generalisation displaces some features by 12--25\metre, and many features have shifted since 1926. A median of 54\metre{} is about 0.85\,mm on the printed sheet: close to the drafting limit of a one-inch map, and well above the NMAS threshold.
 
 \paragraph{Limitations.}
 \begin{itemize}
 \item The study uses one sheet and one rendering style, so it does not support general claims about historical maps.
 \item Only 12 evaluation points were available, none in the southern fifth of the sheet or in Mysore city. Results there are untested extrapolation.
-\item The control points were proposed with AI assistance and accepted by one reviewer. They were not re-picked independently, so the manual baseline is not a measure of expert human georeferencing.
+\item The quality-control rule kept only points consistent with a smooth offset from the printed grid. Points in locally distorted areas were therefore excluded, which probably makes every method's absolute error look better than a random sample would.
+\item All candidate points were OSM road, rail and water crossings or landmarks, the same kind of linework LoFTR matches; other feature types are untested.
+\item The control points were proposed with AI assistance and accepted by one reviewer, the author, who saw them after the held-out results existed. They were not re-picked independently or blindly, so the manual baseline is not a measure of expert human georeferencing, and its seven points are sparse by construction.
+\item Classical registration is represented by SIFT, printed corners and ECC, not by a dedicated road-network matcher.
 \item Three development settings were changed after initial failures, although all were frozen before the evaluation data existed.
 \item We did not test non-linear (local) transforms, other learned matchers, or LoFTR inputs above 1280 pixels. At 1536 pixels LoFTR ran out of memory.
 \end{itemize}
 
 \section{Conclusion}
-On sheet 57\,D/11 of 1926, LoFTR with MAGSAC++ georeferenced the scan to a held-out median error of 54\metre{} and an RMSE of 77\metre. A 7-point manual fit reached 74\metre{} and 102\metre. SIFT failed, at chance level even on pre-aligned tiles. The comparison favours LoFTR, but with 12 points it is not decisive. Affine and projective models performed alike. The printed graticule sits roughly 100\metre{} from WGS\,84.
+On sheet 57\,D/11 of 1926, LoFTR with MAGSAC++ georeferenced the scan to a held-out median error of 54\metre{} and an RMSE of 77\metre. A 7-point manual fit reached 74\metre{} and 102\metre. SIFT failed, at or barely above chance level even on pre-aligned tiles, although it is highly precise on same-style pairs. The comparison favours LoFTR over the manual fit, but with 12 points and after correcting for secondary tests it is not decisive. LoFTR clearly outperforms georeferencing from the printed corners alone. The matchers contribute only a few metres of error; most of it comes from the map and a century of change. Affine and projective models performed alike. The printed graticule sits roughly 100\metre{} from WGS\,84.
 
-The most useful next steps are independent human re-picking of the control points with coverage in the south, the same protocol applied to more sheets, and local non-linear models to absorb paper distortion and datum effects. Code, provenance records and every intermediate output are available in the repository.
+The most useful next steps are independent, blind human re-picking of the control points with coverage in the south (the repository includes a kit for this), the same protocol applied to more sheets, and local non-linear models to absorb paper distortion and datum effects. Code, provenance records and every intermediate output are available in the repository.
 
 \paragraph{Data and code availability.}
-The repository contains the pipeline, the configuration as frozen, both GCP files with their selection protocol, all metrics and per-point errors, and the script that regenerates every figure and table in this paper (\texttt{paper/make\_figures.py}). Raw inputs are re-downloaded with recorded checksums.
+The repository contains the pipeline, the configuration as frozen, both GCP files with their selection protocol, all metrics and per-point errors, all robustness analyses (\texttt{mapalign.robustness} and \texttt{mapalign.robustness\_extra}), and the script that regenerates every figure and table in this paper (\texttt{paper/make\_figures.py}). The exact inputs (scan and OSM extracts) are versioned with their checksums. The LoFTR weights are verified by SHA-256 and mirrored as a release asset. A continuous-integration workflow re-runs the experiment on Linux and compares it with the committed results.
 
 \paragraph{Acknowledgements.}
 Map scan: the Old Survey of India Maps collection compiled by John Brown (Zenodo, CC\,BY\,4.0). Modern data \textcopyright{} OpenStreetMap contributors, ODbL.
