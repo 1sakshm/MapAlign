@@ -512,7 +512,7 @@ and a dedicated road-network registration method as a further classical baseline
 
 ## Citation and acknowledgements
 
-See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign.pdf).
+Author: Saksham Sharma, ORCID [0009-0000-4656-5662](https://orcid.org/0009-0000-4656-5662). See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign.pdf).
 
 ```bibtex
 @software{sharma2026mapalign,

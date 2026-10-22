@@ -23,6 +23,7 @@ keywords:
 authors:
   - given-names: "Saksham"
     family-names: "Sharma"
+    orcid: "https://orcid.org/0009-0000-4656-5662"
 references:
   - type: dataset
     title: "Old Survey of India Maps collection"
