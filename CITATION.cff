@@ -3,6 +3,14 @@ message: "If you use this software, please cite it as below."
 title: "MapAlign: Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison"
 version: 1.0.0
 date-released: 2026-10-22
+doi: "10.5281/zenodo.23572419"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23572419"
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.23572420"
+    description: "Version 1.0.0"
 license: MIT
 repository-code: "https://github.com/1sakshm/MapAlign"
 url: "https://mysore-1926.pages.dev"

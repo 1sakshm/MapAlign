@@ -2,6 +2,8 @@
 
 **Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison**
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23572419.svg)](https://doi.org/10.5281/zenodo.23572419)
+
 ![The georeferenced 1926 sheet with today's OpenStreetMap roads (magenta), railways (black) and rivers (blue) drawn on top using only the GeoTIFF's own geotransform](paper/figures/fig5_alignment_windows.png)
 
 MapAlign compares three ways of aligning a 1926 Survey of India topographic sheet (57 D/11, Mysore) with a modern
@@ -15,7 +17,8 @@ Every method is scored by one shared evaluation on the same held-out control poi
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
 **Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 14 pages; LaTeX source in `paper/`)  
-**Interactive report:** https://mysore-1926.pages.dev
+**Interactive report:** https://mysore-1926.pages.dev  
+**Archive:** Zenodo, [doi:10.5281/zenodo.23572419](https://doi.org/10.5281/zenodo.23572419) (all versions; v1.0.0 is [doi:10.5281/zenodo.23572420](https://doi.org/10.5281/zenodo.23572420))
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
 > (Claude) from zoomed image crops, and were then **reviewed by a human (Saksham Sharma, 2026-10-19), who made no
@@ -510,6 +513,18 @@ and a dedicated road-network registration method as a further classical baseline
 ## Citation and acknowledgements
 
 See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign.pdf).
+
+```bibtex
+@software{sharma2026mapalign,
+  author    = {Sharma, Saksham},
+  title     = {MapAlign: Feature-Based Georeferencing of Historical Survey of India Maps: A Reproducible Baseline Comparison},
+  year      = {2026},
+  version   = {1.0.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23572420},
+  url       = {https://doi.org/10.5281/zenodo.23572420}
+}
+```
 
 - **Map scan:** Old Survey of India Maps collection (J. Brown, Zenodo, CC BY 4.0); the scan bears a University of
   Michigan Library stamp.
