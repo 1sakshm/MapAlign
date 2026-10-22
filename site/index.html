@@ -231,8 +231,8 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
       </div>
       <div>
         <p class="lede">Can a computer find where a century-old Survey of India sheet sits on today's ground? We pitted a learned matcher, a classical one and hand-placed control points against each other. Each was scored in metres at points it never saw.</p>
-        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 13 pages)</a></p>
-        <p class="disclose">The glowing points above are the 61 real anchors LoFTR found in this part of the sheet. Control points were picked by an AI assistant and reviewed unchanged by the author.</p>
+        <p style="margin-top:14px"><a class="btn" href="mapalign-paper.pdf" style="text-decoration:none;display:inline-block">Read the paper (PDF, 14 pages)</a></p>
+        <p class="disclose">The glowing points above are the 61 real anchors LoFTR found in this part of the sheet. Control points were picked by an AI assistant and reviewed unchanged by the author, who later re-picked them blind (Sheet 8).</p>
       </div>
     </div>
     <div class="readout" aria-label="Headline results">
@@ -335,7 +335,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
             <tr class="sec"><td>DISK + LightGlue*</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>12 s match</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, and no secondary LoFTR-vs-manual test survives a correction for the 18 secondary tests, so this is suggestive, not settled. *Added after the evaluation (Sheets 6 and 7).</p>
+        <p class="note" style="margin-top:10px">Metres in EPSG:32643. Paired: median difference −31.7 m, exact Wilcoxon p = 0.043, bootstrap 95% CI [−44.0, +2.5] m. The interval includes zero, and no secondary test against this manual fit survives a correction for the 23 secondary tests, so this is suggestive, not settled. Against a manual fit rebuilt from a blind human re-pick, LoFTR wins at every point (Sheet 8). *Added after the evaluation (Sheets 6 and 7).</p>
       </div>
       <div class="two">
         <div class="card">
@@ -384,7 +384,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
         <div class="fact"><div class="v">0.46 m</div><div class="k">largest polyconic-to-UTM mismatch a single homography leaves on this sheet</div></div>
         <div class="fact"><div class="v">≈ 9 m</div><div class="k">colour-plate misregistration of the background tint, measured at the border</div></div>
         <div class="fact"><div class="v">12–25 m</div><div class="k">displacement forced where a 35 m road symbol runs beside a railway</div></div>
-        <div class="fact"><div class="v">p = 0.009</div><div class="k">LoFTR beats georeferencing from the printed corners, after Holm correction</div></div>
+        <div class="fact"><div class="v">p = 0.012</div><div class="k">LoFTR beats georeferencing from the printed corners, after Holm correction</div></div>
         <div class="fact"><div class="v">0.01 m</div><div class="k">agreement of every per-point error when the whole experiment is re-run on Linux</div></div>
       </div>
     </div>
@@ -406,7 +406,7 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
         <div class="fact"><div class="v">affine</div><div class="k">the model spatial cross-validation picks over polynomials and thin-plate splines</div></div>
         <div class="fact"><div class="v">78.5 m</div><div class="k">held-out RMSE of that affine model on LoFTR's 390 inliers (homography: 79.4)</div></div>
         <div class="fact"><div class="v">170.6 m</div><div class="k">held-out RMSE of a cubic polynomial on the same matches: flexibility overfits</div></div>
-        <div class="fact"><div class="v">57</div><div class="k">new candidate points in the 15 empty grid cells, ready for a blind, timed human re-pick</div></div>
+        <div class="fact"><div class="v">p = 0.85</div><div class="k">affine against a homography on the same LoFTR matches: no gain from bending the model</div></div>
       </div>
       <div class="card">
         <div class="controls" style="margin-bottom:6px"><b class="sc">Related work</b></div>
@@ -415,6 +415,30 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
     </div>
   </section>
 
+  <section class="sheet" id="repick">
+    <div class="sheet-head">
+      <div class="no">SHEET 8 · A BLIND HUMAN RE-PICK</div>
+      <h2>What happens when a person clicks the points again?</h2>
+      <p>The original control points were proposed by an AI assistant. Afterwards the author re-picked every one of them blind and timed, in a browser tool that centred each window on the printed corners and never showed an earlier pick. The evaluation clicks barely moved. The manual fit did: rebuilt from the new clicks, it lost to LoFTR at every point.</p>
+      <p class="note" style="margin-top:12px">Details: Section 8 of the paper and <span class="mono">results/robustness/picker_agreement.json</span>. A second picker, not an independent expert.</p>
+    </div>
+    <div class="sheet-body">
+      <div class="facts">
+        <div class="fact"><div class="v">7.3 px</div><div class="k">median gap between the original and the re-picked evaluation clicks (about 39 m); 10 of 12 within 20 px</div></div>
+        <div class="fact"><div class="v">9–12 s</div><div class="k">median human time per point; 4.5 minutes for all 21, against 18 s of CPU for LoFTR</div></div>
+        <div class="fact"><div class="v">50.8 m</div><div class="k">LoFTR's median on the re-picked evaluation clicks; the manual fit 106.9 m (LoFTR closer at 9 of 12)</div></div>
+        <div class="fact"><div class="v">123.7 m</div><div class="k">median of the manual fit rebuilt from the re-picked control points, up from 73.9 m</div></div>
+        <div class="fact"><div class="v">12 of 12</div><div class="k">points where LoFTR beat that rebuilt fit (Holm-adjusted p = 0.012)</div></div>
+        <div class="fact"><div class="v">11 of 12</div><div class="k">points where LoFTR won when every click was human (Holm-adjusted p = 0.032)</div></div>
+        <div class="fact"><div class="v">21 of 57</div><div class="k">new southern and city points where both methods miss by over 300 m: the wrong feature was clicked</div></div>
+        <div class="fact"><div class="v">122 m</div><div class="k">LoFTR's median on the 39 new points marked confident (manual 166 m, p = 0.13)</div></div>
+      </div>
+      <div class="card">
+        <div class="controls" style="margin-bottom:6px"><b class="sc">Why the new points are not evidence</b></div>
+        <p class="note" style="margin:0">None of the 57 candidates in the empty south and city cells was skipped, although many of those features are modern. The two transforms never disagree by more than 155 m there, so when both are 300 m to 1.5 km off, the click is on a different feature, not a georeferencing error. The picks are kept and hashed exactly as recorded, and the kit now says to skip unless sure. The lesson: deciding whether a feature existed in 1926 is the hard part of building a test set.</p>
+      </div>
+    </div>
+  </section>
 
   <footer>
     <span>MapAlign v0.1.2 · Saksham Sharma · 2026</span>

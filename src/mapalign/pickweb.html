@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MapAlign Picker</title>
+<style>
+  :root { --bg:#f6f3ec; --panel:#fffdf8; --ink:#1f1d1a; --ink2:#6b655b; --line:#ddd5c6; --acc:#b3261e; --ok:#2e7d32; --skip:#9e9e9e; --warn:#e08a00; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.4 system-ui, sans-serif; height:100vh; display:flex; overflow:hidden; }
+  aside { width:250px; border-right:1px solid var(--line); background:var(--panel); display:flex; flex-direction:column; }
+  aside h1 { font-size:15px; margin:12px 14px 4px; }
+  aside .who { margin:0 14px 10px; color:var(--ink2); font-size:12px; }
+  .tabs { display:flex; border-bottom:1px solid var(--line); }
+  .tabs button { flex:1; border:0; background:none; padding:8px 4px; cursor:pointer; font:inherit; font-size:12px; border-bottom:2px solid transparent; }
+  .tabs button.on { border-color:var(--acc); font-weight:600; }
+  .prog { padding:8px 14px; font-size:12px; color:var(--ink2); }
+  ul { list-style:none; margin:0; padding:0 0 10px; overflow:auto; flex:1; }
+  li { padding:4px 14px; cursor:pointer; display:flex; gap:8px; align-items:center; font-size:13px; }
+  li:hover { background:#f1ece1; }
+  li.cur { background:#ece4d4; font-weight:600; }
+  li .dot { width:9px; height:9px; border-radius:50%; background:var(--line); flex:none; }
+  li.done .dot { background:var(--ok); } li.skipped .dot { background:var(--skip); }
+  li .f { color:var(--ink2); font-size:11px; margin-left:auto; }
+  main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  header { padding:10px 16px; border-bottom:1px solid var(--line); display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  header .pid { font-weight:700; font-size:16px; }
+  header .timer { font-variant-numeric:tabular-nums; color:var(--ink2); }
+  header .pick { font-variant-numeric:tabular-nums; }
+  .conf { padding:2px 8px; border-radius:10px; font-size:12px; color:#fff; background:var(--ok); cursor:pointer; user-select:none; }
+  .conf.no { background:var(--warn); }
+  .btns { margin-left:auto; display:flex; gap:8px; }
+  .btns button { font:inherit; padding:6px 12px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
+  .btns button.primary { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .btns button:disabled { opacity:.4; cursor:default; }
+  .views { flex:1; display:flex; gap:10px; padding:10px; min-height:0; }
+  .view { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .view .cap { font-size:12px; color:var(--ink2); margin-bottom:4px; }
+  canvas { flex:1; width:100%; min-height:0; background:#fff; border:1px solid var(--line); border-radius:4px; cursor:crosshair; display:block; }
+  #ref { cursor:grab; }
+  footer { padding:6px 16px; font-size:12px; color:var(--ink2); border-top:1px solid var(--line); }
+  kbd { border:1px solid var(--line); border-bottom-width:2px; border-radius:3px; padding:0 4px; background:var(--panel); font-size:11px; }
+  .rule { display:none; padding:8px 16px; background:#fff4d6; border-bottom:1px solid #e9d49a; font-size:13px; }
+  .done-msg { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(246,243,236,.92); font-size:18px; }
+</style>
+</head>
+<body>
+<aside>
+  <h1>MapAlign picker</h1>
+  <div class="who" id="who"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="prog" id="prog"></div>
+  <ul id="list"></ul>
+</aside>
+<main>
+  <header>
+    <span class="pid" id="pid">–</span>
+    <span id="feat"></span>
+    <span class="timer" id="timer">0 s</span>
+    <span class="pick" id="pick">no pick yet</span>
+    <span class="conf" id="conf" title="c">confident</span>
+    <div class="btns">
+      <button id="bskip" title="s">Skip: not on the 1926 map</button>
+      <button id="bok" class="primary" disabled title="Enter">Accept</button>
+    </div>
+  </header>
+  <div class="rule" id="rule"><b>Extra points: skip unless you are sure.</b> Many of these features are modern. Accept only if the
+    same road, railway or stream exists on the 1926 map and you can see where they meet; press <kbd>s</kbd> otherwise.
+    A nearby look-alike junction is worse than a skip.</div>
+  <div class="views">
+    <div class="view"><div class="cap">1926 scan, centred on the printed-corner estimate (not on any earlier pick). Click the feature.</div><canvas id="hist"></canvas></div>
+    <div class="view"><div class="cap">OpenStreetMap today: the target is at the red cross.</div><canvas id="ref"></canvas></div>
+  </div>
+  <footer>
+    <b>Click</b> place / move pick · <b>wheel</b> zoom · <b>drag</b> pan · <kbd>Enter</kbd> accept · <kbd>c</kbd> confident on/off ·
+    <kbd>s</kbd> skip · <kbd>z</kbd> reset zoom · Every accepted point is saved to the CSV at once; close the tab any time and come back.
+  </footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const KITS = ["fitting", "evaluation", "extra"];
+const LABEL = {fitting: "Fitting", evaluation: "Evaluation", extra: "Extra"};
+let state, kit = "fitting", cur = null, pick = null, confident = true, t0 = 0, busy = false;
+
+class View {
+  constructor(canvas, onPick) {
+    this.c = canvas; this.ctx = canvas.getContext("2d"); this.img = null; this.onPick = onPick;
+    this.s = 1; this.tx = 0; this.ty = 0; this.marks = [];
+    new ResizeObserver(() => this.fit()).observe(canvas);
+    canvas.addEventListener("wheel", e => {
+      e.preventDefault();
+      const [mx, my] = this.mouse(e), k = Math.exp(-e.deltaY * 0.0015);
+      const ns = Math.min(Math.max(this.s * k, this.base * 0.5), this.base * 40);
+      this.tx = mx - (mx - this.tx) * ns / this.s; this.ty = my - (my - this.ty) * ns / this.s; this.s = ns; this.draw();
+    }, {passive: false});
+    let down = null;
+    canvas.addEventListener("pointerdown", e => { down = {x: e.clientX, y: e.clientY, tx: this.tx, ty: this.ty, moved: false}; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointermove", e => {
+      if (!down) return;
+      const dx = e.clientX - down.x, dy = e.clientY - down.y;
+      if (Math.hypot(dx, dy) > 4) down.moved = true;
+      if (down.moved) { const r = devicePixelRatio; this.tx = down.tx + dx * r; this.ty = down.ty + dy * r; this.draw(); }
+    });
+    canvas.addEventListener("pointerup", e => {
+      if (down && !down.moved && this.onPick && this.img) {
+        const [mx, my] = this.mouse(e), u = (mx - this.tx) / this.s, v = (my - this.ty) / this.s;
+        if (u >= 0 && v >= 0 && u <= this.img.width && v <= this.img.height) this.onPick(u, v);
+      }
+      down = null;
+    });
+  }
+  mouse(e) { const r = this.c.getBoundingClientRect(); return [(e.clientX - r.left) * devicePixelRatio, (e.clientY - r.top) * devicePixelRatio]; }
+  set(img) { this.img = img; this.marks = []; this.fit(true); }
+  fit(reset) {
+    const r = this.c.getBoundingClientRect();
+    this.c.width = Math.max(1, Math.round(r.width * devicePixelRatio)); this.c.height = Math.max(1, Math.round(r.height * devicePixelRatio));
+    if (!this.img) { this.draw(); return; }
+    const base = Math.min(this.c.width / this.img.width, this.c.height / this.img.height);
+    if (reset || !this.base) { this.s = base; this.tx = (this.c.width - this.img.width * base) / 2; this.ty = (this.c.height - this.img.height * base) / 2; }
+    this.base = base; this.draw();
+  }
+  draw() {
+    const g = this.ctx; g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, this.c.width, this.c.height);
+    if (!this.img) return;
+    g.imageSmoothingEnabled = this.s < 2;
+    g.setTransform(this.s, 0, 0, this.s, this.tx, this.ty); g.drawImage(this.img, 0, 0);
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    for (const m of this.marks) {
+      const x = this.tx + m.u * this.s, y = this.ty + m.v * this.s, d = 14 * devicePixelRatio;
+      g.lineWidth = 2.5 * devicePixelRatio; g.strokeStyle = "#fff";
+      for (const w of [5 * devicePixelRatio, 2.5 * devicePixelRatio]) {
+        g.lineWidth = w; g.strokeStyle = w > 3 * devicePixelRatio ? "rgba(255,255,255,.85)" : m.color;
+        g.beginPath();
+        if (m.shape === "x") { g.moveTo(x - d, y - d); g.lineTo(x + d, y + d); g.moveTo(x + d, y - d); g.lineTo(x - d, y + d); }
+        else { g.moveTo(x - 2 * d, y); g.lineTo(x - d / 2, y); g.moveTo(x + d / 2, y); g.lineTo(x + 2 * d, y);
+               g.moveTo(x, y - 2 * d); g.lineTo(x, y - d / 2); g.moveTo(x, y + d / 2); g.lineTo(x, y + 2 * d); }
+        g.stroke();
+      }
+    }
+  }
+}
+
+const hist = new View($("hist"), (u, v) => { pick = {u, v}; render(); });
+const ref = new View($("ref"), null);
+
+function load(src) { return new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = src; }); }
+async function getState() { state = await (await fetch("/api/state")).json(); $("who").textContent = "Picker: " + state.picker; }
+
+function drawSide() {
+  $("tabs").innerHTML = "";
+  for (const k of KITS) {
+    const b = document.createElement("button"); b.textContent = LABEL[k]; b.className = k === kit ? "on" : "";
+    b.onclick = () => { kit = k; drawSide(); openNext(); }; $("tabs").appendChild(b);
+  }
+  const rows = state.kits[kit], n = rows.length, d = rows.filter(r => r.status === "done").length, s = rows.filter(r => r.status === "skipped").length;
+  $("prog").textContent = `${d} picked · ${s} skipped · ${n - d - s} to go (of ${n})`;
+  $("list").innerHTML = "";
+  for (const r of rows) {
+    const li = document.createElement("li"); li.className = r.status + (cur && cur.id === r.id && cur.kit === kit ? " cur" : "");
+    li.innerHTML = `<span class="dot"></span>${r.id}<span class="f">${r.feature.replaceAll("_", " ")}</span>`;
+    li.onclick = () => open(kit, r.id); $("list").appendChild(li);
+  }
+}
+
+async function open(k, id) {
+  busy = true;
+  const p = await (await fetch(`/api/point?kit=${k}&id=${encodeURIComponent(id)}`)).json();
+  const [hi, ri] = await Promise.all([load(p.hist), load(p.ref)]);
+  cur = {kit: k, ...p}; pick = null; confident = true;
+  hist.set(hi); ref.set(ri); ref.marks = [{u: ri.width / 2, v: ri.height / 2, color: "#d0021b", shape: "+"}]; ref.draw();
+  t0 = performance.now(); busy = false; render(); drawSide();
+}
+
+function openNext() {
+  const r = state.kits[kit].find(r => r.status === "todo");
+  if (r) return open(kit, r.id);
+  const other = KITS.find(k => state.kits[k].some(r => r.status === "todo"));
+  if (other && other !== kit) { kit = other; drawSide(); return openNext(); }
+  cur = null; hist.set(null); ref.set(null); render(); drawSide();
+  $("pid").textContent = other ? "–" : "All three kits are done. Stop the server with Ctrl+C.";
+}
+
+function render() {
+  if (!cur) { $("feat").textContent = ""; $("pick").textContent = ""; $("bok").disabled = true; $("bskip").disabled = true; return; }
+  $("pid").textContent = `${LABEL[cur.kit]} · ${cur.id}`;
+  $("rule").style.display = cur.kit === "extra" ? "block" : "none";
+  $("feat").textContent = cur.feature.replaceAll("_", " ");
+  $("bskip").disabled = false; $("bok").disabled = !pick;
+  $("conf").textContent = confident ? "confident" : "NOT confident"; $("conf").className = "conf" + (confident ? "" : " no");
+  hist.marks = pick ? [{u: pick.u, v: pick.v, color: confident ? "#d0021b" : "#e08a00", shape: "x"}] : [];
+  hist.draw();
+  // pixel-centre convention, as in picktool: patch column u covers scan x in [x0 + u - 0.5, x0 + u + 0.5)
+  $("pick").textContent = pick ? `x = ${(cur.x0 + pick.u - 0.5).toFixed(1)}, y = ${(cur.y0 + pick.v - 0.5).toFixed(1)}` : "no pick yet";
+}
+
+async function save(skip) {
+  if (!cur || busy || (!skip && !pick)) return;
+  busy = true;
+  const body = {seconds: (performance.now() - t0) / 1000, confident, skip};
+  if (!skip) { body.x = +(cur.x0 + pick.u - 0.5).toFixed(1); body.y = +(cur.y0 + pick.v - 0.5).toFixed(1); }
+  const r = await fetch(`/api/save?kit=${cur.kit}&id=${encodeURIComponent(cur.id)}`, {method: "POST", body: JSON.stringify(body)});
+  if (!r.ok) { alert("Save failed: " + (await r.text())); busy = false; return; }
+  await getState(); busy = false; openNext();
+}
+
+$("bok").onclick = () => save(false);
+$("bskip").onclick = () => save(true);
+$("conf").onclick = () => { confident = !confident; render(); };
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") save(false);
+  else if (e.key === "s") save(true);
+  else if (e.key === "c") { confident = !confident; render(); }
+  else if (e.key === "z") { hist.fit(true); ref.fit(true); }
+});
+setInterval(() => { if (cur) $("timer").textContent = Math.round((performance.now() - t0) / 1000) + " s"; }, 500);
+window.addEventListener("beforeunload", () => {});
+getState().then(() => { drawSide(); openNext(); });
+</script>
+</body>
+</html>

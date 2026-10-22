@@ -14,13 +14,14 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
-**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 13 pages; LaTeX source in `paper/`)  
+**Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 14 pages; LaTeX source in `paper/`)  
 **Interactive report:** https://mysore-1926.pages.dev
 
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
 > (Claude) from zoomed image crops, and were then **reviewed by a human (Saksham Sharma, 2026-10-19), who made no
 > changes**. Only **12** held-out points could be established (the target was 20), and none lie in the southern fifth
-> of the sheet or in Mysore city. See [Limitations](#limitations).
+> of the sheet or in Mysore city. A later blind, timed human re-pick is reported separately
+> ([Re-picking](#re-picking-the-control-points)); it does not replace these points. See [Limitations](#limitations).
 
 ## Contents
 [Research question](#research-question) · [Motivation](#motivation) · [Data and licensing](#data-and-licensing) ·
@@ -79,7 +80,7 @@ gcp/                      fitting_points.csv, evaluation_points.csv, candidates.
 src/mapalign/             config, io, fetch, reference (OSM render), preprocess, match_sift, match_loftr,
                           estimate_transform, diagnostics, pipeline, gcp, georeference, evaluate, visualize,
                           envcheck, run_all; post hoc: robustness, robustness_extra, match_lightglue,
-                          extensions, picktool
+                          extensions, picktool, pickweb
 tests/                    pytest suite (64 tests)
 notebooks/                01_matching_baselines.ipynb (exploration only; it reads saved results)
 results/                  metrics, per-point errors, run records, figures (GeoTIFFs are git-ignored)
@@ -279,7 +280,8 @@ Positional error at **12 held-out points** (EPSG:32643, metres; homography model
 | **LoFTR + RANSAC** | valid: 601 matches, 389 inliers (64.7 %) | 12 | **53.9** | 64.2 | **77.4** | 191.7 | 24.2 | 43.3 | 95.9 | ≈ 20 s |
 | Manual GCPs | valid: 7 fitting points (fit RMSE 55.6 m, leave-one-out RMSE 146.9 m) | 12 | 73.9 | 89.6 | 102.4 | 223.9 | 44.9 | 49.5 | 140.6 | 0.15 s fit* |
 
-\* Human interaction time is not reported, because the points were picked by an AI assistant.
+\* The original points were picked by an AI assistant, so they have no human interaction time. The later blind human
+re-pick took 150 s for the 9 fitting points and 121 s for the 12 evaluation points (median 9–12 s per point).
 Exact runtimes per run are in `results/*_run.json`.
 
 **Paired comparison, LoFTR vs manual:**
@@ -341,8 +343,8 @@ python -m mapalign.robustness_extra all    # synthetic benchmark, plates, symbol
 | Does LoFTR win by matching the truth features? | No. Removing all its matches within 1 / 2 / 3 km of each test point: RMSE 77.4 / 78.4 / 80.6 m. |
 | Spatial correlation | Moran's I: none (p = 0.20–0.92). A cluster bootstrap (8 clusters) gives a median difference of −31.7 m [−44.0, −2.0]; a cluster sign-flip test gives p = 0.070. |
 | Landmark definitions | Without the two landmark-centroid points: LoFTR 49.2 m vs manual 65.4 m median, p = 0.049. |
-| Multiple testing (18 secondary tests, including the extensions below) | Holm / Benjamini–Hochberg: only LoFTR vs printed corners survives (Holm p = 0.009). No secondary LoFTR-vs-manual test does (q = 0.09–0.18). |
-| Classical baselines | Printed sheet corners alone: median 169.8 m, RMSE 173.3. Corners + ECC image alignment: median 99.5 m, RMSE 119.7 (LoFTR closer at 9 of 12, p = 0.021, Holm 0.32). |
+| Multiple testing (23 secondary tests, including the extensions and the human re-pick below) | Holm / Benjamini–Hochberg: LoFTR vs printed corners survives (Holm p = 0.012), and so does LoFTR vs the manual fit rebuilt from the human re-pick (Holm p = 0.012 and 0.032). No test against the original manual fit does (q = 0.07–0.14). |
+| Classical baselines | Printed sheet corners alone: median 169.8 m, RMSE 173.3. Corners + ECC image alignment: median 99.5 m, RMSE 119.7 (LoFTR closer at 9 of 12, p = 0.021, Holm 0.38). |
 | Fairer tuning for the manual fit | Choosing its model by leave-one-out on its own points picks a similarity transform: median 90.2 m, RMSE 106.2 m. |
 | Hand-picked development thresholds | Size rule picks 768 px at every radius from 0.5 to 2 km. LoFTR beats chance on aligned tiles at every radius (1.7–14×); SIFT stays at 1.0–1.5×. |
 | Projection (polyconic vs UTM) | One homography absorbs it to within 0.46 m. |
@@ -384,8 +386,29 @@ sheet the limit is the content and a century of change, not the transform family
 
 ## Re-picking the control points
 
-The control points were proposed with AI assistance and reviewed, unchanged, by the author. An independent, blind,
-timed human re-pick is the most useful open item. Everything needed is in the repository:
+The control points were proposed with AI assistance and reviewed, unchanged, by the author. After every other
+analysis was complete, the author re-picked all of them blind and timed with `mapalign.pickweb`: the window was
+centred on the printed-corner estimate, never on an earlier pick. Results are in
+`results/robustness/picker_agreement.json` and `results/robustness/extra_points.json`, and in Section 8 of the paper.
+
+| Re-pick | Result (median / RMSE in m on the 12 held-out points) |
+|---|---|
+| Evaluation pixels (12 points, 121 s) | the two pickers differ by a median 7.3 px (≈ 39 m); 10 of 12 within 20 px, E04 58 px, E12 76 px |
+| … frozen transforms rescored | LoFTR 50.8 / 146.2, manual 106.9 / 175.0; LoFTR closer at 9 of 12 (p = 0.027) |
+| Manual refitted on the re-picked GCPs (9 points, 150 s) | QC removed F02 only, 8 points used: 123.7 / 151.2 (original fit: 73.9 / 102.4); LoFTR closer at **12 of 12** (p = 0.0005, Holm 0.012) |
+| … fully human (re-picked GCPs and evaluation pixels) | manual 142.4 / 208.9, LoFTR 50.8 / 146.2; LoFTR closer at 11 of 12 (p = 0.0015, Holm 0.032) |
+| Supplementary points (57, in the 15 empty cells) | LoFTR 232.0 / 421.9, manual 230.1 / 418.7; no difference (p = 0.38) |
+| … the 39 marked confident | LoFTR 122.4 / 299.6, manual 165.6 / 310.0; LoFTR closer at 22 of 39 (p = 0.13) |
+
+Two things follow. A manual homography from a handful of points is fragile: the same person clicking the same features
+blind moved its median error from 74 to 124 m, while LoFTR does not depend on the clicks at all. And the supplementary
+points do **not** measure accuracy in the south. None of the 57 was skipped. The two transforms never disagree by
+more than 155 m on them, yet at 21 points both are more than 300 m off, and at five more than 800 m. At those points
+the 1926 feature that was clicked is not the OSM feature, either because a look-alike nearby was clicked or because
+the feature postdates the sheet. The file is hashed and kept as recorded. The kit instructions now say to skip unless
+sure.
+
+To repeat the re-pick with another picker, everything is in the repository:
 
 | Kit | Points | Purpose |
 |---|---|---|
@@ -401,6 +424,8 @@ every point, so a session can be resumed:
 python -m mapalign.picktool gcp/repick_kit_fitting/repick_fitting_template.csv --picker "Your Name"
 python -m mapalign.picktool gcp/repick_kit_evaluation/repick_evaluation_template.csv --picker "Your Name"
 python -m mapalign.picktool gcp/repick_kit_extra/repick_extra_template.csv --picker "Your Name"
+# or all three kits in the browser, on localhost only:
+python -m mapalign.pickweb --picker "Your Name"     # http://127.0.0.1:8765
 
 python -m mapalign.robustness picker --fitting gcp/repick_kit_fitting/repick_fitting_template.csv `
                                      --repick  gcp/repick_kit_evaluation/repick_evaluation_template.csv
@@ -409,8 +434,9 @@ python -m mapalign.robustness extra_points --points gcp/repick_kit_extra/repick_
 
 `picker` reports the picker-to-picker distance per point, refits Method C on the human picks, scores everything on the
 original and on the re-picked evaluation pixels, and gives the human interaction time. `extra_points` scores the
-frozen transforms on the new points, alone and pooled with the original 12, and records the file's SHA-256. The
-original analysis and its lock are not touched; the AI-assisted run stays as a separate, comparable result.
+frozen transforms on the new points, alone, pooled with the original 12 and restricted to points marked confident, and
+records the file's SHA-256. The original analysis and its lock are not touched; the AI-assisted run stays the primary
+result.
 
 ## Related work
 
@@ -435,7 +461,8 @@ is cross-era *and* cross-style), its subject (a rural Survey of India sheet rath
 evaluation (held-out control points in metres, a locked test set, one shared estimator for every method). It is a
 benchmark on one sheet, not a new method. Full references are in the paper.
 
-**Still open:** the human re-pick above, the same protocol on more sheets and on several editions of one sheet
+**Still open:** a re-pick by an independent expert, held-out points in the south and in Mysore city chosen with an
+explicit skip rule, the same protocol on more sheets and on several editions of one sheet
 (edition-to-edition alignment should be far easier than alignment to OSM, and would separate map error from change),
 and a dedicated road-network registration method as a further classical baseline.
 
@@ -443,11 +470,12 @@ and a dedicated road-network registration method as a further classical baseline
 
 - **One sheet, one OSM rendering style.** Nothing here generalises to "LoFTR is better for historical maps".
 - **AI-picked, human-reviewed GCPs** for both the manual baseline and the ground truth. The review accepted every pick
-  unchanged. The manual baseline is still "AI-picked, human-reviewed GCPs", not independent human georeferencing, and
-  no human interaction time exists to report.
+  unchanged. The author's later blind re-pick is a second picker, not an independent expert, and the truth coordinates
+  of the evaluation points still come from the original selection.
 - **12 evaluation points, not 20, with no coverage of the south or of Mysore city.** That area is mostly
-  extrapolation for every method.
-- **Truth accuracy:** OSM geometry has unknown accuracy (plausibly 5–20 m). Point-picking adds roughly ±5 px (±27 m).
+  extrapolation for every method. The 57 supplementary points picked later are dominated by identification errors and
+  do not fill the gap.
+- **Truth accuracy:** OSM geometry has unknown accuracy (plausibly 5–20 m). Two pickers clicking the same feature differ by a median of about 7 px (≈ 39 m).
 - **Tuning on development data:** three settings were changed during development: LoFTR input size, RANSAC
   iterations, and the threshold rule. All were justified on development data only and frozen before the evaluation
   points existed. They are still choices made after seeing the first failures.
@@ -457,7 +485,7 @@ and a dedicated road-network registration method as a further classical baseline
 - **Feature type:** all candidate points are OSM road, rail or water crossings or landmarks, the same linework LoFTR
   matches.
 - **Review:** the author reviewed the points after the held-out results existed. The review was neither blind nor
-  independent.
+  independent; the later re-pick was blind but by the same person.
 - **Classical methods:** represented by SIFT, printed corners and ECC, not by a dedicated road-network matcher.
 - **Post-hoc extensions:** the LightGlue matchers and the non-projective models were added after the evaluation. They
   followed the same selection rules but were not in the frozen plan.
@@ -488,7 +516,7 @@ See [`CITATION.cff`](CITATION.cff). Paper: [`paper/mapalign.pdf`](paper/mapalign
 - **Modern data:** © OpenStreetMap contributors (ODbL).
 - **Software:** Kornia LoFTR (Sun et al., CVPR 2021), DISK, ALIKED and LightGlue (Kornia implementations), and OpenCV
   SIFT (Lowe, IJCV 2004).
-- **Assistance:** much of the code and all GCP picks were produced with an AI assistant (Claude, Anthropic); the GCPs
-  were reviewed by Saksham Sharma.
+- **Assistance:** much of the code and all original GCP picks were produced with an AI assistant (Claude, Anthropic);
+  the GCPs were reviewed, and later re-picked blind, by Saksham Sharma.
 
 **Licence:** code under MIT (see `LICENSE`); data under their own licences.

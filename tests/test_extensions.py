@@ -66,3 +66,15 @@ def test_extra_points_on_the_original_points_match_the_evaluation(ctx, tmp_path,
     out = rb.extra_points(ctx, str(tmp_path / "x.csv"))
     assert out["loftr"]["supplementary"]["rmse_m"] == pytest.approx(rb._summ(ctx.errors("homography", "loftr"))["rmse_m"], abs=0.01)
     assert out["n_points"] == len(ctx.ev)
+
+
+def test_pickweb_crop_pads_outside_image():
+    import numpy as np
+
+    from mapalign.pickweb import crop
+
+    img = np.arange(5 * 5 * 3, dtype=np.uint8).reshape(5, 5, 3)
+    out, x0, y0 = crop(img, 1, 1, 2)
+    assert out.shape == (4, 4, 3) and (x0, y0) == (-1, -1)
+    assert (out[0] == 255).all() and (out[:, 0] == 255).all()
+    assert (out[1:, 1:] == img[:3, :3]).all()

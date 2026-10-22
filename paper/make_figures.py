@@ -506,6 +506,32 @@ if (EX / "aliked_lightglue.json").is_file() and (EX / "nonprojective.json").is_f
                          "disk_lightglue_tile": lgd["disk"]["aligned_tile_upper_bound"],
                          "nonprojective_selected": {"loftr": nl["selected_model"], "manual": nm["selected_model"]}}
 
+# ------------------------------------------------------------------ human re-pick (table)
+if (RB / "picker_agreement.json").is_file() and (RB / "extra_points.json").is_file():
+    pa, xp = read_json(RB / "picker_agreement.json"), read_json(RB / "extra_points.json")
+    pe, pf = pa["evaluation"], pa["fitting"]
+    fh = pf["fully_human"]
+
+    def mr(s):
+        return f"{s['median_m']:.1f} / {s['rmse_m']:.1f}"
+
+    def pw(d):
+        return f"{d['a_better_count']} of {d['n_pairs']}, $p$={d['wilcoxon_p_two_sided']:.4f}".rstrip("0")
+
+    co = xp["confident_only"]
+    rows = [
+        ("Evaluation pixels, re-picked (12)", f"median gap {pe['picker_difference_px']['median']:.1f} px, max {pe['picker_difference_px']['max']:.1f} px; {pe['human_seconds_total']:.0f} s in total"),
+        ("\quad frozen transforms rescored", f"LoFTR {mr(pe['loftr']['second_picker'])}, manual {mr(pe['manual']['second_picker'])}; LoFTR closer at {pw(pe['loftr_vs_manual_second_picker'])}"),
+        ("Manual refitted on re-picked GCPs", f"QC removed {', '.join(pf['qc_excluded'])}; {len(pf['used'])} points used; {pf['human_seconds_total']:.0f} s in total"),
+        ("\quad on original evaluation pixels", f"{mr(pf['heldout_original_eval_picks'])}; LoFTR closer at {pw(pf['loftr_vs_human_manual'])}"),
+        ("\quad fully human", f"manual {mr(fh['manual'])}, LoFTR {mr(fh['loftr'])}; LoFTR closer at {pw(fh['loftr_vs_manual'])}"),
+        (f"Supplementary points ({xp['n_points']}, {len(xp['cells'])} cells)", f"LoFTR {mr(xp['loftr']['supplementary'])}, manual {mr(xp['manual']['supplementary'])}; both over 300\,m at {xp['both_methods_over_300_m']}"),
+        (f"\quad marked confident ({co['n_points']})", f"LoFTR {mr(co['loftr'])}, manual {mr(co['manual'])}; LoFTR closer at {pw(co['paired'])}"),
+    ]
+    (TAB / "repick.tex").write_text(chr(10).join(f"{x} & {y} " + chr(92) * 2 for x, y in rows) + chr(10), encoding="utf-8")
+    NUM["repick"] = {"evaluation": pe, "fitting": {k: v for k, v in pf.items() if k != "H_full"},
+                     "extra": {k: v for k, v in xp.items() if k != "per_point_m"}}
+
 # ------------------------------------------------------------------ numbers
 nmas_m = 63360 * 0.0254 / 50
 for m in ("loftr", "manual"):

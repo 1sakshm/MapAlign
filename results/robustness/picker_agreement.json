@@ -1,0 +1,166 @@
+{
+  "purpose": "inter-picker agreement and its effect on held-out errors",
+  "evaluation": {
+    "n_points": 12,
+    "picker_difference_px": {
+      "median": 7.3,
+      "max": 76.3
+    },
+    "picker_difference_m_nominal": {
+      "median": 38.9,
+      "max": 409.1
+    },
+    "per_point_px": {
+      "E01": 19.7,
+      "E02": 7.4,
+      "E03": 11.3,
+      "E04": 58.5,
+      "E05": 7.1,
+      "E06": 7.0,
+      "E07": 0.7,
+      "E08": 8.1,
+      "E09": 6.0,
+      "E10": 1.5,
+      "E11": 2.3,
+      "E12": 76.3
+    },
+    "human_seconds_total": 120.7,
+    "loftr": {
+      "original_picks": {
+        "n_valid": 12,
+        "median_m": 53.86,
+        "mean_m": 64.23,
+        "rmse_m": 77.43,
+        "max_m": 191.71
+      },
+      "second_picker": {
+        "n_valid": 12,
+        "median_m": 50.82,
+        "mean_m": 102.21,
+        "rmse_m": 146.18,
+        "max_m": 352.0
+      }
+    },
+    "manual": {
+      "original_picks": {
+        "n_valid": 12,
+        "median_m": 73.94,
+        "mean_m": 89.61,
+        "rmse_m": 102.37,
+        "max_m": 223.92
+      },
+      "second_picker": {
+        "n_valid": 12,
+        "median_m": 106.93,
+        "mean_m": 140.74,
+        "rmse_m": 174.96,
+        "max_m": 420.99
+      }
+    },
+    "loftr_vs_manual_second_picker": {
+      "n_pairs": 12,
+      "median_diff_m": -42.35,
+      "a_better_count": 9,
+      "b_better_count": 3,
+      "wilcoxon_statistic": 11.0,
+      "wilcoxon_p_two_sided": 0.0269,
+      "bootstrap_ci95_median_diff_m": [
+        -70.2,
+        -0.88
+      ]
+    }
+  },
+  "fitting": {
+    "n_picked": 9,
+    "qc_excluded": [
+      "F02"
+    ],
+    "used": [
+      "F01",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09"
+    ],
+    "human_seconds_total": 150.0,
+    "human_seconds_per_point_median": 11.9,
+    "picker_difference_px": {
+      "F01": 56.8,
+      "F02": 3.0,
+      "F03": 1.0,
+      "F04": 2.7,
+      "F05": 48.9,
+      "F06": 7.3,
+      "F07": 3.1,
+      "F08": 16.1,
+      "F09": 7.0
+    },
+    "heldout_original_eval_picks": {
+      "n_valid": 12,
+      "median_m": 123.66,
+      "mean_m": 133.42,
+      "rmse_m": 151.18,
+      "max_m": 359.16
+    },
+    "loftr_vs_human_manual": {
+      "n_pairs": 12,
+      "median_diff_m": -70.33,
+      "a_better_count": 12,
+      "b_better_count": 0,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_two_sided": 0.0005,
+      "bootstrap_ci95_median_diff_m": [
+        -92.19,
+        -34.75
+      ]
+    },
+    "H_full": [
+      [
+        1.096076533507512,
+        -0.01448997450608029,
+        213.15661674410526
+      ],
+      [
+        0.019105654831182255,
+        1.0745202654218202,
+        21.90681021705993
+      ],
+      [
+        3.816978782615653e-06,
+        -3.3625740370123175e-06,
+        1.0
+      ]
+    ],
+    "fully_human": {
+      "manual": {
+        "n_valid": 12,
+        "median_m": 142.42,
+        "mean_m": 179.69,
+        "rmse_m": 208.86,
+        "max_m": 428.15
+      },
+      "loftr": {
+        "n_valid": 12,
+        "median_m": 50.82,
+        "mean_m": 102.21,
+        "rmse_m": 146.18,
+        "max_m": 352.0
+      },
+      "loftr_vs_manual": {
+        "n_pairs": 12,
+        "median_diff_m": -81.67,
+        "a_better_count": 11,
+        "b_better_count": 1,
+        "wilcoxon_statistic": 2.0,
+        "wilcoxon_p_two_sided": 0.0015,
+        "bootstrap_ci95_median_diff_m": [
+          -107.49,
+          -53.46
+        ]
+      }
+    }
+  }
+}

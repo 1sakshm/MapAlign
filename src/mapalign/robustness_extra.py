@@ -485,6 +485,23 @@ def multiple_testing(c: Ctx):
         for m in ("loftr", "manual"):
             tests.append((f"{m} selected non-projective model vs homography (Wilcoxon)",
                           npj[m]["selected_vs_homography"]["wilcoxon_p_two_sided"], "secondary"))
+    if (R / "picker_agreement.json").is_file():
+        pa = read_json(R / "picker_agreement.json")
+        if "evaluation" in pa:
+            tests.append(("human re-pick of evaluation pixels: LoFTR vs manual (Wilcoxon)",
+                          pa["evaluation"]["loftr_vs_manual_second_picker"]["wilcoxon_p_two_sided"], "secondary"))
+        if "fitting" in pa:
+            tests.append(("LoFTR vs manual refitted on human picks (Wilcoxon)",
+                          pa["fitting"]["loftr_vs_human_manual"]["wilcoxon_p_two_sided"], "secondary"))
+            if "fully_human" in pa["fitting"]:
+                tests.append(("fully human: LoFTR vs human manual on human evaluation pixels (Wilcoxon)",
+                              pa["fitting"]["fully_human"]["loftr_vs_manual"]["wilcoxon_p_two_sided"], "secondary"))
+    if (R / "extra_points.json").is_file():
+        xp = read_json(R / "extra_points.json")
+        tests.append(("supplementary points, all: LoFTR vs manual (Wilcoxon)", xp["paired_supplementary"]["wilcoxon_p_two_sided"], "secondary"))
+        if "confident_only" in xp:
+            tests.append(("supplementary points, confident: LoFTR vs manual (Wilcoxon)",
+                          xp["confident_only"]["paired"]["wilcoxon_p_two_sided"], "secondary"))
     df = pd.DataFrame(tests, columns=["test", "p", "family"])
     sec = df[df.family == "secondary"].copy()
     m = len(sec)

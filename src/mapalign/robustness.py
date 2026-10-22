@@ -605,6 +605,13 @@ def extra_points(c: Ctx, path: str):
     out["paired_supplementary"] = paired_comparison(errs["loftr"], errs["manual"], c.seed)
     out["paired_pooled"] = paired_comparison(np.concatenate([c.errors("homography", "loftr"), errs["loftr"]]),
                                              np.concatenate([c.errors("homography", "manual"), errs["manual"]]), c.seed)
+    # the picker's own confidence flag, recorded before any result was seen; the only subset that does not depend on
+    # either method's output
+    conf = (pts.get("confident_yes_no", pd.Series("", index=pts.index)).astype(str).str.lower() == "yes").to_numpy()
+    out["confident_only"] = {"n_points": int(conf.sum()),
+                             **{m: _summ(e[conf]) for m, e in errs.items()},
+                             "paired": paired_comparison(errs["loftr"][conf], errs["manual"][conf], c.seed)}
+    out["both_methods_over_300_m"] = int(((errs["loftr"] > 300) & (errs["manual"] > 300)).sum())
     out["per_point_m"] = {m: dict(zip(pts.point_id, np.round(e, 1).tolist())) for m, e in errs.items()}
     write_json(out, OUT / "extra_points.json")
     log.info("extra_points: %s", out)

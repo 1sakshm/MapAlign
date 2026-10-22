@@ -1,6 +1,7 @@
 # The evaluation-point file is locked by SHA-256 (data/raw/manifest.json); store GCP CSVs byte-for-byte
 # so line-ending conversion can never change the hash on checkout.
 gcp/*.csv -text
+gcp/**/*.csv -text
 
 # Raw inputs are checksummed in data/raw/manifest.json; store them byte-for-byte
 data/raw/*.json -text

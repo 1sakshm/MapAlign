@@ -6,4 +6,7 @@ Easiest: the timed picking tool fills the template and records the seconds for y
 
 `python -m mapalign.picktool gcp/repick_kit_fitting/repick_fitting_template.csv --picker "Your Name"`
 
+Or pick in the browser (all three kits in one page, served on localhost only):
+`python -m mapalign.pickweb --picker "Your Name"`
+
 Then run: `python -m mapalign.robustness picker --fitting <filled template>`

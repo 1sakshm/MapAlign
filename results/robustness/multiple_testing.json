@@ -12,36 +12,36 @@
       "test": "LoFTR vs manual, affine (Wilcoxon)",
       "p": 0.0161,
       "family": "secondary",
-      "p_holm": 0.2576,
-      "q_bh": 0.0945
+      "p_holm": 0.3059,
+      "q_bh": 0.0741
     },
     {
       "test": "landmarks excluded, homography",
       "p": 0.0488,
       "family": "secondary",
-      "p_holm": 0.6832,
-      "q_bh": 0.1757
+      "p_holm": 0.7808,
+      "q_bh": 0.1403
     },
     {
       "test": "landmarks excluded, affine",
       "p": 0.0137,
       "family": "secondary",
-      "p_holm": 0.2329,
-      "q_bh": 0.0945
+      "p_holm": 0.274,
+      "q_bh": 0.0741
     },
     {
       "test": "cluster sign-flip, homography",
       "p": 0.0703,
       "family": "secondary",
-      "p_holm": 0.9139,
-      "q_bh": 0.2109
+      "p_holm": 1.0,
+      "q_bh": 0.1797
     },
     {
       "test": "Moran's I loftr error_m",
       "p": 0.8111,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.9001
+      "q_bh": 0.8887
     },
     {
       "test": "Moran's I loftr dE_m",
@@ -55,85 +55,120 @@
       "p": 0.8458,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.9001
+      "q_bh": 0.8887
     },
     {
       "test": "Moran's I manual error_m",
       "p": 0.6805,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.9001
+      "q_bh": 0.8695
     },
     {
       "test": "Moran's I manual dE_m",
       "p": 0.2216,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.3989
+      "q_bh": 0.3641
     },
     {
       "test": "Moran's I manual dN_m",
       "p": 0.2044,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.3989
+      "q_bh": 0.3641
     },
     {
       "test": "Spearman loftr_vs_nearest_inlier",
       "p": 0.208,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.3989
+      "q_bh": 0.3641
     },
     {
       "test": "Spearman manual_vs_nearest_fitting_point",
       "p": 0.746,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.9001
+      "q_bh": 0.8887
     },
     {
       "test": "LoFTR vs printed_corners (Wilcoxon)",
       "p": 0.0005,
       "family": "secondary",
-      "p_holm": 0.009,
-      "q_bh": 0.009
+      "p_holm": 0.0115,
+      "q_bh": 0.0058
     },
     {
       "test": "LoFTR vs printed_corners_plus_ecc (Wilcoxon)",
       "p": 0.021,
       "family": "secondary",
-      "p_holm": 0.315,
-      "q_bh": 0.0945
+      "p_holm": 0.378,
+      "q_bh": 0.0805
     },
     {
       "test": "ALIKED+LightGlue vs_loftr (Wilcoxon)",
       "p": 0.1514,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.3893
+      "q_bh": 0.3166
     },
     {
       "test": "ALIKED+LightGlue vs_manual (Wilcoxon)",
       "p": 0.5186,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.7779
+      "q_bh": 0.7016
     },
     {
       "test": "loftr selected non-projective model vs homography (Wilcoxon)",
       "p": 0.8501,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.9001
+      "q_bh": 0.8887
     },
     {
       "test": "manual selected non-projective model vs homography (Wilcoxon)",
       "p": 0.5186,
       "family": "secondary",
       "p_holm": 1.0,
-      "q_bh": 0.7779
+      "q_bh": 0.7016
+    },
+    {
+      "test": "human re-pick of evaluation pixels: LoFTR vs manual (Wilcoxon)",
+      "p": 0.0269,
+      "family": "secondary",
+      "p_holm": 0.4573,
+      "q_bh": 0.0884
+    },
+    {
+      "test": "LoFTR vs manual refitted on human picks (Wilcoxon)",
+      "p": 0.0005,
+      "family": "secondary",
+      "p_holm": 0.0115,
+      "q_bh": 0.0058
+    },
+    {
+      "test": "fully human: LoFTR vs human manual on human evaluation pixels (Wilcoxon)",
+      "p": 0.0015,
+      "family": "secondary",
+      "p_holm": 0.0315,
+      "q_bh": 0.0115
+    },
+    {
+      "test": "supplementary points, all: LoFTR vs manual (Wilcoxon)",
+      "p": 0.3757,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.5761
+    },
+    {
+      "test": "supplementary points, confident: LoFTR vs manual (Wilcoxon)",
+      "p": 0.1347,
+      "family": "secondary",
+      "p_holm": 1.0,
+      "q_bh": 0.3098
     }
   ],
-  "n_secondary": 18
+  "n_secondary": 23
 }
