@@ -16,6 +16,17 @@ Every method is scored by one shared evaluation on the same held-out control poi
 
 This is an engineering benchmark on **one** map sheet, not a claim of methodological novelty.
 
+**Results at a glance** (median / RMSE positional error in metres on the 12 held-out points):
+
+| | Control points picked by | LoFTR | Manual GCPs | LoFTR closer at |
+|---|---|---|---|---|
+| **Pre-specified comparison** | AI-proposed, accepted by the author | 53.9 / 77.4 | 73.9 / 102.4 | 9 of 12 (p = 0.043; suggestive, not established) |
+| **Fully human re-pick** | the author, blind and timed | 50.8 / 146.2 | 142.4 / 208.9 | 11 of 12 (p = 0.0015, Holm 0.032) |
+
+SIFT produced no valid transform. The re-pick replaced every AI-assisted click with a blind human click (271 s in
+total); see [Re-picking](#re-picking-the-control-points). The pre-specified comparison stays the primary test because
+it was fixed before any result existed; the human re-pick is the strongest check of it.
+
 **Paper:** [*Georeferencing a 1926 Survey of India Sheet: Learned Matching, Classical Matching and Manual Control Points Compared on Held-Out Ground Truth*](paper/mapalign.pdf) (PDF, 14 pages; LaTeX source in `paper/`)  
 **Interactive report:** https://mysore-1926.pages.dev  
 **Archive:** Zenodo, [doi:10.5281/zenodo.23572419](https://doi.org/10.5281/zenodo.23572419) (all versions; v1.0.0 is [doi:10.5281/zenodo.23572420](https://doi.org/10.5281/zenodo.23572420))
@@ -23,8 +34,9 @@ This is an engineering benchmark on **one** map sheet, not a claim of methodolog
 > **Read before using the numbers.** All 21 control points (9 fitting, 12 evaluation) were picked by an AI assistant
 > (Claude) from zoomed image crops, and were then **reviewed by a human (Saksham Sharma, 2026-10-19), who made no
 > changes**. Only **12** held-out points could be established (the target was 20), and none lie in the southern fifth
-> of the sheet or in Mysore city. A later blind, timed human re-pick is reported separately
-> ([Re-picking](#re-picking-the-control-points)); it does not replace these points. See [Limitations](#limitations).
+> of the sheet or in Mysore city. The author later re-picked every point blind and timed, which gives a fully human
+> version of the comparison ([Re-picking](#re-picking-the-control-points)). It is reported next to the original
+> points, not in place of them. See [Limitations](#limitations).
 
 ## Contents
 [Research question](#research-question) · [Motivation](#motivation) · [Data and licensing](#data-and-licensing) ·
@@ -49,6 +61,9 @@ pairs they were trained on. MapAlign measures, under one fixed protocol, how wel
 real sheet.
 
 ## Data and licensing
+
+A datasheet for the control points and evaluation files, following *Datasheets for Datasets*, is in
+[`docs/DATASHEET.md`](docs/DATASHEET.md).
 
 | Role | Source | Licence |
 |---|---|---|
@@ -296,6 +311,11 @@ Exact runtimes per run are in `results/*_run.json`.
 This is suggestive, not established: the interval includes zero, and none of the secondary LoFTR-vs-manual tests
 survives a multiple-testing correction (see [Robustness](#robustness-and-sensitivity)).
 
+**With every click made by a human** (the author's blind, timed re-pick of both the fitting points and the evaluation
+pixels), LoFTR stays at a median of 50.8 m while the manual fit rises to 142.4 m, and LoFTR is closer at 11 of 12 points
+(p = 0.0015, Holm-adjusted 0.032). Unlike the comparison above, this difference survives the correction. Details in
+[Re-picking](#re-picking-the-control-points).
+
 **Affine vs homography** (secondary; not used to choose any setting):
 - LoFTR affine: median 42.4 m, RMSE 76.3 m.
 - Manual affine: median 87.8 m, RMSE 105.5 m.
@@ -389,9 +409,9 @@ sheet the limit is the content and a century of change, not the transform family
 
 ## Re-picking the control points
 
-The control points were proposed with AI assistance and reviewed, unchanged, by the author. After every other
-analysis was complete, the author re-picked all of them blind and timed with `mapalign.pickweb`: the window was
-centred on the printed-corner estimate, never on an earlier pick. Results are in
+This is the human-made part of the evaluation. The original control points were proposed with AI assistance and
+reviewed, unchanged, by the author. After every other analysis was complete, the author re-picked all of them blind
+and timed with `mapalign.pickweb`: the window was centred on the printed-corner estimate, never on an earlier pick. Results are in
 `results/robustness/picker_agreement.json` and `results/robustness/extra_points.json`, and in Section 8 of the paper.
 
 | Re-pick | Result (median / RMSE in m on the 12 held-out points) |
@@ -438,8 +458,8 @@ python -m mapalign.robustness extra_points --points gcp/repick_kit_extra/repick_
 `picker` reports the picker-to-picker distance per point, refits Method C on the human picks, scores everything on the
 original and on the re-picked evaluation pixels, and gives the human interaction time. `extra_points` scores the
 frozen transforms on the new points, alone, pooled with the original 12 and restricted to points marked confident, and
-records the file's SHA-256. The original analysis and its lock are not touched; the AI-assisted run stays the primary
-result.
+records the file's SHA-256. The original analysis and its lock are not touched. The AI-assisted run stays the
+pre-specified primary test, because it was fixed before any result existed; the fully human run is reported beside it.
 
 ## Related work
 
