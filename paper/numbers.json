@@ -446,7 +446,7 @@
   "homography/sift": {
    "model": "homography",
    "method": "sift",
-   "label": "SIFT + RANSAC",
+   "label": "SIFT + MAGSAC++",
    "method_status": "failed",
    "n_evaluation_points": 12,
    "n_failed_predictions": 12,
@@ -468,7 +468,7 @@
   "homography/loftr": {
    "model": "homography",
    "method": "loftr",
-   "label": "LoFTR + RANSAC",
+   "label": "LoFTR + MAGSAC++",
    "method_status": "valid",
    "n_evaluation_points": 12,
    "n_failed_predictions": 0,

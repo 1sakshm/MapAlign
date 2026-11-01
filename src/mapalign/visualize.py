@@ -148,7 +148,7 @@ def plot_per_point_errors(err, out_path) -> None:
     e = err[(err.model == "homography") & err.error_m.notna()]
     methods = [m for m in ("loftr", "manual", "sift") if (e.method == m).any()]
     pids = sorted(e.point_id.unique())
-    labels = {"loftr": "LoFTR + RANSAC", "manual": "Manual GCPs", "sift": "SIFT + RANSAC"}
+    labels = {"loftr": "LoFTR + MAGSAC++", "manual": "Manual GCPs", "sift": "SIFT + MAGSAC++"}
     fig, ax = plt.subplots(figsize=(10, 4.6))
     y = np.arange(len(pids))
     for m in methods:

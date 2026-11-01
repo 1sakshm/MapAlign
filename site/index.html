@@ -326,9 +326,9 @@ footer{margin-top:96px;padding-top:20px;border-top:1.5px solid var(--ink);displa
         <table>
           <thead><tr><th>Method · homography</th><th>n</th><th>Median</th><th>Mean</th><th>RMSE</th><th>Max</th><th>P90</th><th>CPU time</th></tr></thead>
           <tbody>
-            <tr class="best"><td><span class="legend-dot" style="background:var(--blue)"></span>LoFTR + RANSAC</td><td>12</td><td>53.9</td><td>64.2</td><td>77.4</td><td>191.7</td><td>95.9</td><td>≈20 s</td></tr>
+            <tr class="best"><td><span class="legend-dot" style="background:var(--blue)"></span>LoFTR + MAGSAC++</td><td>12</td><td>53.9</td><td>64.2</td><td>77.4</td><td>191.7</td><td>95.9</td><td>≈20 s</td></tr>
             <tr><td><span class="legend-dot" style="background:var(--red)"></span>Manual control points (7)</td><td>12</td><td>73.9</td><td>89.6</td><td>102.4</td><td>223.9</td><td>140.6</td><td>0.15 s</td></tr>
-            <tr><td>SIFT + RANSAC</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>≈15 s</td></tr>
+            <tr><td>SIFT + MAGSAC++</td><td class="fail">0</td><td class="fail">failed</td><td>–</td><td>–</td><td>–</td><td>–</td><td>≈15 s</td></tr>
             <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners + ECC*</td><td>12</td><td>99.5</td><td>102.4</td><td>119.7</td><td>263.1</td><td>–</td><td>≈60 s</td></tr>
             <tr class="sec"><td><span class="legend-dot" style="background:var(--brown)"></span>Printed corners only*</td><td>12</td><td>169.8</td><td>169.0</td><td>173.3</td><td>258.2</td><td>–</td><td>instant</td></tr>
             <tr class="sec"><td><span class="legend-dot" style="background:var(--ink-3)"></span>ALIKED + LightGlue*</td><td>12</td><td>54.6</td><td>85.8</td><td>104.9</td><td>201.4</td><td>183.4</td><td>9 s match</td></tr>

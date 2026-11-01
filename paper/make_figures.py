@@ -217,7 +217,7 @@ save(fig, "fig5_alignment_windows")
 fig, axes = plt.subplots(1, 2, figsize=(COL2, COL2 * 0.5), gridspec_kw={"wspace": 0.04})
 pw = apply_h(F, ev_px)
 EX = 20.0
-for ax, m, col, lab in ((axes[0], "loftr", BLUE, "(a) LoFTR + MAGSAC"), (axes[1], "manual", RED, "(b) Manual GCP fit")):
+for ax, m, col, lab in ((axes[0], "loftr", BLUE, "(a) LoFTR + MAGSAC++"), (axes[1], "manual", RED, "(b) Manual GCP fit")):
     e = errs("homography", m)
     ax.imshow(rgb(hist.color), alpha=0.72)
     ax.quiver(pw[:, 0], pw[:, 1], e.dE_m.to_numpy() / 10 * EX, -e.dN_m.to_numpy() / 10 * EX, angles="xy",
@@ -561,8 +561,8 @@ def fm(v, nd=1):
 
 M = met["metrics"]
 rows = []
-for key, name in (("homography/loftr", "LoFTR + MAGSAC"), ("homography/manual", "Manual GCPs (7)"),
-                  ("homography/sift", "SIFT + MAGSAC")):
+for key, name in (("homography/loftr", "LoFTR + MAGSAC++"), ("homography/manual", "Manual GCPs (7)"),
+                  ("homography/sift", "SIFT + MAGSAC++")):
     v = M[key]
     rows.append(f"{name} & {v['n_valid']} & {fm(v['median_m'])} & {fm(v['mean_m'])} & {fm(v['rmse_m'])} & "
                 f"{fm(v['std_m'])} & {fm(v['p90_m'])} & {fm(v['min_m'])} & {fm(v['max_m'])} \\\\")

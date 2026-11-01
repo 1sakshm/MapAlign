@@ -34,7 +34,9 @@ from mapalign.io import read_json, write_json
 log = logging.getLogger("mapalign.evaluate")
 
 METHODS = ("sift", "loftr", "manual")
-LABELS = {"sift": "SIFT + RANSAC", "loftr": "LoFTR + RANSAC", "manual": "Manual GCPs (Method C)"}
+LABELS = {"sift": "SIFT + MAGSAC++", "loftr": "LoFTR + MAGSAC++", "manual": "Manual GCPs (Method C)"}
+# The affine re-fit uses cv2.estimateAffine2D, which has no MAGSAC++, so those rows say RANSAC.
+AFFINE_LABELS = {**LABELS, "sift": "SIFT + RANSAC", "loftr": "LoFTR + RANSAC"}
 
 
 class EvaluationLockError(RuntimeError):
@@ -202,7 +204,7 @@ def evaluate(cfg: dict) -> dict:
                              "error_m": round(float(e[i]), 2) if np.isfinite(e[i]) else None,
                              "prediction_status": "ok" if np.isfinite(e[i]) else f"failed: method status {rec.get('status')}",
                              "confidence": valid.confidence[i], "feature_type": valid.feature_type[i]})
-            entry = {"model": model, "method": m, "label": LABELS[m], "method_status": rec.get("status"),
+            entry = {"model": model, "method": m, "label": (LABELS if model == "homography" else AFFINE_LABELS)[m], "method_status": rec.get("status"),
                      "n_evaluation_points": int(len(valid)), "n_failed_predictions": int((~np.isfinite(e)).sum()),
                      **summarize_errors(e)}
             if model == "homography":

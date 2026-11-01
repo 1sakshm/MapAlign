@@ -8,8 +8,8 @@
 
 MapAlign compares three ways of aligning a 1926 Survey of India topographic sheet (57 D/11, Mysore) with a modern
 geographic reference:
-- **Method A:** learned feature matching (Kornia LoFTR + RANSAC);
-- **Method B:** classical feature matching (OpenCV SIFT + RANSAC);
+- **Method A:** learned feature matching (Kornia LoFTR + MAGSAC++);
+- **Method B:** classical feature matching (OpenCV SIFT + MAGSAC++);
 - **Method C:** a least-squares fit to manually selected ground-control points (GCPs).
 
 Every method is scored by one shared evaluation on the same held-out control points, as positional error in metres.
@@ -112,7 +112,7 @@ site/                     static report website (deployed to Cloudflare Pages)
 All three methods produce a 3 × 3 projective homography mapping **historical-scan pixels → reference pixels**. The
 reference's exact affine geotransform then gives EPSG:32643 metres.
 
-| | Method A: LoFTR + RANSAC | Method B: SIFT + RANSAC | Method C: manual GCPs |
+| | Method A: LoFTR + MAGSAC++ | Method B: SIFT + MAGSAC++ | Method C: manual GCPs |
 |---|---|---|---|
 | Correspondences | Kornia `LoFTR(pretrained="outdoor")`. Both images scaled by one common factor to ≤ 768 px (≈ 45 m/px), eval mode, no grad | OpenCV SIFT on 10 m/px grayscale; brute-force L2 2-NN matching; Lowe ratio 0.75 | 9 picked GCPs, of which 2 were removed by a pre-fit QC rule, leaving 7 |
 | Estimator | MAGSAC++ (OpenCV USAC), 3 px at the matcher's resolution, 1.2 M iterations, deterministic* | same | least squares, no RANSAC |
@@ -294,8 +294,8 @@ Positional error at **12 held-out points** (EPSG:32643, metres; homography model
 
 | Method | Status | n | Median | Mean | RMSE | Max | Min | Std | P90 | Runtime (CPU) |
 |---|---|---|---|---|---|---|---|---|---|---|
-| SIFT + RANSAC | **failed**: 594 matches, 26 degenerate inliers | 0 / 12 | – | – | – | – | – | – | – | ≈ 15 s |
-| **LoFTR + RANSAC** | valid: 601 matches, 389 inliers (64.7 %) | 12 | **53.9** | 64.2 | **77.4** | 191.7 | 24.2 | 43.3 | 95.9 | ≈ 20 s |
+| SIFT + MAGSAC++ | **failed**: 594 matches, 26 degenerate inliers | 0 / 12 | – | – | – | – | – | – | – | ≈ 15 s |
+| **LoFTR + MAGSAC++** | valid: 601 matches, 389 inliers (64.7 %) | 12 | **53.9** | 64.2 | **77.4** | 191.7 | 24.2 | 43.3 | 95.9 | ≈ 20 s |
 | Manual GCPs | valid: 7 fitting points (fit RMSE 55.6 m, leave-one-out RMSE 146.9 m) | 12 | 73.9 | 89.6 | 102.4 | 223.9 | 44.9 | 49.5 | 140.6 | 0.15 s fit* |
 
 \* The original points were picked by an AI assistant, so they have no human interaction time. The later blind human
