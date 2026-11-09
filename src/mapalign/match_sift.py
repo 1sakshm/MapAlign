@@ -8,21 +8,13 @@ from __future__ import annotations
 
 import logging
 import time
-from dataclasses import dataclass, field
 
 import cv2
 import numpy as np
 
+from mapalign.core import MatchResult
+
 log = logging.getLogger(__name__)
-
-
-@dataclass
-class MatchResult:
-    method: str
-    pts0: np.ndarray                     # (N, 2) float, image0 working px
-    pts1: np.ndarray                     # (N, 2) float, image1 working px
-    scores: np.ndarray                   # (N,) per-match score (SIFT: ratio d1/d2, lower = better)
-    stats: dict = field(default_factory=dict)
 
 
 def match_sift(gray0: np.ndarray, gray1: np.ndarray, params: dict) -> MatchResult:

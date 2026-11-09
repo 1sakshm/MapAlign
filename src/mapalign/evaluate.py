@@ -24,9 +24,9 @@ import sys
 import numpy as np
 import pandas as pd
 from affine import Affine
-from scipy import stats
 
 from mapalign.config import load_config, resolve_path
+from mapalign.core import paired_comparison, positional_errors, predict, summarize_errors  # noqa: F401 (re-exported)
 from mapalign.estimate_transform import apply_h, check_transform, estimate_transform, estimator_params
 from mapalign.georeference import fit_gcp_transform, map_to_ref_px, ref_px_to_map
 from mapalign.io import read_json, write_json
@@ -41,50 +41,6 @@ AFFINE_LABELS = {**LABELS, "sift": "SIFT + RANSAC", "loftr": "LoFTR + RANSAC"}
 
 class EvaluationLockError(RuntimeError):
     """The evaluation-point file differs from the locked version."""
-
-
-# ---------------------------------------------------------------- core metric functions
-
-def positional_errors(true_en: np.ndarray, pred_en: np.ndarray) -> np.ndarray:
-    """e_i = sqrt((E_i - Ehat_i)^2 + (N_i - Nhat_i)^2), in the units of the inputs (metres here)."""
-    true_en, pred_en = np.asarray(true_en, float), np.asarray(pred_en, float)
-    if true_en.shape != pred_en.shape or true_en.ndim != 2 or true_en.shape[1] != 2:
-        raise ValueError(f"expected matching (N, 2) arrays, got {true_en.shape} and {pred_en.shape}")
-    return np.hypot(true_en[:, 0] - pred_en[:, 0], true_en[:, 1] - pred_en[:, 1])
-
-
-def summarize_errors(e: np.ndarray) -> dict:
-    """Summary statistics over valid (finite) errors. Population std (ddof=0) is reported as `std_m`."""
-    e = np.asarray(e, float)
-    valid = e[np.isfinite(e)]
-    if len(valid) == 0:
-        return {"n_valid": 0, "mean_m": None, "median_m": None, "rmse_m": None, "max_m": None, "min_m": None,
-                "std_m": None, "p90_m": None}
-    r = lambda v: round(float(v), 2)  # noqa: E731
-    return {"n_valid": int(len(valid)), "mean_m": r(valid.mean()), "median_m": r(np.median(valid)),
-            "rmse_m": r(np.sqrt(np.mean(valid ** 2))), "max_m": r(valid.max()), "min_m": r(valid.min()),
-            "std_m": r(valid.std(ddof=0)), "p90_m": r(np.percentile(valid, 90))}
-
-
-def paired_comparison(a: np.ndarray, b: np.ndarray, seed: int, n_boot: int = 20000) -> dict:
-    """Paired comparison of per-point errors a vs b (same points).
-
-    Wilcoxon signed-rank test (exact, two-sided) on d = a - b, and a percentile bootstrap 95% CI
-    for the median of d. With n ~ 12, both are low-power and descriptive only.
-    """
-    a, b = np.asarray(a, float), np.asarray(b, float)
-    ok = np.isfinite(a) & np.isfinite(b)
-    d = a[ok] - b[ok]
-    out = {"n_pairs": int(ok.sum()), "median_diff_m": round(float(np.median(d)), 2) if len(d) else None,
-           "a_better_count": int((d < 0).sum()), "b_better_count": int((d > 0).sum())}
-    if len(d) >= 5:
-        w = stats.wilcoxon(d, alternative="two-sided", method="exact" if len(d) <= 25 else "auto")
-        rng = np.random.default_rng(seed)
-        boots = np.median(rng.choice(d, size=(n_boot, len(d)), replace=True), axis=1)
-        out.update(wilcoxon_statistic=float(w.statistic), wilcoxon_p_two_sided=round(float(w.pvalue), 4),
-                   bootstrap_ci95_median_diff_m=[round(float(np.percentile(boots, 2.5)), 2),
-                                                 round(float(np.percentile(boots, 97.5)), 2)])
-    return out
 
 
 # ---------------------------------------------------------------- inputs
@@ -124,12 +80,6 @@ def method_transforms(cfg: dict) -> dict:
         gt = Affine.from_gdal(*rec["reference_geotransform_gdal"]) if rec.get("reference_geotransform_gdal") else None
         out[m] = (H, gt, rec)
     return out
-
-
-def predict(H: np.ndarray | None, gt: Affine | None, px: np.ndarray) -> np.ndarray:
-    if H is None or gt is None:
-        return np.full((len(px), 2), np.nan)
-    return ref_px_to_map(apply_h(H, px), gt)
 
 
 # ---------------------------------------------------------------- secondary: affine vs homography

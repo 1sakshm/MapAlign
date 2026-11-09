@@ -44,7 +44,7 @@ it was fixed before any result existed; the human re-pick is the strongest check
 [Data preparation](#data-preparation) · [Running](#running-the-experiment) · [GCP collection](#gcp-collection) ·
 [Coordinate conventions](#coordinate-conventions) · [Metrics](#evaluation-metrics) · [Figures](#example-visualizations) ·
 [Results](#results) · [Robustness](#robustness-and-sensitivity) · [Other matchers and models](#other-matchers-and-transform-models) ·
-[Re-picking](#re-picking-the-control-points) · [Related work](#related-work) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
+[Re-picking](#re-picking-the-control-points) · [Experiment 2](#experiment-2-paintings-engravings-and-old-photos) · [Related work](#related-work) · [Limitations](#limitations) · [Reproducibility](#reproducibility) · [Citation](#citation-and-acknowledgements)
 
 ## Research question
 
@@ -460,6 +460,23 @@ original and on the re-picked evaluation pixels, and gives the human interaction
 frozen transforms on the new points, alone, pooled with the original 12 and restricted to points marked confident, and
 records the file's SHA-256. The original analysis and its lock are not touched. The AI-assisted run stays the
 pre-specified primary test, because it was fixed before any result existed; the fully human run is reported beside it.
+
+## Experiment 2: paintings, engravings and old photos
+
+**Question.** Do modern matchers still find the same points when one image is an engraving, a painting or an old
+photograph and the other is a modern photograph of the same building? And how much does the answer depend on the
+style?
+
+The 1926 map is one historical depiction. This experiment asks whether the same result holds for others. The 30–50
+pairs come from Wikimedia Commons, with one historical image and one modern photograph of the same building in each,
+grouped as photo, drawing or painting. For each pair, an annotator who has not seen any matcher output marks 8–10
+corresponding points. These points are held out, the same way the map's evaluation points were. The matchers are
+SIFT, LoFTR, DISK and ALIKED + LightGlue, RoMa and MASt3R. All of them go through the same estimator and scoring code
+as the map experiment (`mapalign.core`), and the results are reported by style.
+
+**Status:** the protocol is in [`styles/README.md`](styles/README.md). There are no results yet. This section will
+report the success rate and held-out error by style, show failure cases and state its limits: a small sample and a
+single annotator. The paper's results are not affected.
 
 ## Related work
 

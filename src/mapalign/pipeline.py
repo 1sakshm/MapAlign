@@ -28,10 +28,10 @@ from pyproj import Transformer
 from mapalign.config import DEFAULT_CONFIG, load_config, resolve_path
 from mapalign.diagnostics import (aligned_tile_test, corner_deviation_from_prior, prior_consistency,
                                   prior_homography_work, sift_tile_matcher)
-from mapalign.estimate_transform import apply_h, compose_full_resolution, estimate_transform, estimator_params
+from mapalign.core import MatchResult, fit_transform, get_matcher
+from mapalign.estimate_transform import apply_h, compose_full_resolution
 from mapalign.georeference import graticule_corner_check, map_to_ref_px
 from mapalign.io import write_json
-from mapalign.match_sift import MatchResult, match_sift
 from mapalign.preprocess import PreparedImage, prepare_historical, prepare_reference
 from mapalign.visualize import plot_matches, plot_overlay
 
@@ -39,12 +39,7 @@ log = logging.getLogger("mapalign.pipeline")
 
 
 def _run_matcher(method: str, hist: PreparedImage, ref: PreparedImage, cfg: dict) -> MatchResult:
-    if method == "sift":
-        return match_sift(hist.gray, ref.gray, cfg["sift"])
-    if method == "loftr":
-        from mapalign.match_loftr import match_loftr  # Phase 4
-        return match_loftr(hist.gray, ref.gray, cfg["loftr"], cfg["compute"]["device"])
-    raise ValueError(method)
+    return get_matcher(method, cfg[method], cfg["compute"]["device"])(hist.gray, ref.gray)
 
 
 def _tile_matcher(method: str, cfg: dict):
@@ -90,8 +85,7 @@ def run(method: str, cfg: dict) -> dict:
     size0 = (hist.gray.shape[1], hist.gray.shape[0])
     size1 = (ref.gray.shape[1], ref.gray.shape[0])
     t0 = time.perf_counter()
-    matcher_scale = m.stats.get("common_scale", 1.0)
-    tr = estimate_transform(m.pts0, m.pts1, size0, size1, estimator_params(cfg["transform"], matcher_scale), seed)
+    tr = fit_transform(m, size0, size1, cfg["transform"], seed)
     t_est = time.perf_counter() - t0
     t_total = time.perf_counter() - t_start
 

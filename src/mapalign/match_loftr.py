@@ -19,7 +19,7 @@ import numpy as np
 import torch
 
 from mapalign.config import ensure_torch_home
-from mapalign.match_sift import MatchResult
+from mapalign.core import MatchResult
 
 log = logging.getLogger(__name__)
 

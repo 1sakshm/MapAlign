@@ -24,8 +24,8 @@ from scipy.interpolate import RBFInterpolator
 
 from mapalign.config import resolve_path
 from mapalign.diagnostics import aligned_tile_test, prior_consistency, prior_homography_work
-from mapalign.estimate_transform import apply_h, compose_full_resolution, estimate_transform, estimator_params
-from mapalign.evaluate import paired_comparison, positional_errors, predict
+from mapalign.estimate_transform import apply_h, compose_full_resolution
+from mapalign.core import fit_transform, get_matcher, paired_comparison, positional_errors, predict
 from mapalign.georeference import fit_gcp_transform, map_to_ref_px, ref_px_to_map
 from mapalign.io import write_json
 from mapalign.robustness import Ctx, _summ
@@ -55,7 +55,7 @@ def _lightglue(c: Ctx, feat: str):
     """Fourth method. Input size chosen by the rule used for LoFTR in Phase 4 (fixed in advance): the most matches
     within 1 km of the graticule prior. Everything after matching is the frozen pipeline: MAGSAC++ with the same
     3 px threshold at matcher resolution, 1.2 M iterations, the same validity checks."""
-    from mapalign.match_lightglue import lightglue_tile_matcher, match_lightglue
+    from mapalign.match_lightglue import lightglue_tile_matcher
     from mapalign.visualize import plot_matches, plot_overlay
 
     OUT.mkdir(parents=True, exist_ok=True)
@@ -68,7 +68,7 @@ def _lightglue(c: Ctx, feat: str):
     for side in LG_SIZES:
         row = {"max_side_px": side}
         try:
-            m = match_lightglue(hist.gray, ref.gray, {"features": feat, "max_side_px": side}, c.cfg["compute"]["device"])
+            m = get_matcher(f"{feat}_lightglue", {"max_side_px": side}, c.cfg["compute"]["device"])(hist.gray, ref.gray)
             pc = prior_consistency(m.pts0, m.pts1, Hp, res_m)
             row.update(matches=len(m.pts0), within_1km_of_prior=pc["matches_within"],
                        effective_resolution_m=round(res_m / m.stats["common_scale"], 1),
@@ -81,9 +81,8 @@ def _lightglue(c: Ctx, feat: str):
     ok = [r for r in sweep if "error" not in r]
     best = max(ok, key=lambda r: (r["within_1km_of_prior"], -r["max_side_px"]))
     m = runs[best["max_side_px"]]
-    params = estimator_params(c.cfg["transform"], m.stats["common_scale"])
     t0 = time.perf_counter()
-    tr = estimate_transform(m.pts0, m.pts1, size0, size1, params, c.seed)
+    tr = fit_transform(m, size0, size1, c.cfg["transform"], c.seed)
     t_est = time.perf_counter() - t0
     tile = aligned_tile_test(hist, ref, Hp, lightglue_tile_matcher({"features": feat}, c.cfg["compute"]["device"]))
     out = {"purpose": f"fourth method (post hoc, secondary): {feat.upper()} + LightGlue matches into the frozen MAGSAC++ pipeline",
