@@ -1,0 +1,129 @@
+{
+  "purpose": "post hoc, secondary: RoMa matches into the frozen MAGSAC++ pipeline",
+  "settings": "library defaults, fixed before the run",
+  "matching": {
+    "device": "cpu",
+    "common_scale": 0.250435,
+    "coarse_res": 560,
+    "upsample_res": 864,
+    "num_samples": 5000,
+    "seed": 0,
+    "matches": 5000,
+    "model_load_s": 9.96,
+    "inference_s": 55.45
+  },
+  "matching_s": 67.8,
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 5000,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 11.979156268093517,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 0.250435,
+    "effective_rng": "OpenCV internal fixed state (cv2.setRNGSeed has no effect on this call)",
+    "inliers": 4448,
+    "inlier_ratio": 0.8896,
+    "inlier_reproj_rmse_px": 3.643554262938398,
+    "inlier_reproj_median_px": 2.7048785792645,
+    "valid": true,
+    "problems": [],
+    "condition_number": 221132.56974983917,
+    "det_linear_part": 0.983384119807579,
+    "singular_values_linear_part": [
+      0.9953174973356131,
+      0.9880104815197372
+    ],
+    "mapped_corners_image1_px": [
+      [
+        331.52841057469067,
+        330.1630669715132
+      ],
+      [
+        3036.8601872491236,
+        319.56622753965365
+      ],
+      [
+        3059.536438497697,
+        3117.2213312069216
+      ],
+      [
+        327.53004418869295,
+        3108.8390647280166
+      ]
+    ]
+  },
+  "prior_consistency": {
+    "radius_m": 1000.0,
+    "matches": 5000,
+    "matches_within": 4778,
+    "inliers": 4448,
+    "inliers_within": 4448,
+    "median_distance_m": 165.3
+  },
+  "status": "valid",
+  "H_full": [
+    [
+      1.0626113942652216,
+      -0.0027747926334247934,
+      225.8516362016321
+    ],
+    [
+      -0.005048350213564003,
+      1.061978358971981,
+      94.3261851750576
+    ],
+    [
+      -1.3365382435238572e-06,
+      -1.8754535973615312e-06,
+      1.0
+    ]
+  ],
+  "heldout": {
+    "n_valid": 12,
+    "median_m": 45.66,
+    "mean_m": 69.51,
+    "rmse_m": 88.12,
+    "max_m": 225.97
+  },
+  "per_point_m": {
+    "E01": 101.6,
+    "E02": 35.8,
+    "E03": 121.5,
+    "E04": 42.8,
+    "E05": 51.2,
+    "E06": 46.0,
+    "E07": 30.3,
+    "E08": 57.5,
+    "E09": 38.4,
+    "E10": 37.7,
+    "E11": 226.0,
+    "E12": 45.4
+  },
+  "paired_vs_loftr": {
+    "n_pairs": 12,
+    "median_diff_m": -3.32,
+    "a_better_count": 6,
+    "b_better_count": 6,
+    "wilcoxon_statistic": 29.0,
+    "wilcoxon_p_two_sided": 0.4697,
+    "bootstrap_ci95_median_diff_m": [
+      -28.62,
+      15.05
+    ]
+  },
+  "paired_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": 15.06,
+    "a_better_count": 2,
+    "b_better_count": 10,
+    "wilcoxon_statistic": 11.0,
+    "wilcoxon_p_two_sided": 0.0269,
+    "bootstrap_ci95_median_diff_m": [
+      4.94,
+      28.09
+    ]
+  }
+}

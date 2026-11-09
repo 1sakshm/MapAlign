@@ -10,7 +10,7 @@ dust3r.utils.image.load_images does. Matches are mapped back to the input pixels
 
 The code is not on PyPI: clone https://github.com/naver/mast3r (with --recursive) and point MAST3R_DIR at it
 (default: ../vendor/mast3r next to the repo). The checkpoint is downloaded from Hugging Face into the repo's
-.cache/huggingface. Licence: CC BY-NC-SA 4.0 (code and weights), research use only; neither is redistributed.
+.cache/huggingface/hub, whatever HF_HOME says. Licence: CC BY-NC-SA 4.0 (code and weights), research use only; neither is redistributed.
 """
 
 from __future__ import annotations
@@ -41,7 +41,6 @@ def _import_paths():
     for p in (root, os.path.join(root, "dust3r")):
         if p not in sys.path:
             sys.path.insert(0, p)
-    os.environ.setdefault("HF_HOME", str(REPO_ROOT / ".cache" / "huggingface"))
 
 
 @functools.lru_cache(maxsize=1)
@@ -49,7 +48,11 @@ def _load(device: str):
     _import_paths()
     from mast3r.model import AsymmetricMASt3R
 
-    return AsymmetricMASt3R.from_pretrained(CHECKPOINT).to(device).eval()
+    from huggingface_hub import snapshot_download
+
+    # An explicit cache_dir, so a user-wide HF_HOME does not trigger a second 2.7 GB download.
+    local = snapshot_download(CHECKPOINT, cache_dir=str(REPO_ROOT / ".cache" / "huggingface" / "hub"))
+    return AsymmetricMASt3R.from_pretrained(local).to(device).eval()
 
 
 def _prepare(img: Image.Image, size: int, idx: int):

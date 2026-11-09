@@ -1,0 +1,139 @@
+{
+  "purpose": "post hoc, secondary: MASt3R matches into the frozen MAGSAC++ pipeline",
+  "settings": "library defaults, fixed before the run",
+  "matching": {
+    "device": "cpu",
+    "common_scale": 0.14829,
+    "size": 512,
+    "subsample": 8,
+    "border_px": 3,
+    "checkpoint": "naver/MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric",
+    "input_px": [
+      [
+        496,
+        512
+      ],
+      [
+        496,
+        512
+      ]
+    ],
+    "matches": 737,
+    "model_load_s": 9.39,
+    "inference_s": 25.82
+  },
+  "matching_s": 39.5,
+  "estimation": {
+    "model": "homography",
+    "input_correspondences": 737,
+    "ransac_method": "USAC_MAGSAC",
+    "ransac_reproj_threshold_px": 20.230629172567266,
+    "threshold_units": "image1 (reference) working pixels",
+    "seed": 42,
+    "ransac_max_iters": 1200000,
+    "ransac_reproj_threshold_matcher_px": 3.0,
+    "matcher_scale": 0.14829,
+    "effective_rng": "OpenCV internal fixed state (cv2.setRNGSeed has no effect on this call)",
+    "inliers": 326,
+    "inlier_ratio": 0.4423,
+    "inlier_reproj_rmse_px": 11.759814588859689,
+    "inlier_reproj_median_px": 10.297293511822716,
+    "valid": true,
+    "problems": [],
+    "condition_number": 361785.5850033432,
+    "det_linear_part": 0.8182662896836057,
+    "singular_values_linear_part": [
+      0.9546391301238666,
+      0.8571472338216786
+    ],
+    "mapped_corners_image1_px": [
+      [
+        402.49554619828996,
+        394.56395973021426
+      ],
+      [
+        3060.169853944148,
+        311.3011042844418
+      ],
+      [
+        3142.255816465148,
+        3276.207955915898
+      ],
+      [
+        258.97965799051065,
+        3148.2212732269045
+      ]
+    ]
+  },
+  "prior_consistency": {
+    "radius_m": 1000.0,
+    "matches": 737,
+    "matches_within": 618,
+    "inliers": 326,
+    "inliers_within": 324,
+    "median_distance_m": 291.3
+  },
+  "status": "valid",
+  "H_full": [
+    [
+      0.9581814740078394,
+      -0.062364874107966414,
+      433.0669304106022
+    ],
+    [
+      -0.040842757052601056,
+      0.9597470240511639,
+      283.07708345881866
+    ],
+    [
+      -1.328824794749949e-05,
+      -1.4569640627291733e-05,
+      1.0
+    ]
+  ],
+  "heldout": {
+    "n_valid": 12,
+    "median_m": 173.53,
+    "mean_m": 240.44,
+    "rmse_m": 325.9,
+    "max_m": 887.09
+  },
+  "per_point_m": {
+    "E01": 297.5,
+    "E02": 58.5,
+    "E03": 172.7,
+    "E04": 171.8,
+    "E05": 22.2,
+    "E06": 116.3,
+    "E07": 109.0,
+    "E08": 174.4,
+    "E09": 191.4,
+    "E10": 274.8,
+    "E11": 409.7,
+    "E12": 887.1
+  },
+  "paired_vs_loftr": {
+    "n_pairs": 12,
+    "median_diff_m": -130.93,
+    "a_better_count": 11,
+    "b_better_count": 1,
+    "wilcoxon_statistic": 2.0,
+    "wilcoxon_p_two_sided": 0.0015,
+    "bootstrap_ci95_median_diff_m": [
+      -219.27,
+      -70.67
+    ]
+  },
+  "paired_vs_manual": {
+    "n_pairs": 12,
+    "median_diff_m": -85.14,
+    "a_better_count": 10,
+    "b_better_count": 2,
+    "wilcoxon_statistic": 7.0,
+    "wilcoxon_p_two_sided": 0.0093,
+    "bootstrap_ci95_median_diff_m": [
+      -187.16,
+      -58.15
+    ]
+  }
+}
