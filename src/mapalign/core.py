@@ -34,7 +34,7 @@ class MatchResult:
 
 # ---------------------------------------------------------------- 1. load a matcher
 
-MATCHERS = ("sift", "loftr", "disk_lightglue", "aliked_lightglue")
+MATCHERS = ("sift", "loftr", "disk_lightglue", "aliked_lightglue", "roma", "mast3r")
 
 
 def get_matcher(name: str, params: dict | None = None, device: str = "auto") -> Callable[[np.ndarray, np.ndarray], MatchResult]:
@@ -50,6 +50,12 @@ def get_matcher(name: str, params: dict | None = None, device: str = "auto") -> 
         from mapalign.match_lightglue import match_lightglue
         p = {**params, "features": name.removesuffix("_lightglue")}
         return lambda g0, g1: match_lightglue(g0, g1, p, device)
+    if name == "roma":
+        from mapalign.match_roma import match_roma
+        return lambda g0, g1: match_roma(g0, g1, params, device)
+    if name == "mast3r":
+        from mapalign.match_mast3r import match_mast3r
+        return lambda g0, g1: match_mast3r(g0, g1, params, device)
     raise ValueError(f"unknown matcher {name!r}; expected one of {MATCHERS}")
 
 

@@ -6,6 +6,8 @@ Usage:
     python -m mapalign.extensions all
     python -m mapalign.extensions lightglue       # a fourth method: DISK or ALIKED keypoints + LightGlue + the frozen MAGSAC++
     python -m mapalign.extensions nonprojective   # polynomial and thin-plate-spline models instead of a homography
+    python -m mapalign.extensions roma            # RoMa dense matches + the frozen MAGSAC++ (library defaults)
+    python -m mapalign.extensions mast3r          # MASt3R matches + the frozen MAGSAC++ (library defaults)
 
 Both follow the protocol used for the original methods. Settings are chosen with development data only (the
 graticule prior, the fitting points or the correspondences themselves), with the selection rule written down
@@ -265,7 +267,58 @@ def nonprojective(c: Ctx):
     return out
 
 
-TASKS = {"lightglue": lightglue, "nonprojective": nonprojective}
+# ---------------------------------------------------------------- 3. RoMa and MASt3R (dense learned matchers)
+
+def roma(c: Ctx):
+    return _dense(c, "roma")
+
+
+def mast3r(c: Ctx):
+    return _dense(c, "mast3r")
+
+
+def _dense(c: Ctx, name: str):
+    """Fifth and sixth methods, added with the art-history experiment. Settings are each library's published
+    defaults, fixed before running (no sweep: RoMa and MASt3R resize internally to a fixed grid). Both get the
+    colour images, which is what they were trained on. Everything after matching is the frozen pipeline."""
+    from mapalign.visualize import plot_matches, plot_overlay
+
+    OUT.mkdir(parents=True, exist_ok=True)
+    hist, ref = _prepared(c)
+    Hp = prior_homography_work(c.cfg, hist, ref)
+    res_m = c.cfg["preprocessing"]["working_resolution_m"]
+    size0 = (hist.gray.shape[1], hist.gray.shape[0])
+    size1 = (ref.gray.shape[1], ref.gray.shape[0])
+    t0 = time.perf_counter()
+    m = get_matcher(name, {}, c.cfg["compute"]["device"])(hist.color, ref.color)
+    t_match = time.perf_counter() - t0
+    tr = fit_transform(m, size0, size1, c.cfg["transform"], c.seed)
+    label = {"roma": "RoMa", "mast3r": "MASt3R"}[name]
+    out = {"purpose": f"post hoc, secondary: {label} matches into the frozen MAGSAC++ pipeline",
+           "settings": "library defaults, fixed before the run", "matching": m.stats, "matching_s": round(t_match, 1),
+           "estimation": tr.stats, "prior_consistency": prior_consistency(m.pts0, m.pts1, Hp, res_m, tr.inlier_mask),
+           "status": "valid" if tr.ok else "failed"}
+    np.savez_compressed(OUT / f"{name}_correspondences.npz", pts0_work=m.pts0, pts1_work=m.pts1,
+                        scores=m.scores, inlier_mask=tr.inlier_mask)
+    plot_matches(hist.color, ref.color, m.pts0, m.pts1, tr.inlier_mask, f"{label} + MAGSAC++",
+                 OUT / f"{name}_matches.png", seed=c.seed)
+    if tr.ok:
+        H = compose_full_resolution(tr.matrix, hist.full_to_work, ref.full_to_work)
+        e = positional_errors(c.truth, predict(H, ref.geotransform, c.px))
+        out["H_full"] = H.tolist()
+        out["heldout"] = _summ(e)
+        out["per_point_m"] = dict(zip(c.ids, np.round(e, 1).tolist()))
+        out["paired_vs_loftr"] = paired_comparison(c.errors("homography", "loftr"), e, c.seed)
+        out["paired_vs_manual"] = paired_comparison(c.errors("homography", "manual"), e, c.seed)
+        plot_overlay(hist.color, ref.color, tr.matrix, f"{label} overlay (post hoc)", OUT / f"overlay_{name}.png")
+    else:
+        out["heldout"] = {"n_valid": 0, "note": "no valid transform, scored as failed like SIFT"}
+    log.info("%s: %s", name, {k: out[k] for k in ("status", "heldout")})
+    write_json(out, OUT / f"{name}.json")
+    return out
+
+
+TASKS = {"lightglue": lightglue, "nonprojective": nonprojective, "roma": roma, "mast3r": mast3r}
 
 
 def main(argv=None) -> int:
