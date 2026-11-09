@@ -48,3 +48,6 @@ paper/*.synctex.gz
 
 # GDAL/QGIS statistics sidecars
 *.aux.xml
+
+# FIRE: overlays are derived patient images; written locally, not committed
+fire/figures/overlay_*.png

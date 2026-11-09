@@ -172,6 +172,31 @@ def tune() -> dict:
     return choice
 
 
+def frozen_choice() -> dict:
+    return json.loads((RESULTS / "tuning_choice.json").read_text())
+
+
+def evaluate(methods=("sift", "loftr")) -> list[dict]:
+    """Frozen settings on all 134 pairs; the split column keeps the 10 tuning pairs out of headline numbers."""
+    choice, split = frozen_choice(), B.split_of()
+    pids = sorted(split)
+    rows = []
+    for method in methods:
+        side = choice[method]["side"] if method in choice else 864
+        th = choice[method]["threshold"] if method in choice else 3
+        note = ensure_matches(method, side, choice["clahe"], pids)
+        if note:
+            raise RuntimeError(f"{method} could not run: {note}")
+        for model in ("homography", "affine"):
+            rows += [{**score(method, side, choice["clahe"], p, model, th), "split": split[p]} for p in pids]
+    path = RESULTS / "per_pair.csv"
+    if path.exists():  # keep rows of methods not re-run here (e.g. the optional RoMa run)
+        old = [r for r in csv.DictReader(open(path, encoding="utf-8")) if r["method"] not in methods]
+        rows = [*old, *rows]
+    write_csv(path, rows)
+    return rows
+
+
 def main() -> int:
     if len(sys.argv) > 1 and sys.argv[1] == "_match":
         _, _, method, side, clahe, *pids = sys.argv
@@ -183,6 +208,14 @@ def main() -> int:
     verify()
     if a.stage in ("all", "tune"):
         tune()
+    if a.stage in ("all", "evaluate"):
+        evaluate()
+    if a.stage in ("all", "stats"):
+        import report
+        report.stats()
+    if a.stage in ("all", "figures"):
+        import report
+        print("\n".join(report.figures()))
     return 0
 
 
